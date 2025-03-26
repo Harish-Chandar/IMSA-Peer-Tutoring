@@ -1,6 +1,6 @@
-const sqlite3 = require('sqlite3').verbose();
+import { Database, verbose } from 'sqlite3';
 
-const db = new sqlite3.Database('./peertutoringdb.sqlite', (err) => {
+const db = new (verbose().Database)('./peertutoringdb.sqlite', (err: Error | null) => {
     if (err) {
         console.error('Error opening database:', err.message);
     } else {
@@ -36,7 +36,7 @@ const createTutorsTable = `
     );
 `;
 
-db.run(createTutorsTable, (err) => {
+db.run(createTutorsTable, (err: Error | null) => {
     if (err) {
         console.error('Error creating "tutors" table:', err.message);
     } else {
@@ -58,7 +58,7 @@ const createBulletinTable = `
     );
 `;
 
-db.run(createBulletinTable, (err) => {
+db.run(createBulletinTable, (err: Error | null) => {
     if (err) {
         console.error('Error creating "bulletin" table:', err.message);
     } else {
@@ -78,7 +78,7 @@ const createResourcesTable = `
     );
 `;
 
-db.run(createResourcesTable, (err) => {
+db.run(createResourcesTable, (err: Error | null) => {
     if (err) {
         console.error('Error creating "resources" table:', err.message);
     } else {
@@ -86,7 +86,7 @@ db.run(createResourcesTable, (err) => {
     }
 });
 
-db.close((err) => {
+db.close((err: Error | null) => {
     if (err) {
         console.error('Error closing database:', err.message);
     } else {
