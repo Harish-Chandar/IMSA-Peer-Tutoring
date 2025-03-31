@@ -1,9 +1,9 @@
 import TutorCard from './components/TutorCard';
-
+import FindTutors from './pages/FindTutors';
 export default function App() {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">
+      {/* <h1 className="text-3xl font-bold underline">
         Hello world!
       </h1>
       <TutorCard
@@ -13,7 +13,8 @@ export default function App() {
         classes={["Advanced Topics", "MI 1/2", "Anatomy and Physiology"]}
         routing_link="/tutor/ashah"
         image="/ashah.jpg"
-        />
+        /> */}
+      <FindTutors></FindTutors>
     </div>
     
   )
