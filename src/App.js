@@ -1,10 +1,7 @@
-import React from "react";
-import ResourceForm from "./ResourceForm";
-import Note from "./Components/note";
-
 export default function App() {
   return (
-    <ResourceForm
-    />
-  );
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+  )
 }
