@@ -12,12 +12,12 @@ function TutorNote({ name, hall,classes }) {
   };
 
   return (
-    <div className={`w-60 h-60 shadow-2xl rounded-lg m-5`}>
-        <img className="self-end h-full w-full object-cover rounded-lg" src="/assets/in2.jpg" alt="placeholder" />
-      <div className={`bg-slate-50 shadow-2xl rounded-lg p-1 w-50 h-30 self-center relative bottom-10`}>
-        <h3 className="font-sans text-black"><b>{name}</b></h3>
-        <h3 className="font-sans text-black">{hall}</h3>
-        <h3 className="font-sans text-black"><b>Classes Taught:</b> {classes}</h3>
+    <div className={`w-60 h-60 shadow-2xl rounded-lg m-5 relative`}>
+        <img className="self-end h-full w-full object-cover rounded-lg" src="/assets/aarav.png" alt="placeholder" />
+      <div className={`bg-slate-50 shadow-2xl rounded-lg p-1 w-50 h-30 mx-auto relative bottom-10`}>
+        <h3 className="font-sans text-neutral-600"><b>{name}</b></h3>
+        <h3 className="font-sans text-neutral-600">{hall}</h3>
+        <h3 className="font-sans text-neutral-600"><b>Classes Taught:</b> {classes}</h3>
       </div>
     </div>
   );

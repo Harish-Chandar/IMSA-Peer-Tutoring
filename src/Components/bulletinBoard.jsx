@@ -12,8 +12,8 @@ function Bulletin() {
          
           <Note
             title="hello pookie"
-            classy="Multi-Variable Calculus"
-            teacher="Dr.Trimm"
+            course="Multi-Variable Calculus"
+            teachers="Dr.Trimm"
             location="IN2"
             date="2/14/2025"
             time="3:00 AM"
@@ -21,8 +21,8 @@ function Bulletin() {
           />
           <Note 
             title="Aarav is so cute"
-            classy="Multi-Variable Calculus"
-            teacher="Dr.Trimm"
+            course="Multi-Variable Calculus"
+            teachers="Dr.Trimm"
             location="IN2"
             date="2/14/2025"
             time="3:00 AM"
@@ -30,8 +30,8 @@ function Bulletin() {
           />
           <Note
             title="Vishnu needs to lock-in"
-            classy="Multi-Variable Calculus"
-            teacher="Dr.Trimm"
+            course="Multi-Variable Calculus"
+            teachers="Dr.Trimm"
             location="IN2"
             date="2/14/2025"
             time="3:00 AM"

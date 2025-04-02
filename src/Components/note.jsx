@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./../App.css";
 
-function Note({ title, classy, teacher, location, date, time, color }) {
+function Note({ title, course, teachers, location, date, time, color }) {
 
   // All the colors needed for the background of notes
   const colorClasses = {
@@ -17,8 +17,8 @@ function Note({ title, classy, teacher, location, date, time, color }) {
         <img className="absolute w-10 self-end" src="/assets/paperclip.png" alt="placeholder" />
       </div>
         <h3 className="font-sans text-black"><b>{title}</b></h3>
-        <h3 className="font-sans text-black">{classy}</h3>
-        <h3 className="font-sans text-black"><b>Teachers:</b> {teacher}</h3>
+        <h3 className="font-sans text-black">{course}</h3>
+        <h3 className="font-sans text-black"><b>Teachers:</b> {teachers}</h3>
         <h3 className="font-sans text-black"><b>Location:</b> {location}</h3>
         <h3 className="font-sans text-black"><b>Date:</b> {date}</h3>
         <h3 className="font-sans text-black"><b>Time:</b> {time}</h3>
