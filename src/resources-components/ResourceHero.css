@@ -1,0 +1,28 @@
+/* @import "tailwindcss"; */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
+
+.resource-hero {
+  font-family: "Roboto", sans-serif;
+  height: 44vh;
+  width: 100%;
+  background-color: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-text h1 {
+  font-size: 5.5%;
+  font-weight: 400;
+}
+
+.hero-text h2 {
+  font-size: 1.8%;
+  color: red;
+  /* font-size: 3rem; */
+}
+
+.blue {
+  color: #2194f3;
+}
