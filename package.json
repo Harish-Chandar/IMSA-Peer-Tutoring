@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.13",
+    "axios": "^1.8.4",
+    "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
