@@ -59,15 +59,28 @@ app.get("/api/tutors/search", (req, res) => {
 
 // api route for retrieving name given an id
 app.get("/api/tutors/:id", (req, res) => {
-  const tutorId = req.params.id;
+  	const tutorId = req.params.id;
+	if (isNaN(tutorId) || tutorId <= 0) {
+    	return res.status(400).json({ error: "Invalid tutor ID" });
+  	}
   db.all(
     "SELECT fname, lname FROM tutors WHERE id = ?",
     [parseInt(tutorId)],
-    (err, rows) => {
-      // TODO: fix error handling i'm not very good at this @Harish-Chandar @Harish-Chandar @Harish-Chandar help
+	(err, rows) => {
       if (err) {
-        return res.send("error retrieving tutor name");
+        console.error(err);  // Log error for debugging purposes
+        return res.status(500).json({ error: "Error retrieving tutor name" });
       }
+
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Tutor not found" });
+      }
+
+      res.status(200).json({ // 200 status means "ok", 404 is your typical "page not found" and "500" means there's some problem with the db
+        id: tutorId,
+        fname: rows[0].fname,
+        lname: rows[0].lname,
+      });
       res.json(rows);
     }
   );
