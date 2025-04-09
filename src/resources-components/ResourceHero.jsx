@@ -1,18 +1,22 @@
 import React, { Component } from "react";
-
-import "./ResourceHero.css";
-
+// import "./ResourceHero.css";
+import resourceHeroImage from "../resource-images/resourceHero.png";
 class ResourceHero extends Component {
   render() {
     return (
-      <div classname="resource-hero">
-        <div classname="hero-text">
-          <h1>
-            Find resources <span class="blue">for IMSA classes</span>
-          </h1>
-          <h2 style={{ fontWeight: 400 }}>
-            Sort by teacher, subject, and more!
-          </h2>
+      <div>
+        <div className="w-full h-15 mt-8"></div>
+        <div className="flex flex-row justify-evenly w-screen h-80 bg-slate-100">
+          <div className="self-start flex flex-col text-left h-full justify-center">
+            <h2 className="text-gray-700 text-4xl font-bold">
+              Find resources{" "}
+              <span className="text-blue-500 text-4xl">for IMSA classes</span>
+            </h2>
+            <h2 className="text-gray-400 text-2xl font-normal mb-3">
+              Sort by teacher, subject, and more!
+            </h2>
+          </div>
+          <img src={resourceHeroImage} alt="Resource Hero" />{" "}
         </div>
       </div>
     );

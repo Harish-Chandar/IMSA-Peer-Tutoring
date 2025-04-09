@@ -27,7 +27,7 @@ export const SearchBar = ({ setResults }) => {
   };
 
   return (
-    <div className="input-wrapper">
+    <div className="bg-white w-full rounded-[5px] h-[2.5rem] px-[15px] shadow-[0_0_8px_#ddd] flex items-center justify-start">
       <FaSearch id="search-icon" />
       <input
         placeholder="Search for any class or department..."
