@@ -22,7 +22,7 @@ function FindTutors() {
 
   const fetchTutors = async () => {
     try {
-      const response = await fetch("/api/tutors/search");
+      const response = await fetch("http://localhost:5000/api/tutors/search");
       const data = await response.json();
       setTutors(data);
     } catch (error) {
@@ -38,7 +38,7 @@ function FindTutors() {
         queryParams.append("hall", selectedFilters.join(","));
 
       const response = await fetch(
-        `/api/tutors/search?${queryParams.toString()}`
+        `http://localhost:5000/api/tutors/search?${queryParams.toString()}` // use full URL
       );
       const data = await response.json();
       setTutors(data);
@@ -130,9 +130,10 @@ function FindTutors() {
               name={`${tutor.fname} ${tutor.lname}`}
               wing={tutor.wing}
               hall={tutor.hall}
-              classes={tutor.classes || []}
+              //tutor.classes doesn't exist but ill fix this later
+              classes={tutor.classes || ["tutor classes don't exist ig"]}
               routing_link={`/tutor/${tutor.id}`}
-              image={tutor.image || "https://placehold.co/600x400"}
+              image={tutor.image || "https://placehold.co/600x600"}
             />
           ))}
         </div>
