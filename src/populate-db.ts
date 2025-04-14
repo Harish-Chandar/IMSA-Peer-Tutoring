@@ -25,7 +25,6 @@ populateDb.run(CRT, (err: Error | null) => {
     } else {
         console.log('Successfully created schedule table.');
     }
-    // Close the database connection after creating the table
     populateDb.close((err: Error | null) => {
         if (err) {
             console.error('Error closing database:', err.message);
