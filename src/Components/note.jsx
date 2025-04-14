@@ -12,9 +12,9 @@ function Note({ title, course, teachers, location, date, time, color }) {
   };
 
   return (
-    <div className={`w-60 h-60 p-4 shadow-2xl rounded-lg m-5 ${colorClasses[color]}`}>
+    <div className={`w-60 h-60 p-4 shadow-2xl rounded-lg m-5 ${colorClasses[color]} relative hover:scale-105 duration-300`}>
       <div className="flex flex-row justify-end">
-        <img className="absolute w-10 self-end" src="/assets/paperclip.png" alt="placeholder" />
+        <img className="absolute w-10 self-end -top-2 -right-2 z-0" src="/assets/paperclip.png" alt="placeholder" />
       </div>
         <h3 className="font-sans text-black"><b>{title}</b></h3>
         <h3 className="font-sans text-black">{course}</h3>

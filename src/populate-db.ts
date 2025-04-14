@@ -17,7 +17,7 @@ const CRT = `CREATE TABLE IF NOT EXISTS schedule (
         date TEXT,
         time TEXT
         );
-    `;
+    `; 
 
 populateDb.run(CRT, (err: Error | null) => {
     if (err) {
