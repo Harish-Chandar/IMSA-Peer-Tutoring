@@ -24,7 +24,7 @@ function FindTutors() {
   // automatically update search results when searchQuery or selectedFilters change
   useEffect(() => {
     handleSearch();
-  }, [selectedFilters]);
+  }, [searchQuery, selectedFilters]);
 
   const fetchTutors = async () => {
     try {

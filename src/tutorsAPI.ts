@@ -33,8 +33,12 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
   const params: (string | number)[] = [];
 
   if (name) {
-    query += " AND (LOWER(fname) = LOWER(?) OR LOWER(lname) = LOWER(?))";
-    params.push(name, name);
+    // trim so no whitespace
+    const trimmedName = name.trim();
+
+    // use full name (first + last) for matching
+    query += " AND LOWER(fname || ' ' || lname) LIKE LOWER(?)";
+    params.push(`%${trimmedName}%`);
   }
   if (hall) {
     // the frontend sends back a comma list for multiple halls, so handle that
