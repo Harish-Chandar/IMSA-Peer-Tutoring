@@ -12,7 +12,7 @@ app.listen(PORT, () => {
   console.log(`server listening on port ${PORT}`);
 });
 
-// i think this allows the routes to use json but i'm not sure
+// allows routes to parse json
 app.use(express.json());
 
 // initialize database
@@ -39,19 +39,20 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
   if (hall) {
     // the frontend sends back a comma list for multiple halls, so handle that
     if (hall.includes(",")) {
-      
-      // i didn't know how to do this part so warning this is gpted
       const hallList = hall
         .split(",")
+        // maps everything to an int and filters out any NaN values
         .map((h) => parseInt(h.trim()))
         .filter((h) => !isNaN(h));
       if (hallList.length === 0) {
         return res.status(400).json({ error: "Invalid hall parameter" });
       }
+
+      // appends to query and params for multiple halls
       query += " AND hall IN (" + hallList.map(() => "?").join(",") + ")";
       params.push(...hallList);
 
-      // ok this is my code again this is for when there is only 1 hall, just parse int
+      // for when there is only 1 hall, just parse int
     } else {
       const hallInt = parseInt(hall);
       if (isNaN(hallInt)) {
@@ -62,8 +63,10 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
     }
   }
 
+  // debug log statement of query
   console.log("Executing Query:", query, "Params:", params);
 
+  // execute the query
   db.all(query, params, (err: Error | null, rows: any[]) => {
     if (err) {
       console.error("Database error:", err);
@@ -77,15 +80,18 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
 // api route for retrieving name given an id
 app.get("/api/tutors/:id", (req: Request, res: Response) => {
   const tutorId = parseInt(req.params.id);
+
+  // validate tutorId
   if (isNaN(tutorId) || tutorId <= 0) {
     return res.status(400).json({ error: "Invalid tutor ID" });
   }
+
   db.all(
     "SELECT fname, lname FROM tutors WHERE id = ?",
     [tutorId],
     (err: Error | null, rows: any[]) => {
       if (err) {
-        console.error(err); // Log error for debugging purposes
+        console.error(err);
         return res.status(500).json({ error: "Error retrieving tutor name" });
       }
 
@@ -113,11 +119,12 @@ app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
       if (err) {
         return res.send("Error retrieving classes");
       }
-      res.json(rows);
+      res.status(200).json(rows);
     }
   );
 });
 
+// test api route for fun
 app.get("/api/test", (req: Request, res: Response) => {
   db.all("SELECT * FROM tutors", (err: Error | null, rows: any[]) => {
     if (err) {
@@ -125,8 +132,8 @@ app.get("/api/test", (req: Request, res: Response) => {
       res.status(500).send("Database error occurred");
       return;
     }
-    console.log("Fetched tutors:", rows); // Ensure this is visible
-    res.json(rows);
+    console.log("Fetched tutors:", rows); // ensure this is visible
+    res.status(200).json(rows);
   });
   console.log("Test route hit!");
 });

@@ -16,9 +16,15 @@ function FindTutors() {
     "1507",
   ];
 
+  // automatically fetch tutors when loaded
   useEffect(() => {
     fetchTutors();
   }, []);
+
+  // automatically update search results when searchQuery or selectedFilters change
+  useEffect(() => {
+    handleSearch();
+  }, [selectedFilters]);
 
   const fetchTutors = async () => {
     try {
@@ -130,10 +136,16 @@ function FindTutors() {
               name={`${tutor.fname} ${tutor.lname}`}
               wing={tutor.wing}
               hall={tutor.hall}
-              //tutor.classes doesn't exist but ill fix this later
-              classes={tutor.classes || ["tutor classes don't exist ig"]}
               routing_link={`/tutor/${tutor.id}`}
               image={tutor.image || "https://placehold.co/600x600"}
+              physics={tutor.physics}
+              chem={tutor.chem}
+              biology={tutor.biology}
+              sciother={tutor.sciother}
+              mathother={tutor.mathother}
+              mathcore={tutor.mathcore}
+              cs={tutor.cs}
+              language={tutor.language}
             />
           ))}
         </div>

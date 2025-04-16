@@ -10,7 +10,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "tailwind": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

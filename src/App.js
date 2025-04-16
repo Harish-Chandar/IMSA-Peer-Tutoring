@@ -1,5 +1,5 @@
-import TutorCard from './components/TutorCard';
-import FindTutors from './pages/FindTutors';
+import FindTutors from "./pages/FindTutors";
+import NavBar from "./components/NavBar";
 export default function App() {
   return (
     <div>
@@ -14,8 +14,8 @@ export default function App() {
         routing_link="/tutor/ashah"
         image="/ashah.jpg"
         /> */}
+      <NavBar></NavBar>
       <FindTutors></FindTutors>
     </div>
-    
-  )
+  );
 }

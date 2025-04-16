@@ -1,23 +1,37 @@
-import React from 'react'
+import React from "react";
 
 function NavBar() {
-    return (
-      <header className="bg-white text-black p-4 ">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <img src="/logoS.png" alt="SpamSleuth Logo" className="mr-2" />
-            <h1 className="text-2xl font-bold">SpamSleuth</h1>
-          </div>
-          <nav>
-            <ul className="flex space-x-4">
-              <li><a href="/" className="hover:underline">Home</a></li>
-              <li><a href="/information" className="hover:underline">Information</a></li>
-              <li><a href="/about" className="hover:underline">About Us</a></li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-    );
-  }
+  return (
+    <nav className="bg-slate-50 w-full h-15 flex flex-row px-6 shadow-md">
+      <h2 className="self-center text-4xl text-blue-500 font-bold text-left ">
+        Peer Tutors @ IMSA
+      </h2>
 
-export default NavBar
+      <div className="self-center ml-auto relative group">
+        <h3 className="text-slate-500 text-lg font-bold">Class Resources</h3>
+        <div className="absolute bg-slate-50 hidden group-hover:block">
+          <a
+            href="#"
+            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+          >
+            Link 1
+          </a>
+          <a
+            href="#"
+            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+          >
+            Link 2
+          </a>
+          <a
+            href="#"
+            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+          >
+            Link 3
+          </a>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+export default NavBar;
