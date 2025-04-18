@@ -19,6 +19,7 @@ const createTutorsTable = `
         blurb TEXT,
         hall INTEGER,
         wing INTEGER,
+        image TEXT,
         totaltime INTEGER DEFAULT 0,
         approvedtime INTEGER DEFAULT 0,
         starttime INTEGER,

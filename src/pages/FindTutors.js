@@ -44,7 +44,7 @@ function FindTutors() {
         queryParams.append("hall", selectedFilters.join(","));
 
       const response = await fetch(
-        `http://localhost:5000/api/tutors/search?${queryParams.toString()}` // use full URL
+        `http://localhost:5000/api/tutors/search?${queryParams.toString()}`
       );
       const data = await response.json();
       setTutors(data);
