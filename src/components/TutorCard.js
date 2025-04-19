@@ -10,9 +10,25 @@ function parseClass(subject) {
 }
 
 // take the wing number from tutors db and return the corresponding wing letter
-// A = 1, B = 2, C = 3, D = 4
+// 1 = A, 2 = B, 3 = C, 4 = D
 function assignWing(wingNum) {
   return String.fromCharCode(wingNum + 64);
+}
+
+// assign a priority (higher value = higher priority) to a course if it should appear first
+function getPriority(course) {
+  const normalized = course.toLowerCase();
+  if (normalized.includes("scientific inquiries: chemistry")) return 6;
+  if (normalized.includes("scientific inquiries: physics")) return 6;
+  if (normalized.includes("computer science inquiry")) return 6;
+  if (normalized.includes("mathematical investigations: i/ii")) return 6;
+  if (normalized.includes("mathematical investigations: ii")) return 6;
+  if (normalized.includes("mathematical investigations: iii")) return 5;
+  if (normalized.includes("mathematical investigations: iv")) return 4;
+  if (normalized.includes("bc calculus i")) return 3;
+  if (normalized.includes("object oriented programming")) return 3;
+  if (normalized.includes("bc calculus ii")) return 2;
+  return 0;
 }
 
 function TutorCard({
@@ -41,12 +57,24 @@ function TutorCard({
     cs,
     language,
   };
-  const taughtClasses = [];
+  let taughtClasses = [];
+
+  // loop through all subjects and add parsed classes to taughtClasses array
   Object.values(subjects).forEach((subject) => {
     if (subject) {
       taughtClasses.push(...parseClass(subject));
     }
   });
+
+  // sort taught classes by priority (highest first) then by alphabetical order as a tie breaker
+  taughtClasses.sort((a, b) => {
+    const diff = getPriority(b) - getPriority(a);
+    if (diff === 0) return a.localeCompare(b);
+    return diff;
+  });
+
+  // truncate to only first 3 classes
+  const displayClasses = taughtClasses.slice(0, 3);
 
   return (
     <div className="relative w-64 h-[22rem] flex flex-col items-center">
@@ -59,18 +87,14 @@ function TutorCard({
       <div className="absolute bottom-0 w-full bg-white rounded-xl p-4 shadow-md text-center">
         <h3 className="text-lg font-semibold font-sans">{name}</h3>
         <p className="text-sm text-gray-400 font-sans">
-          {" "}
           {hall}, {assignWing(wing)} wing
         </p>
         <p className="text-sm text-gray-700 font-sans">
-          {/* in the future, make this display 3 classes that the tutor chooses? */}
           <span className="font-bold">Classes: </span>
-          {taughtClasses.join(", ")}
+          {displayClasses.join(", ")}
+          {taughtClasses.length > 3 ? "..." : ""}
         </p>
-        <a
-          href={routing_link}
-          className="text-blue-500 font-medium mt-2 block "
-        >
+        <a href={routing_link} className="text-blue-500 font-medium mt-2 block">
           View Profile →
         </a>
       </div>
