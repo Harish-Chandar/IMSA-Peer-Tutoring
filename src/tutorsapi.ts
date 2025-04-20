@@ -171,3 +171,55 @@ app.get("/api/resources", (req: Request, res: Response) => {
     res.json(rows);
   });
 });
+
+// api route for retrieving resources by department
+app.get("/api/resources/search", (req: Request, res: Response) => {
+  const { course, department } = req.query as { course?: string; department?: string};
+  let query = "SELECT * FROM resources WHERE 1=1";  
+  const params: (string | number)[] = [];
+
+  if(course) {
+    //trim so there is no whitespace
+    const trimmedCourse = course.trim();
+
+    //use full name (first + last) for matching
+    query += " AND LOWER(course) LIKE LOWER(?)";
+    params.push(`%${trimmedCourse}%`);
+
+  }
+  if(department) {
+    // the frontend sends back a comma list for multiple departments, so handle that
+    if(department.includes(",")) {
+      const departmentList = department.split(",").map((d) => d.trim());
+        
+      if(departmentList.length === 0) {
+        return res.status(400).json({ error: "Invalid department parameter" });
+      }
+
+      //appends to query and params for multiple departments
+      query += " AND LOWER(department) IN (" + departmentList.map(() => "?").join(",") + ")";
+      params.push(...departmentList.map((d) => d.toLowerCase()));
+
+      // for when there is only 1 dept
+    } else {
+      query += " AND LOWER(department) = LOWER(?)";
+      params.push(department.trim().toLowerCase());
+    }
+  }
+  // debug log statement of query
+  console.log("Executing Query:", query, "Params:", params);
+
+  // execute the query
+  db.all(query, params, (err: Error | null, rows: any[]) => {
+    if(err) {
+      console.error("Database error:", err);
+      res.status(500).json({ error: "Error retrieving resources" });
+      return;
+    }
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "No resources found" });
+    }
+    res.json(rows);
+  });
+});
