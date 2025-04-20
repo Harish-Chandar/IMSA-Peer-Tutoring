@@ -4,12 +4,12 @@ import testimage from "../resource-images/gateway-arch.png";
 
 function ResourceCard({ course, department, teachers }) {
   // All the colors needed for the background of notes
-  const colorClasses = {
-    yellow: "bg-yellow-100",
-    red: "bg-red-100",
-    green: "bg-green-100",
-    blue: "bg-blue-100",
-  };
+  // const colorClasses = {
+  //   yellow: "bg-yellow-100",
+  //   red: "bg-red-100",
+  //   green: "bg-green-100",
+  //   blue: "bg-blue-100",
+  // };
 
   return (
     <div

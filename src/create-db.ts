@@ -74,7 +74,8 @@ const createResourcesTable = `
         resource_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         teacher TEXT NOT NULL,
         email TEXT NOT NULL,
-        classes TEXT NOT NULL,
+        course TEXT NOT NULL,
+        department TEXT NOT NULL,
         url TEXT,
         type TEXT,
         time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL

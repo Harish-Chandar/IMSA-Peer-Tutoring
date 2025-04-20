@@ -132,20 +132,22 @@ app.get("/api/test", (req: Request, res: Response) => {
 
 // api route for inserting new data into the database
 app.post("/api/resources", (req: Request, res: Response) => {
+  console.log("Request body:", req.body);
+
   // Extract the data from the request body:
-  const { teacher, email, classes, url, type } = req.body;
+  const { teacher, email, course, url, type } = req.body;
   // Validate the data:
-  if (!teacher || !email || !classes || !url) {
+  if (!teacher || !email || !course || !url) {
     return res.status(400).json({
-      error: "Teacher. email, classes, and url are required fields.",
+      error: "Teacher, email, course, and url are required fields.",
     });
   }
 
   // Insert the data into the database:
-  const query = `INSERT INTO resources (teacher, email, classes, url, type) VALUES (?, ?, ?, ?, ?)`;
+  const query = `INSERT INTO resources (teacher, email, course, url, type) VALUES (?, ?, ?, ?, ?)`;
   db.run(
     query,
-    [teacher, email, classes, url, type || ""],
+    [teacher, email, course, url, type || ""],
     function (err: Error | null) {
       if (err) {
         console.error("Database error:", err);

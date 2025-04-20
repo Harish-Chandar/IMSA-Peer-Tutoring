@@ -1,17 +1,18 @@
-// const sqlite3 = require("sqlite3").verbose();
-// const db = new sqlite3.Database("../peertutoringdb.sqlite");
+
 import { handleForm } from "./ResourceFormHandler.js";
 
 export default function ResourceForm() {
+
+
   return (
       <div>
         <h2>Submit Resource</h2>
-        <form action={handleForm}>
+        <form onSubmit={handleForm}>
           <label>
-            Name:
+            Teacher:
             <input
               type="text"
-              name="name"
+              name="teacher"
             />
           </label>
           <br />
@@ -24,10 +25,10 @@ export default function ResourceForm() {
           </label>
           <br />
           <label>
-            Classes:
+            Course:
             <input
               type="text"
-              name="classes"
+              name="course"
             />
           </label>
           <br />

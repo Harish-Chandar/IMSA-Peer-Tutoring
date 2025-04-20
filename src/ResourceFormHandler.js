@@ -1,17 +1,21 @@
 import { db } from "./create-db.ts"
 
 export function handleForm(formData) {
-    // const sqlite3 = require("sqlite3").verbose();
-    // const db = new sqlite3.Database("../peertutoringdb.sqlite");
-    const name = formData.get("name");
+    const teacher = formData.get("teacher");
     const email = formData.get("email");
-    const classes = formData.get("classes");
+    const course = formData.get("course");
     const url = formData.get("url");
-    alert(`Name: ${name} Email: ${email} Classes: ${classes} URL: ${url}`);
+    alert(`Teacher: ${teacher} Email: ${email} Course: ${course} URL: ${url}`);
     const fillData = `
-      INSERT INTO resources (name, email, classes, url) VALUES (${name}, ${email}, ${classes}, ${url});
+      INSERT INTO resources (teacher, email, course, url) VALUES (?, ?, ?, ?);
     `;
-    let result = db.all(fillData, (err, row) => {
-      console.log(row);
+    console.log("Database file path:", db.filename);
+    console.log("Executing Query:", fillData, [teacher, email, course, url]);
+    db.run(fillData, [teacher, email, course, url], (err) => {
+      if (err) {
+        console.error("Error inserting data:", err);
+      } else {
+        console.log("Data inserted successfully");
+      }
     });
 }
