@@ -128,16 +128,19 @@ function FindResources() {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center mt-6">
-                    {resources.map((resource, index) => (
-                        <ResourceCard
-                            key={index}
-                            name={resource.course}
-                            teacher={resource.teacher}
-                            department={resource.department}
-                            url={resource.url}
-                            type={resource.type}
-                        />
-                    ))}
+                    {resources.length > 0 ? (
+                        resources.map((resource, index) => (
+                            <ResourceCard
+                                course={resource.course}
+                                teacher={resource.teacher}
+                                department={resource.department}
+                                url={resource.url}
+                                type={resource.type}
+                            />
+                        ))
+                    ) : (
+                        <p className="text-gray-500 mt-6 ">No resources found.</p> 
+                    )}
                 </div>
             </div>
         </div>

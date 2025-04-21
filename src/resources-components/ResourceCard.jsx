@@ -2,7 +2,7 @@ import { useState } from "react";
 import "../App.css";
 import testimage from "../resource-images/gateway-arch.png";
 
-function ResourceCard({ course, department, teachers }) {
+function ResourceCard({ course, teacher, department, url, type}) {
   // All the colors needed for the background of notes
   // const colorClasses = {
   //   yellow: "bg-yellow-100",
@@ -28,7 +28,7 @@ function ResourceCard({ course, department, teachers }) {
         </h3>
         <h3 className="font-sans text-neutral-600">{department}</h3>
         <h3 className="font-sans text-neutral-600">
-          <b>Teachers:</b> {teachers}
+          <b>Teacher:</b> {teacher}
         </h3>
       </div>
     </div>

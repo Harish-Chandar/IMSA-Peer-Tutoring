@@ -135,19 +135,19 @@ app.post("/api/resources", (req: Request, res: Response) => {
   console.log("Request body:", req.body);
 
   // Extract the data from the request body:
-  const { teacher, email, course, url, type } = req.body;
+  const { teacher, email, course, department, url, type } = req.body;
   // Validate the data:
-  if (!teacher || !email || !course || !url) {
+  if (!teacher || !email || !department || !course || !url) {
     return res.status(400).json({
-      error: "Teacher, email, course, and url are required fields.",
+      error: "Teacher, email, department, course, and url are required fields.",
     });
   }
 
   // Insert the data into the database:
-  const query = `INSERT INTO resources (teacher, email, course, url, type) VALUES (?, ?, ?, ?, ?)`;
+  const query = `INSERT INTO resources (teacher, email, course, department, url, type) VALUES (?, ?, ?, ?, ?, ?)`;
   db.run(
     query,
-    [teacher, email, course, url, type || ""],
+    [teacher, email, course, department, url, type || ""],
     function (err: Error | null) {
       if (err) {
         console.error("Database error:", err);
@@ -219,9 +219,11 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
       return;
     }
 
+    console.log("Query Results:", rows); // Log the query results
+
     if (rows.length === 0) {
       return res.status(404).json({ error: "No resources found" });
     }
-    res.json(rows);
+    res.json(rows || []); // Always return an array
   });
 });
