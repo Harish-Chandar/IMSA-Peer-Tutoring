@@ -1,5 +1,6 @@
 import FindTutors from "./pages/FindTutors";
 import NavBar from "./components/NavBar";
+import Tutor from "./pages/Tutor";
 export default function App() {
   return (
     <div>
@@ -15,7 +16,7 @@ export default function App() {
         image="/ashah.jpg"
         /> */}
       <NavBar></NavBar>
-      <FindTutors></FindTutors>
+      <Tutor></Tutor>
     </div>
   );
 }
