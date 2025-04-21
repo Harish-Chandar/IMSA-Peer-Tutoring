@@ -55,7 +55,7 @@ function Tutor() {
         {/* REPLACE THIS WITH THE INFO OF THE TUTOR IN QUESTION */}
           <h2 className="text-5xl font-semibold text-gray-800 font-sans py-5">Aarav Shah</h2> 
           <p className = "text-xl text-gray-500 font-sans">1505 D wing</p>
-          <p className="text-xl text-gray-600 mt-2 font-sans"><span className="font-bold">Classes Taught:</span> MI 1/2, Advancted Topics</p>
+          <p className="text-xl text-gray-600 mt-2 font-sans"><span className="font-bold">Classes Taught:</span> MI 1/2, Advanced Topics</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
