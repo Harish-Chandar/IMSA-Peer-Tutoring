@@ -130,7 +130,7 @@ app.get("/api/test", (req: Request, res: Response) => {
   console.log("Test route hit!");
 });
 
-// api route for inserting new data into the database
+// api route for inserting new data into the resources table
 app.post("/api/resources", (req: Request, res: Response) => {
   console.log("Request body:", req.body);
 
@@ -142,12 +142,20 @@ app.post("/api/resources", (req: Request, res: Response) => {
       error: "Teacher, email, department, course, and url are required fields.",
     });
   }
+  // concatenate teacher and course for search_field --> for search bar functionality, it will search through search_field in each resource so that we can search by teacher + by course name
+  const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
+  console.log("Constructed search_field:", search_field); // Debugging
 
   // Insert the data into the database:
-  const query = `INSERT INTO resources (teacher, email, course, department, url, type) VALUES (?, ?, ?, ?, ?, ?)`;
+  const query = `
+    INSERT INTO resources (teacher, email, course, department, url, type, search_field)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+  console.log("Executing Query:", query);
+  console.log("Query Parameters:", [teacher, email, course, department, url, type || "", search_field]);
   db.run(
     query,
-    [teacher, email, course, department, url, type || ""],
+    [teacher, email, course, department, url, type || "", search_field], // Include search_field here
     function (err: Error | null) {
       if (err) {
         console.error("Database error:", err);
@@ -176,25 +184,23 @@ app.get("/api/resources", (req: Request, res: Response) => {
 
 // api route for retrieving resources by department
 app.get("/api/resources/search", (req: Request, res: Response) => {
-  const { course, department } = req.query as { course?: string; department?: string};
-  let query = "SELECT * FROM resources WHERE 1=1";  
+  const { searchQuery, department } = req.query as { searchQuery?: string; department?: string };
+  let query = "SELECT * FROM resources WHERE 1=1"; // 1=1 lets you append more conditions easily with AND operator.
   const params: (string | number)[] = [];
 
-  if(course) {
+  if (searchQuery) { // search for searchQuery in search_field column 
     //trim so there is no whitespace
-    const trimmedCourse = course.trim();
-
-    //use full name (first + last) for matching
-    query += " AND LOWER(course) LIKE LOWER(?)";
+    const trimmedCourse = searchQuery.trim();
+    query += " AND LOWER(search_field) LIKE LOWER(?)";
     params.push(`%${trimmedCourse}%`);
 
   }
-  if(department) {
+  if (department) {
     // the frontend sends back a comma list for multiple departments, so handle that
-    if(department.includes(",")) {
+    if (department.includes(",")) {
       const departmentList = department.split(",").map((d) => d.trim());
-        
-      if(departmentList.length === 0) {
+
+      if (departmentList.length === 0) {
         return res.status(400).json({ error: "Invalid department parameter" });
       }
 
@@ -208,12 +214,13 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
       params.push(department.trim().toLowerCase());
     }
   }
+  
   // debug log statement of query
   console.log("Executing Query:", query, "Params:", params);
 
   // execute the query
   db.all(query, params, (err: Error | null, rows: any[]) => {
-    if(err) {
+    if (err) {
       console.error("Database error:", err);
       res.status(500).json({ error: "Error retrieving resources" });
       return;

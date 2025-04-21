@@ -40,17 +40,24 @@ function FindResources() {
     const handleSearch = async () => {
       try {
         const queryParams = new URLSearchParams();
-        if (searchQuery) queryParams.append("name", searchQuery);
+        if (searchQuery) queryParams.append("searchQuery", searchQuery);
         if (selectedFilters.length > 0)
           queryParams.append("department", selectedFilters.join(","));
-  
+        
+        console.log("Query Params:", queryParams.toString()); // Debugging
+
         const response = await fetch(
-          `http://localhost:5000/api/resources/search?${queryParams.toString()}`
+          `http://localhost:5000/api/resources/search?${queryParams.toString()}` // change hardcoding
         );
+        if(!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
+        console.log("Fetched Search Results:", data); // Debugging
         setResources(data);
       } catch (error) {
         console.error("Error searching resources:", error);
+        setResources([]); // Clear resources on error
       }
     };
   
@@ -78,7 +85,9 @@ function FindResources() {
                         type="text"
                         placeholder="Search..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {setSearchQuery(e.target.value);
+                          console.log("Search Query:", e.target.value); // Debugging
+                        }}
                         className="w-full p-3 text-blue-500 focus:outline-none bg-white"
                     />
                     <button

@@ -78,7 +78,9 @@ const createResourcesTable = `
         department TEXT NOT NULL,
         url TEXT,
         type TEXT,
-        time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        search_field TEXT
+
     );
 `;
 
