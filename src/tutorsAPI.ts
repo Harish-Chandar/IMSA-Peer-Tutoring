@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import sqlite3 from "sqlite3";
 import cors from "cors";
 
+import bcrypt from "bcrypt";
+
 const app = express();
 const PORT = 5000;
 
@@ -126,6 +128,30 @@ app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
       res.status(200).json(rows);
     }
   );
+});
+
+type Admin = {
+  id: number;
+  email: string;
+  pwd: string;
+  access: number;
+};
+
+app.post("/api/login", (req: Request, res: Response) => {
+  const { email, password }: { email: string; password: string } = req.body;
+
+  const query = `SELECT * FROM admins WHERE email = ?`;
+  db.get<Admin>(query, [email], (err, row) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    if (!row) return res.status(401).json({ error: "Invalid email or password" });
+
+    bcrypt.compare(password, row.pwd, (err , result : Boolean) => {
+      if (err) return res.status(500).json({ error: "Hash comparison error" });
+      if (!result) return res.status(401).json({ error: "Invalid email or password" });
+
+      res.json({ success: true, access: row.access, email: row.email });
+    });
+  });
 });
 
 // test api route for fun
