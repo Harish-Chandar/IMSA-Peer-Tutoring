@@ -86,6 +86,23 @@ db.run(createResourcesTable, (err) => {
     }
 });
 
+const createAdminTable = `
+	CREATE TABLE IF NOT EXISTS admins (
+	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	email TEXT NOT NULL,
+	pwd TEXT NOT NULL,
+	access INTEGER NOT NULL
+	);
+`;
+
+db.run(createAdminTable, (err) => {
+	if (err) {
+		console.error('Error creating "admin" table:', err.message);
+	} else {
+		console.log('Successfully created "admin" table.');
+	}
+});
+
 db.close((err) => {
     if (err) {
         console.error('Error closing database:', err.message);
