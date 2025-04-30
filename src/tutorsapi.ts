@@ -234,3 +234,25 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
     res.json(rows || []); // Always return an array
   });
 });
+
+// route to get details of a resource by ID
+app.get("/api/resources/:id", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  if (isNaN(resourceId) || resourceId <= 0) {
+    return res.status(400).json({ error: "Invalid resource ID" });
+  }
+  const query = "SELECT * FROM resources WHERE resource_id = ?";
+  db.get(query, [resourceId], (err: Error | null, row: any) => {
+    if(err){
+      console.error("Database error:", err);
+      return res.status(500).json({error: "Error retrieving resource" });
+
+    }
+
+    if(!row) {
+      return res.status(404).json({error: "Resource not found"});
+    }
+
+    res.json(row);
+  });
+})

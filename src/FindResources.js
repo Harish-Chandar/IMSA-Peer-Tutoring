@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import ResourceCard from "./resources-components/ResourceCard.jsx";
 import ResourceHero from "./resources-components/ResourceHero.jsx";
 import NavBar from "./resources-components/NavBar.jsx";
+import { Link } from "react-router-dom";
+
 function FindResources() {
     const [resources, setResources] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -139,16 +141,18 @@ function FindResources() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center mt-6">
                     {resources.length > 0 ? (
                         resources.map((resource, index) => (
-                            <ResourceCard
-                                course={resource.course}
-                                teacher={resource.teacher}
-                                department={resource.department}
-                                url={resource.url}
-                                type={resource.type}
-                            />
+                            <Link to={`/resources/${resource.resource_id}`} key={index}> 
+                                <ResourceCard
+                                    course={resource.course}
+                                    teacher={resource.teacher}
+                                    department={resource.department}
+                                    url={resource.url}
+                                    type={resource.type}
+                                />
+                            </Link>
                         ))
                     ) : (
-                        <p className="text-gray-500 mt-6 ">No resources found.</p> 
+                        <p className="text-gray-500 mt-6">No resources found.</p>
                     )}
                 </div>
             </div>
