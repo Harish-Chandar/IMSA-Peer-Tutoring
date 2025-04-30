@@ -5,9 +5,9 @@ function Note({ title, course, teachers, location, date, time, color }) {
 
     // All the colors needed for the background of notes
 const colorClasses = {
-    1: "bg-[#e6f0ff]", 
-    2: "bg-[#60a5fa]", 
-    3: "bg-[#3b82f6]", 
+    1: "bg-[#c1e6fd]", 
+    2: "bg-[#5ebcf9]", 
+    3: "bg-[#48a4ea]", 
     blue: "bg-blue-100",
 };
 
