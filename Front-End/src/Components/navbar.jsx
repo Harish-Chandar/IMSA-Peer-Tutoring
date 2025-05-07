@@ -14,13 +14,15 @@ function Navbar() {
         ☰
       </button>
 
-      <h2 className="text-4xl text-blue-500 font-bold md:block hidden cursor-pointer" onClick={() => window.location.href='/'}>
+      <h2 className="text-4xl text-blue-500 font-bold md:block md:text-lg lg:text-4xl hidden cursor-pointer" onClick={() => window.location.href='/'}>
         Peer Tutors @ IMSA
       </h2>
 
       <div
-        className={`fixed md:static top-[60px] left-0 bg-slate-50 shadow-lg flex-col md:flex md:flex-row md:shadow-none md:items-center items-start w-full md:w-auto md:ml-auto ${
-          isMenuOpen ? "flex" : "hidden"
+        className={`fixed md:static top-[60px] left-0 bg-slate-50 shadow-lg flex flex-col md:flex md:flex-row md:shadow-none md:items-center items-start w-full md:w-auto md:ml-auto transition-all duration-300 ease-in-out ${
+          isMenuOpen 
+            ? "opacity-100 translate-y-0" 
+            : "opacity-0 -translate-y-4 pointer-events-none md:opacity-100 md:translate-y-0 md:pointer-events-auto"
         }`}
       >
         <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 my-2 md:hidden"><a href="/" className="!text-slate-500 !font-bold">Home</a></h3>

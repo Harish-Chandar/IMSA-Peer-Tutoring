@@ -31,7 +31,7 @@ function Bulletin() {
 
   return (
     <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center font-sans shadow-2xl">
-      <h1 className="text-4xl text-neutral-700 font-bold mb-8">Bulletin Board</h1>
+      <h1 className="text-4xl text-gray-700 font-bold mb-8">Bulletin Board</h1>
       <div className="flex flex-row flex-wrap justify-center gap-4 w-full">
         {bulletinNotes.map(note => (
           <Note
