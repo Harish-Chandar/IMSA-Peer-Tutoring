@@ -16,7 +16,7 @@ export default function App() {
         image="/ashah.jpg"
         /> */}
       <NavBar></NavBar>
-      <Tutor></Tutor>
+      <FindTutors></FindTutors>
     </div>
   );
 }

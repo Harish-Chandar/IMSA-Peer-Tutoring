@@ -77,24 +77,32 @@ function TutorCard({
   const displayClasses = taughtClasses.slice(0, 3);
 
   return (
-    <div className="relative w-64 h-[22rem] flex flex-col items-center">
-      <img
-        src={image || "https://placehold.co/600x400"}
-        alt={`${name}`}
-        className="w-[600px] h-[200px] object-cover rounded-3xl border-4 border-blue-300 shadow-lg"
-      />
+    <div className="relative w-64 flex flex-col items-center">
+      {/* Image container */}
+      <div className="w-full h-64 overflow-hidden border-4 border-blue-300 shadow-lg rounded-b-none rounded-t-3xl z-0">
+        <img
+          src={image || "https://placehold.co/600x600"}
+          alt={`${name}`}
+          className="w-full h-full object-cover object-top"
+          style={{ aspectRatio: "600/600" }}
+        />
+      </div>
 
-      <div className="absolute bottom-0 w-full bg-white rounded-xl p-4 shadow-md text-center">
+      {/* Info container - same width as image, floating above */}
+      <div className="w-full bg-white -mt-8 z-10 rounded-2xl p-4 shadow-xl text-center flex flex-col">
         <h3 className="text-lg font-semibold font-sans">{name}</h3>
         <p className="text-sm text-gray-400 font-sans">
           {hall}, {assignWing(wing)} wing
         </p>
-        <p className="text-sm text-gray-700 font-sans">
+        <p className="text-sm text-gray-700 font-sans overflow-hidden">
           <span className="font-bold">Classes: </span>
           {displayClasses.join(", ")}
           {taughtClasses.length > 3 ? "..." : ""}
         </p>
-        <a href={routing_link} className="text-blue-500 font-medium mt-2 block">
+        <a
+          href={routing_link}
+          className="text-blue-500 font-medium mt-auto pt-2 block"
+        >
           View Profile →
         </a>
       </div>
