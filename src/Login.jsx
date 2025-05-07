@@ -21,11 +21,11 @@ export function Login() {
 				console.log("User access level:", data.access);
 			} else {
 				
-				setError("Login failed.");
+				setError("⚠️ Login failed. ⚠️");
 			}
 		} catch (err) {
 			console.error("Error during login:", err);
-			setError("Login failed due to server error.");
+			setError("⚠️ Login failed due to server error. ⚠️");
 		}
 	};
 
@@ -62,7 +62,7 @@ export function Login() {
 						Log In!
 					</button>
 				</form>
-			<p className="py-10 text-3xl text-red-600 font-sans">⚠️ {error} ⚠️</p>
+			<p className="py-4 text-3xl text-red-600 font-sans">{error}</p>
 			</div>
 		</div>
 	);
