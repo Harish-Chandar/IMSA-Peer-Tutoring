@@ -57,6 +57,22 @@ function Dashboard() {
                 <p className="font-sans py-2">Date of hours:</p>
                 <input type="date" className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"></input>
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans">Submit</button>
+                {/* IMPROVE LEVEL OF SECURITY FOR THIS SECTION */}
+                <p className="font-sans py-2">Approve hours for tutors:</p>
+                <div className="w-full h-60 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2 scroll-auto">
+                    {/* SOMETHING NEEDS TO HAPPEN WHEN YOU CHANGE THE SEARCH FIELD - IMPLEMENT SEARCH ALGORITHM */}
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Aarav Shah - 18,394 hours - 5/7/25 <br></br>1:00 am - 2:00 pm</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"> <span>Tutor name - hours - date - time</span> <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">Approve</button> <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">Decline</button></div>
+                </div>
+
 
             </div>
 
