@@ -92,6 +92,24 @@ db.run(createResourcesTable, (err: Error | null) => {
   }
 });
 
+const createResourceLinksTable = `
+    CREATE TABLE IF NOT EXISTS resource_links (
+        link_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        resource_id INTEGER NOT NULL,
+        label VARCHAR(255) NOT NULL,
+        url VARCHAR(255) NOT NULL,
+        FOREIGN KEY (resource_id) REFERENCES resources(resource_id) ON DELETE CASCADE
+    );
+`;
+
+db.run(createResourceLinksTable, (err: Error | null) => {
+  if (err) {
+    console.error('Error creating "resource_links" table:', err.message);
+  } else {
+    console.log('Successfully created "resource_links" table.');
+  }
+});
+
 db.close((err: Error | null) => {
   if (err) {
     console.error("Error closing database:", err.message);

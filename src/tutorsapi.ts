@@ -132,41 +132,72 @@ app.get("/api/test", (req: Request, res: Response) => {
 
 // api route for inserting new data into the resources table
 app.post("/api/resources", (req: Request, res: Response) => {
-  console.log("Request body:", req.body);
+  const { teacher, email, course, department, url, type, links } = req.body;
 
-  // Extract the data from the request body:
-  const { teacher, email, course, department, url, type } = req.body;
-  // Validate the data:
-  if (!teacher || !email || !department || !course || !url) {
-    return res.status(400).json({
-      error: "Teacher, email, department, course, and url are required fields.",
-    });
-  }
-  // concatenate teacher and course for search_field --> for search bar functionality, it will search through search_field in each resource so that we can search by teacher + by course name
+  console.log("Request body:", req.body); // Log the entire request body
+  console.log("Links received:", links); // Log just the links
+
+  // Create search field for easier searching
   const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
-  console.log("Constructed search_field:", search_field); // Debugging
 
-  // Insert the data into the database:
-  const query = `
-    INSERT INTO resources (teacher, email, course, department, url, type, search_field)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
-  console.log("Executing Query:", query);
-  console.log("Query Parameters:", [teacher, email, course, department, url, type || "", search_field]);
+  // First insert the main resource
   db.run(
-    query,
-    [teacher, email, course, department, url, type || "", search_field], // Include search_field here
-    function (err: Error | null) {
+    "INSERT INTO resources (teacher, email, course, department, url, type, search_field) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [teacher, email, course, department, url, type, search_field],
+    function (this: any, err: Error | null) {
       if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({ error: "Failed to add resource" });
+        console.error("Error inserting resource:", err);
+        return res.status(500).json({ error: "Error adding resource" });
       }
 
-      // Send a success response:
-      res.status(201).json({
-        resource_id: this.lastID,
-        message: "Resource added successfully",
-      });
+      // Get the ID of the newly inserted resource
+      const resourceId = this.lastID;
+      console.log(`Created resource with ID: ${resourceId}`);
+
+      // Now handle the links array if it exists
+      if (links && Array.isArray(links) && links.length > 0) {
+        console.log(
+          `Processing ${links.length} links for resource ${resourceId}`
+        );
+
+        // Use direct inserts instead of prepared statements
+        let insertedLinks = 0;
+        let errorCount = 0;
+
+        links.forEach((link: { label: string; url: string }, index: number) => {
+          console.log(`Inserting link ${index + 1}:`, link);
+
+          db.run(
+            "INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
+            [resourceId, link.label, link.url],
+            function (err: Error | null) {
+              if (err) {
+                console.error(`Error inserting link ${index + 1}:`, err);
+                errorCount++;
+              } else {
+                console.log(
+                  `Link ${index + 1} inserted with ID: ${this.lastID}`
+                );
+                insertedLinks++;
+              }
+
+              // If this is the last link (whether success or error), send the response
+              if (insertedLinks + errorCount === links.length) {
+                res.status(201).json({
+                  id: resourceId,
+                  message: `Resource created successfully. ${insertedLinks} links inserted. ${errorCount} links failed.`,
+                });
+              }
+            }
+          );
+        });
+      } else {
+        // No links to insert, send response immediately
+        res.status(201).json({
+          id: resourceId,
+          message: "Resource created successfully with no links.",
+        });
+      }
     }
   );
 });
@@ -184,16 +215,19 @@ app.get("/api/resources", (req: Request, res: Response) => {
 
 // api route for retrieving resources by department
 app.get("/api/resources/search", (req: Request, res: Response) => {
-  const { searchQuery, department } = req.query as { searchQuery?: string; department?: string };
+  const { searchQuery, department } = req.query as {
+    searchQuery?: string;
+    department?: string;
+  };
   let query = "SELECT * FROM resources WHERE 1=1"; // 1=1 lets you append more conditions easily with AND operator.
   const params: (string | number)[] = [];
 
-  if (searchQuery) { // search for searchQuery in search_field column 
+  if (searchQuery) {
+    // search for searchQuery in search_field column
     //trim so there is no whitespace
     const trimmedCourse = searchQuery.trim();
     query += " AND LOWER(search_field) LIKE LOWER(?)";
     params.push(`%${trimmedCourse}%`);
-
   }
   if (department) {
     // the frontend sends back a comma list for multiple departments, so handle that
@@ -205,7 +239,10 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
       }
 
       //appends to query and params for multiple departments
-      query += " AND LOWER(department) IN (" + departmentList.map(() => "?").join(",") + ")";
+      query +=
+        " AND LOWER(department) IN (" +
+        departmentList.map(() => "?").join(",") +
+        ")";
       params.push(...departmentList.map((d) => d.toLowerCase()));
 
       // for when there is only 1 dept
@@ -214,7 +251,7 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
       params.push(department.trim().toLowerCase());
     }
   }
-  
+
   // debug log statement of query
   console.log("Executing Query:", query, "Params:", params);
 
@@ -238,21 +275,40 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 // route to get details of a resource by ID
 app.get("/api/resources/:id", (req: Request, res: Response) => {
   const resourceId = parseInt(req.params.id);
-  if (isNaN(resourceId) || resourceId <= 0) {
-    return res.status(400).json({ error: "Invalid resource ID" });
-  }
-  const query = "SELECT * FROM resources WHERE resource_id = ?";
-  db.get(query, [resourceId], (err: Error | null, row: any) => {
-    if(err){
-      console.error("Database error:", err);
-      return res.status(500).json({error: "Error retrieving resource" });
 
+  // First, get the resource
+  db.get(
+    "SELECT * FROM resources WHERE resource_id = ?",
+    [resourceId],
+    (err, resource) => {
+      if (err) {
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      if (!resource) {
+        return res.status(404).json({ error: "Resource not found" });
+      }
+
+      // Then, get all links for this resource
+      db.all(
+        "SELECT link_id, label, url FROM resource_links WHERE resource_id = ?",
+        [resourceId],
+        (err, links) => {
+          if (err) {
+            // Even if there's an error getting links, return the resource
+            return res.json({
+              ...resource,
+              links: [],
+            });
+          }
+
+          // Return the resource with links
+          return res.json({
+            ...resource,
+            links: links || [],
+          });
+        }
+      );
     }
-
-    if(!row) {
-      return res.status(404).json({error: "Resource not found"});
-    }
-
-    res.json(row);
-  });
-})
+  );
+});
