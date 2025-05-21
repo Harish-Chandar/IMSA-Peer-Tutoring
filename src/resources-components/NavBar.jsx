@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
+
 class NavBar extends Component {
   render() {
     return (
@@ -13,12 +15,12 @@ class NavBar extends Component {
               Class Resources
             </h3>
             <div className="absolute bg-slate-50 hidden group-hover:block">
-              <a
-                href="#"
+              <Link
+                to="/resources/new"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
               >
-                Link 1
-              </a>
+                Add Resource
+              </Link>
               <a
                 href="#"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"

@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+const DBPORT = process.env.REACT_APP_DBPORT;
+const HOST = process.env.REACT_APP_HOST;
+
 function ResourceForm() {
   const [formData, setFormData] = useState({
     teacher: "",
@@ -55,8 +58,9 @@ function ResourceForm() {
       })),
     };
 
+    const baseUrl = `http://${HOST}:${DBPORT}`;
     try {
-      const response = await fetch("http://localhost:5000/api/resources", {
+      const response = await fetch(`${baseUrl}/api/resources`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

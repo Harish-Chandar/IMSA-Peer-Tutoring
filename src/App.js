@@ -10,8 +10,8 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<FindResources />} />
+        <Route path="/resources/new" element={<AddResource />} />
         <Route path="/resources/:id" element={<ResourceDetails />} />
-        <Route path="/resources/new" element={<ResourceForm />} />
       </Routes>
     </Router>
     // <AddResource></AddResource>
