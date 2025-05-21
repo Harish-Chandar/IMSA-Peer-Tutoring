@@ -85,7 +85,7 @@ npm install
 
 3. Initialize the database:
 ```bash
-npm run create-db
+node Server/create-db.ts
 ```
 
 4. Start the server:
