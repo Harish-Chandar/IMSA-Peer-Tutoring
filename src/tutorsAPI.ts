@@ -81,7 +81,7 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
   });
 });
 
-// api route for retrieving name given an id
+// api route for retrieving a whole lot about a tutor based on ID
 app.get("/api/tutors/:id", (req: Request, res: Response) => {
   const tutorId = parseInt(req.params.id);
 
@@ -91,24 +91,19 @@ app.get("/api/tutors/:id", (req: Request, res: Response) => {
   }
 
   db.all(
-    "SELECT fname, lname FROM tutors WHERE id = ?",
+    "SELECT * FROM tutors WHERE id = ?",
     [tutorId],
     (err: Error | null, rows: any[]) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: "Error retrieving tutor name" });
+        return res.status(500).json({ error: "Error retrieving tutor data" });
       }
 
       if (rows.length === 0) {
         return res.status(404).json({ error: "Tutor not found" });
       }
 
-      res.status(200).json({
-        // 200 status means "ok", 404 is your typical "page not found" and "500" means there's some problem with the db
-        id: tutorId,
-        fname: rows[0].fname,
-        lname: rows[0].lname,
-      });
+      res.status(200).json(rows[0]);
     }
   );
 });
@@ -124,6 +119,29 @@ app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
         return res.send("Error retrieving classes");
       }
       res.status(200).json(rows);
+    }
+  );
+});
+
+// api route for retrieving schedule string for a tutor
+app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
+  const tutorId = req.params.id;
+
+  db.get(
+    "SELECT schedule FROM tutors WHERE id = ?",
+    [tutorId],
+    (err: Error | null, row: any) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ error: "Error retrieving schedule" });
+      }
+
+      if (!row) {
+        return res.status(404).json({ error: "Tutor not found" });
+      }
+
+      // Return the raw schedule string
+      res.status(200).json({ schedule: row.schedule || "" });
     }
   );
 });
