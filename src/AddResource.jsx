@@ -5,6 +5,17 @@ const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 
 function ResourceForm() {
+  // Define preset departments
+  const departments = [
+    "English",
+    "Fine Arts",
+    "History & Social Science",
+    "Mathematics & CS",
+    "Science",
+    "Wellness",
+    "World Languages",
+  ];
+
   const [formData, setFormData] = useState({
     teacher: "",
     email: "",
@@ -139,14 +150,22 @@ function ResourceForm() {
 
           <div className="flex flex-col">
             <label className="text-gray-700 mb-1">Department</label>
-            <input
+            <select
               className="border rounded p-2"
               name="department"
               value={formData.department}
               onChange={handleChange}
-              placeholder="Department (e.g. Mathematics, Science)"
               required
-            />
+            >
+              <option value="" disabled>
+                Select a department
+              </option>
+              {departments.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex flex-col">
@@ -156,7 +175,7 @@ function ResourceForm() {
               name="type"
               value={formData.type}
               onChange={handleChange}
-              placeholder="Resource type"
+              placeholder="Resource type (e.g., PDF, Video, Link, etc.)"
             />
           </div>
 
