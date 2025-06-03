@@ -21,18 +21,18 @@ class NavBar extends Component {
               >
                 Add Resource
               </Link>
-              <a
-                href="#"
+              <Link
+                to="/resources/modify"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
               >
-                Link 2
-              </a>
-              <a
-                href="#"
+                Modify Resources
+              </Link>
+              <Link
+                to="/"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
               >
-                Link 3
-              </a>
+                Find Resources
+              </Link>
             </div>
           </div>
         </nav>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import NavBar from "./resources-components/NavBar"; // Import NavBar component
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -91,136 +92,140 @@ function ResourceForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Add New Resource
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex flex-col">
-          <label className="text-gray-700 mb-1">Teacher Name</label>
-          <input
-            className="border rounded p-2"
-            name="teacher"
-            value={formData.teacher}
-            onChange={handleChange}
-            placeholder="Teacher name"
-            required
-          />
-        </div>
+    <div className="bg-[#F1F1F1] min-h-screen">
+      <NavBar />
+      <div className="max-w-2xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
+        {" "}
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          Add New Resource
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Teacher Name</label>
+            <input
+              className="border rounded p-2"
+              name="teacher"
+              value={formData.teacher}
+              onChange={handleChange}
+              placeholder="Teacher name"
+              required
+            />
+          </div>
 
-        <div className="flex flex-col">
-          <label className="text-gray-700 mb-1">Email</label>
-          <input
-            className="border rounded p-2"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            required
-          />
-        </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Email</label>
+            <input
+              className="border rounded p-2"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
+              required
+            />
+          </div>
 
-        <div className="flex flex-col">
-          <label className="text-gray-700 mb-1">Course</label>
-          <input
-            className="border rounded p-2"
-            name="course" // Changed from classes to course
-            value={formData.course}
-            onChange={handleChange}
-            placeholder="Course name"
-            required
-          />
-        </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Course</label>
+            <input
+              className="border rounded p-2"
+              name="course" // Changed from classes to course
+              value={formData.course}
+              onChange={handleChange}
+              placeholder="Course name"
+              required
+            />
+          </div>
 
-        <div className="flex flex-col">
-          <label className="text-gray-700 mb-1">Department</label>
-          <input
-            className="border rounded p-2"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            placeholder="Department (e.g. Mathematics, Science)"
-            required
-          />
-        </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Department</label>
+            <input
+              className="border rounded p-2"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              placeholder="Department (e.g. Mathematics, Science)"
+              required
+            />
+          </div>
 
-        <div className="flex flex-col">
-          <label className="text-gray-700 mb-1">Resource Type</label>
-          <input
-            className="border rounded p-2"
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            placeholder="Resource type"
-          />
-        </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Resource Type</label>
+            <input
+              className="border rounded p-2"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              placeholder="Resource type"
+            />
+          </div>
 
-        <div className="border-t pt-4 mt-4">
-          <h3 className="text-lg font-semibold mb-2">Resource Links</h3>
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-lg font-semibold mb-2">Resource Links</h3>
 
-          {links.map((link, index) => (
-            <div
-              key={index}
-              className="flex flex-col mb-4 p-3 border rounded bg-gray-50"
+            {links.map((link, index) => (
+              <div
+                key={index}
+                className="flex flex-col mb-4 p-3 border rounded bg-gray-50"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium">Link #{index + 1}</span>
+                  {links.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeLink(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-col mb-2">
+                  <label className="text-gray-700 mb-1">Label</label>
+                  <input
+                    className="border rounded p-2"
+                    value={link.label}
+                    onChange={(e) =>
+                      handleLinkChange(index, "label", e.target.value)
+                    }
+                    placeholder="Link Label (e.g. Syllabus, Worksheet)"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 mb-1">URL</label>
+                  <input
+                    className="border rounded p-2"
+                    value={link.url}
+                    onChange={(e) =>
+                      handleLinkChange(index, "url", e.target.value)
+                    }
+                    placeholder="https://..."
+                    required
+                  />
+                </div>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addLink}
+              className="mt-2 px-4 py-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
             >
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">Link #{index + 1}</span>
-                {links.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeLink(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-
-              <div className="flex flex-col mb-2">
-                <label className="text-gray-700 mb-1">Label</label>
-                <input
-                  className="border rounded p-2"
-                  value={link.label}
-                  onChange={(e) =>
-                    handleLinkChange(index, "label", e.target.value)
-                  }
-                  placeholder="Link Label (e.g. Syllabus, Worksheet)"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-gray-700 mb-1">URL</label>
-                <input
-                  className="border rounded p-2"
-                  value={link.url}
-                  onChange={(e) =>
-                    handleLinkChange(index, "url", e.target.value)
-                  }
-                  placeholder="https://..."
-                  required
-                />
-              </div>
-            </div>
-          ))}
+              + Add Another Link
+            </button>
+          </div>
 
           <button
-            type="button"
-            onClick={addLink}
-            className="mt-2 px-4 py-2 bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
           >
-            + Add Another Link
+            Add Resource
           </button>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Add Resource
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

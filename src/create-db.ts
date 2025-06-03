@@ -91,7 +91,7 @@ db.run(createResourcesTable, (err: Error | null) => {
     console.log('Successfully created "resources" table.');
   }
 });
-
+// "FOREIGN KEY (resource_id) REFERENCES resources(resource_id) ON DELETE CASCADE" -- this line establishes the link between resource_id in the resources table and the resource_id column in the resource_links table. You cannot add an resource with a resource_id that does not exist in resources. ON DELETE CASCADE means that when you delete a resoruce from teh resources table, all associated links with the same resource_id will be deleted as well.
 const createResourceLinksTable = `
     CREATE TABLE IF NOT EXISTS resource_links (
         link_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

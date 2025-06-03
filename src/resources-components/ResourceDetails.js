@@ -81,7 +81,7 @@ function ResourceDetails() {
               <strong>Teacher:</strong> {resource.teacher}
             </p>
 
-            {/* Multiple Links Section */}
+            {/* Links */}
             <div className="space-y-3 mt-4">
               {links.map((link, index) => (
                 <div key={link.link_id || index} className="mb-3">

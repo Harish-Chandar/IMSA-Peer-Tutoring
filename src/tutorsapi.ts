@@ -215,10 +215,12 @@ app.get("/api/resources", (req: Request, res: Response) => {
 
 // api route for retrieving resources by department
 app.get("/api/resources/search", (req: Request, res: Response) => {
-  const { searchQuery, department } = req.query as {
-    searchQuery?: string;
-    department?: string;
-  };
+  const searchQuery = req.query.searchQuery as string; // Make sure you use searchQuery
+  const departmentParam = req.query.department as string;
+
+  console.log("API received searchQuery:", searchQuery); // Debug
+  console.log("API received department:", departmentParam); // Debug
+
   let query = "SELECT * FROM resources WHERE 1=1"; // 1=1 lets you append more conditions easily with AND operator.
   const params: (string | number)[] = [];
 
@@ -229,10 +231,10 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
     query += " AND LOWER(search_field) LIKE LOWER(?)";
     params.push(`%${trimmedCourse}%`);
   }
-  if (department) {
+  if (departmentParam) {
     // the frontend sends back a comma list for multiple departments, so handle that
-    if (department.includes(",")) {
-      const departmentList = department.split(",").map((d) => d.trim());
+    if (departmentParam.includes(",")) {
+      const departmentList = departmentParam.split(",").map((d) => d.trim());
 
       if (departmentList.length === 0) {
         return res.status(400).json({ error: "Invalid department parameter" });
@@ -248,7 +250,7 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
       // for when there is only 1 dept
     } else {
       query += " AND LOWER(department) = LOWER(?)";
-      params.push(department.trim().toLowerCase());
+      params.push(departmentParam.trim().toLowerCase());
     }
   }
 
@@ -270,6 +272,20 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
     }
     res.json(rows || []); // Always return an array
   });
+});
+
+app.get("/api/resources/departments", (req: Request, res: Response) => {
+  db.all(
+    "SELECT DISTINCT department FROM resources ORDER BY department",
+    [],
+    (err: Error | null, departments: { department: string }[]) => {
+      if (err) {
+        return res.status(500).json({ error: "Database error" });
+      }
+      const departmentNames = departments.map((row) => row.department);
+      res.json(departmentNames);
+    }
+  );
 });
 
 // route to get details of a resource by ID
@@ -309,6 +325,72 @@ app.get("/api/resources/:id", (req: Request, res: Response) => {
           });
         }
       );
+    }
+  );
+});
+
+// Add a new link to a resource
+app.post("/api/resources/:id/links", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  const { label, url } = req.body;
+
+  if (!label || !url) {
+    return res.status(400).json({ error: "Label and URL are required" });
+  }
+
+  db.run(
+    "INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
+    [resourceId, label, url],
+    function (this: any, err: Error | null) {
+      if (err) {
+        console.error("Error adding link:", err);
+        return res.status(500).json({ error: "Error adding link" });
+      }
+
+      res.status(201).json({
+        linkId: this.lastID,
+        message: "Link added successfully",
+      });
+    }
+  );
+});
+
+// Delete a link
+app.delete(
+  "/api/resources/:id/links/:linkId",
+  (req: Request, res: Response) => {
+    const linkId = parseInt(req.params.linkId);
+
+    db.run(
+      "DELETE FROM resource_links WHERE link_id = ?",
+      [linkId],
+      (err: Error | null) => {
+        if (err) {
+          console.error("Error deleting link:", err);
+          return res.status(500).json({ error: "Error deleting link" });
+        }
+
+        res.json({ message: "Link deleted successfully" });
+      }
+    );
+  }
+);
+
+// Update the main resource URL (for legacy resources)
+app.patch("/api/resources/:id", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  const { url } = req.body;
+
+  db.run(
+    "UPDATE resources SET url = ? WHERE resource_id = ?",
+    [url, resourceId],
+    (err: Error | null) => {
+      if (err) {
+        console.error("Error updating resource:", err);
+        return res.status(500).json({ error: "Error updating resource" });
+      }
+
+      res.json({ message: "Resource updated successfully" });
     }
   );
 });
