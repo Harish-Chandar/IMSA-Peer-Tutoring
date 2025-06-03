@@ -394,3 +394,27 @@ app.patch("/api/resources/:id", (req: Request, res: Response) => {
     }
   );
 });
+
+// Update resource information
+app.patch("/api/resources/:id/info", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  const { teacher, email, course, department, type } = req.body;
+
+  // Create search field for easier searching
+  const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
+
+  db.run(
+    "UPDATE resources SET teacher = ?, email = ?, course = ?, department = ?, type = ?, search_field = ? WHERE resource_id = ?",
+    [teacher, email, course, department, type, search_field, resourceId],
+    (err: Error | null) => {
+      if (err) {
+        console.error("Error updating resource information:", err);
+        return res
+          .status(500)
+          .json({ error: "Error updating resource information" });
+      }
+
+      res.json({ message: "Resource information updated successfully" });
+    }
+  );
+});
