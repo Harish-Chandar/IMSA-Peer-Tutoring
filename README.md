@@ -93,7 +93,7 @@ node Server/create-db.ts
 npm start
 ```
 
-5. Access the application through your web browser at `http://localhost:[port]`
+5. Access the application through your web browser
 
 ## API Endpoints
 
@@ -111,5 +111,5 @@ The system includes several database management scripts:
 - `populate-db.ts`: Sample data population
 - `view-db.ts`: Database inspection tool
 
-## Acknowledgements
+
 
