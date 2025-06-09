@@ -128,7 +128,7 @@ app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
   const tutorId = req.params.id;
 
   db.get(
-    "SELECT schedule FROM tutors WHERE id = ?",
+    "SELECT availability FROM tutors WHERE id = ?",
     [tutorId],
     (err: Error | null, row: any) => {
       if (err) {
@@ -141,7 +141,7 @@ app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
       }
 
       // Return the raw schedule string
-      res.status(200).json({ schedule: row.schedule || "" });
+      res.status(200).json({ availability: row.availability || "" });
     }
   );
 });

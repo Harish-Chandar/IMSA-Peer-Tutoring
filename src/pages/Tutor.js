@@ -159,7 +159,7 @@ function Tutor() {
 
         if (scheduleResponse.ok) {
           // extract and parse the schedule string
-          const { schedule: scheduleStr } = await scheduleResponse.json();
+          const { availability: scheduleStr } = await scheduleResponse.json();
           setDebugInfo((prev) => ({
             ...prev,
             scheduleStringReceived: Boolean(scheduleStr),
@@ -268,9 +268,7 @@ function Tutor() {
     ? `${tutor.hall}${wingDisplay ? ` ${wingDisplay} wing` : ""}`
     : "location unknown";
 
-  // determine correct image property (might be 'image' or 'imgurl')
-  const profileImage =
-    tutor.image || tutor.imgurl || "https://placehold.co/600x600";
+  const profileImage = tutor.image || "https://placehold.co/600x600";
 
   // render main component
   return (
