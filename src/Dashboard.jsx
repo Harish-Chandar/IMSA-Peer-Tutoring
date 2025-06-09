@@ -18,9 +18,9 @@ function Dashboard() {
         setSearchTerm('');
       };
 
-    return (    
-    <div className="p-6">
-        <h1 className="text-4xl font-sans mb-6 text-center">Administrator Dashboard</h1>
+    return (   
+    <div className="p-6 bg-gray-100">
+        <h1 className="text-4xl font-sans mb-6 text-center font-bold py-10">Administrator Dashboard</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="rounded-2xl shadow-md p-4 bg-white border">
                 <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">Tutor Management</h2>
