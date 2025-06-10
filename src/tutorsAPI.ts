@@ -1,13 +1,13 @@
 import express, { Request, Response } from "express";
 import sqlite3 from "sqlite3";
 import cors from "cors";
-
+import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 
-require("dotenv").config();
+dotenv.config();
 
 const app = express();
-const PORT = process.env.DBHOST;
+const PORT = process.env.DBHOST || 5000;
 
 app.use(cors());
 
@@ -145,11 +145,13 @@ app.post("/api/login", (req: Request, res: Response) => {
   const query = `SELECT * FROM admins WHERE email = ?`;
   db.get<Admin>(query, [email], (err, row) => {
     if (err) return res.status(500).json({ error: "DB error" });
-    if (!row) return res.status(401).json({ error: "Invalid email or password" });
+    if (!row)
+      return res.status(401).json({ error: "Invalid email or password" });
 
-    bcrypt.compare(password, row.pwd, (err , result : Boolean) => {
+    bcrypt.compare(password, row.pwd, (err, result: Boolean) => {
       if (err) return res.status(500).json({ error: "Hash comparison error" });
-      if (!result) return res.status(401).json({ error: "Invalid email or password" });
+      if (!result)
+        return res.status(401).json({ error: "Invalid email or password" });
 
       res.json({ success: true, access: row.access, email: row.email });
     });
