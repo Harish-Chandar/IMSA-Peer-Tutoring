@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "IMSA Peer Tutoring Schedule System",
   "type": "module",
-  "main": "server.ts",
+  "main": "tutorsapi.ts",
   "scripts": {
-    "start": "node --loader ts-node/esm server.ts",
+    "start": "node --loader ts-node/esm tutorsapi.ts",
     "build": "tsc"
   },
   "dependencies": {
