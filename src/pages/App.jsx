@@ -1,6 +1,6 @@
-import FindTutors from "./pages/FindTutors";
-import NavBar from "./components/NavBar";
-import Tutor from "./pages/Tutor";
+import FindTutors from "./FindTutors";
+import NavBar from "../components/Navbar";
+import Tutor from "./Tutor";
 export default function App() {
   return (
     <div>
