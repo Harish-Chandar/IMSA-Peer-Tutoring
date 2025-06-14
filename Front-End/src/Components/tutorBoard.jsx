@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./../App.css";
 import TutorNote from "./tutorNote";
+import { API_URL } from "../config.js";
 
 function TutorBoard() {
   const [tutorNotes, setTutorNotes] = useState([]);
@@ -10,7 +11,8 @@ function TutorBoard() {
     const fetchTutorData = async () => {
       try {
         console.log('Fetching tutor data...');
-        const response = await fetch('http://localhost:3001/api/tutors');
+        console.log(API_URL)
+        const response = await fetch(`${API_URL}/tutors`);
         
         if (!response.ok) {
           throw new Error(`Error fetching tutors`);
@@ -37,9 +39,9 @@ function TutorBoard() {
           <TutorNote
             key={tutor.id}
             name={`${tutor.fname} ${tutor.lname}`}
-            hall={`${tutor.hall} ${tutor.wing}`}
+            hall={`${tutor.hall} ${tutor.wing}-Wing`}
             classes={tutor.courses}
-            img="/assets/default-tutor.png"
+            img="/assets/aarav.png"
           />
         ))}
       </div>

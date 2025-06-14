@@ -9,7 +9,7 @@ function Bulletin() {
   useEffect(() => {
     const fetchBulletinData = async () => {
         console.log('Fetching bulletin data...');
-        const response = await fetch('http://localhost:3001/api/bulletin');
+        const response = await fetch('http://localhost:5000/api/bulletin');
         
         if (!response.ok) {
           throw new Error(`ERROR`);

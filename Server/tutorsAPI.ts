@@ -1,16 +1,8 @@
-// const express = require("express");
-// const sqlite3 = require("sqlite3");
-// const cors = require("cors");
 
-// const app = express();
-// const PORT = 5000;
-
-// app.use(express.json());
-// const express = require("express");
-// const sqlite3 = require("sqlite3");
 import express from "express";
 import sqlite3 from "sqlite3";
 import cors from "cors";
+import bulletinRouter from './bulletinAPI.js';
 
 const app = express();
 const PORT = 5000;
@@ -23,12 +15,16 @@ app.listen(PORT, () => {
 
 app.use(express.json());
 
+
+
 const db = new sqlite3.Database("peertutoringdb.sqlite", (err) => {
   if (err) {
     return console.error(err.message);
   }
   console.log("connected to the database");
 });
+
+app.use('/api', bulletinRouter); 
 
 app.post('/api/schedule', (req, res) => {
   const { title, course, teachers, location, date, time } = req.body;
@@ -58,6 +54,18 @@ app.get("/api/tutors/:id", (req, res) => {
     } else {
       res.json(rows);
     }
+  });
+});
+
+app.get("/api/tutors", (req, res) => {
+  
+  db.all("SELECT * FROM tutors WHERE is_available = 1", [], (err, rows) => {
+    if (err) {
+      console.error('Database error:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+    
+    res.json(rows);
   });
 });
 
