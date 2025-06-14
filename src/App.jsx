@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Homepage from "./pages/Home";
 import Navbar from "./components/Navbar";
-import ScheduleForm from "./pages/Scheduleform";
+import ScheduleForm from "./pages/ScheduleForm";
 
 function App() {
   return (

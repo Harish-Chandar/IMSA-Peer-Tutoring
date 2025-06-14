@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./../App.css";
-import Note from "../components/Bulletinnote";
+import Note from "../components/BulletinNote";
 
 function ScheduleForm() {
 
@@ -49,7 +49,7 @@ function ScheduleForm() {
                   <h2 className="text-gray-400 text-md font-bold mb-3">Use the form below and schedule a tutoring sessions with your own peers!</h2>
                   
                 </div>
-                <img src="/assets/smartguy.png" className="w-full md:w-auto max-w-md mx-auto"></img>
+                <img src="/public/smartguy.png" className="w-full md:w-auto max-w-md mx-auto"></img>
         </div>              
       
       <div className="mt-6 mb-4 px-4 md:px-0">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./../App.css";
-import Note from "./Bulletinnote.jsx";
+import Note from "./BulletinNote.jsx";
 import {API_URL} from "../config.js";
 
 function Bulletin() {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./../App.css";
-import TutorNote from "./Tutornote.jsx";
+import TutorNote from "./TutorNote.jsx";
 import { API_URL } from "../config.js";
 
 function TutorBoard() {

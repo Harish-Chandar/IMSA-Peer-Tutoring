@@ -1,6 +1,6 @@
 import React from 'react';
-import TutorBoard from '../components/Tutorboard';
-import Bulletin from '../components/Bulletinboard';
+import TutorBoard from '../components/TutorBoard';
+import Bulletin from '../components/BulletinBoard';
 import '../App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGroup, faBuilding, faThumbTack } from '@fortawesome/free-solid-svg-icons';

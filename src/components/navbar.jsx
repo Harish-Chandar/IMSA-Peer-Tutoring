@@ -26,12 +26,12 @@ function Navbar() {
         }`}
       >
         <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 my-2 md:hidden"><a href="/" className="!text-slate-500 !font-bold">Home</a></h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="youtube.com" className="!text-slate-500 !font-bold">Class Resources</a></h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="youtube.com" className="!text-slate-500 !font-bold">Bulletin Board</a></h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="youtube.com" className="!text-slate-500 !font-bold">Tutors</a></h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="youtube.com" className="!text-slate-500 !font-bold">About Us</a></h3>
+        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="findresources" className="!text-slate-500 !font-bold">Class Resources</a></h3>
+        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="bulletinboard" className="!text-slate-500 !font-bold">Bulletin Board</a></h3>
+        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="findtutors" className="!text-slate-500 !font-bold">Tutors</a></h3>
+        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0"><a href="aboutus" className="!text-slate-500 !font-bold">About Us</a></h3>
         
-        <button className="bg-blue-500 text-slate-50 text-md font-bold mt-1 mb-3 ml-10 md:ml-3 rounded mb-1 md:mb-0 md:mt-0 md:ml-3">
+        <button className="bg-blue-500 text-slate-50 text-md font-bold mt-1 mb-3 ml-10 md:ml-3 rounded mb-1 md:mb-0 md:mt-0 md:ml-3" onClick={() => window.location.href='/login'}>
           Login In
         </button>
       </div>
