@@ -1,8 +1,8 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Homepage from "./pages/homepage";
-import Navbar from "./components/navbar";
-import ScheduleForm from "./pages/scheduleForm";
+import Homepage from "./pages/Home";
+import Navbar from "./components/Navbar";
+import ScheduleForm from "./pages/Scheduleform";
 
 function App() {
   return (

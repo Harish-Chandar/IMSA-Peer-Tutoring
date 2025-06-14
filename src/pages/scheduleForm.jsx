@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./../App.css";
-import Note from "../components/note";
+import Note from "../components/Bulletinnote";
 
 function ScheduleForm() {
 
