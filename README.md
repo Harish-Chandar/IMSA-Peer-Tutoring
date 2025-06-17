@@ -1,70 +1,115 @@
-# Getting Started with Create React App
+# IMSA Peer Tutoring System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web-based application for peer tutors at the Illinois Mathematics and Science Academy (IMSA).
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+The IMSA Peer Tutoring System is designed to facilitate the scheduling and management of peer tutoring sessions. It provides a user-friendly interface for creating and managing tutoring schedules, making it easier for students to find and participate in tutoring sessions.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Schedule creation and management
+- Course-specific tutoring sessions
+- Date and time scheduling
+- Bulletin board for announcements
+- Resource management
+- Tutor availability tracking
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Technical Stack
 
-### `npm test`
+- Frontend: React.js, HTML5, CSS3, JavaScript
+- Backend: Node.js/Express (API endpoints)
+- Database: SQLite3
+- State Management: React Hooks
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project Structure
 
-### `npm run build`
+### Components (`src/Components/`)
+- `navbar.jsx`: Navigation bar component
+- `tutorBoard.jsx`: Display and management of tutor information
+- `scheduleForm.jsx`: Form for scheduling tutoring sessions
+- `tutorNote.jsx`: Notes and feedback for tutoring sessions
+- `bulletinBoard.jsx`: Announcement board component
+- `note.jsx`: Post-it note Component
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Database Structure (`src/create-db.ts`)
+The system uses SQLite3 with the following tables:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Tutors Table**
+   - Personal information (name, email, IMSA ID)
+   - Availability tracking
+   - Subject expertise (physics, chemistry, biology, etc.)
+   - Time tracking (total and approved hours)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Bulletin Table**
+   - Announcements and events
+   - Priority levels
+   - Creation and expiration dates
+   - Author information
 
-### `npm run eject`
+3. **Resources Table**
+   - Educational resources
+   - Contact information
+   - Resource types and URLs
+   - Timestamps
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Schedule Form (`Server/schedule-form.html`)
+The schedule form provides a user-friendly interface for:
+- Creating new tutoring sessions
+- Specifying course details
+- Setting location and time
+- Managing multiple teachers
+- Real-time submission feedback
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Getting Started
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Prerequisites
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- A modern web browser
+- Node.js and npm installed (for backend development)
+- SQLite3
+- Access to the IMSA network (if required)
 
-## Learn More
+### Installation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd IMSA-Peer-Tutoring
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. Install dependencies:
+```bash
+npm install
+```
 
-### Code Splitting
+3. Initialize the database:
+```bash
+node Server/create-db.ts
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+4. Start the server:
+```bash
+npm start
+```
 
-### Analyzing the Bundle Size
+5. Access the application through your web browser
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## API Endpoints
 
-### Making a Progressive Web App
+- `POST /api/schedule`: Create a new tutoring session
+  - Request body: JSON object containing session details
+  - Response: Success/error message
+- `GET /api/tutors`: Retrieve tutor information
+- `POST /api/bulletin`: Create new bulletin board entries
+- `GET /api/resources`: Access educational resources
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Database Management
 
-### Advanced Configuration
+The system includes several database management scripts:
+- `create-db.ts`: Initial database setup
+- `populate-db.ts`: Sample data population
+- `view-db.ts`: Database inspection tool
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
