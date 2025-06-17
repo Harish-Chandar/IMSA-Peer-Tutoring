@@ -1,4 +1,4 @@
-import NavBar from "../resources-components/NavBar.jsx";
+import NavBar from "./NavBar.jsx";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import testimage from "../resource-images/gateway-arch.png";
