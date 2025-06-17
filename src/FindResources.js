@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ResourceCard from "./resources-components/ResourceCard.jsx";
-import ResourceHero from "./resources-components/ResourceHero.jsx";
-import NavBar from "./resources-components/NavBar.jsx";
+import ResourceCard from "./components/ResourceCard.jsx";
+import ResourceHero from "./components/ResourceHero.jsx";
+import NavBar from "./components/NavBar.jsx";
 import { Link } from "react-router-dom";
 
 function FindResources() {

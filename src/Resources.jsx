@@ -1,12 +1,11 @@
 import { useState } from "react";
 import "./Resources.jsx";
-import { SearchBar } from "./resources-components/SearchBar.jsx";
-import { SearchResultsList } from "./resources-components/SearchResultsList.jsx";
-import ResourceHero from "./resources-components/ResourceHero.jsx";
-import NavBar from "./resources-components/NavBar.jsx";
-import ResourceBoard from "./resources-components/ResourceBoard.jsx";
-import ResourceCard from "./resources-components/ResourceCard.jsx";
-
+import { SearchBar } from "./components/SearchBar.jsx";
+import { SearchResultsList } from "./components/SearchResultsList.jsx";
+import ResourceHero from "./components/ResourceHero.jsx";
+import NavBar from "./components/NavBar.jsx";
+import ResourceBoard from "./components/ResourceBoard.jsx";
+import ResourceCard from "./components/ResourceCard.jsx";
 
 export const Resources = () => {
   const [results, setResults] = useState([]);

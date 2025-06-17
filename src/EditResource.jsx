@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import NavBar from "./resources-components/NavBar";
+import NavBar from "./components/NavBar";
 
 function EditResource() {
   const { id } = useParams();

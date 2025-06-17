@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import NavBar from "./resources-components/NavBar";
-import ResourceEditCard from "./resources-components/ResourceEditCard";
-import "./resources-components/SearchResultsList.css";
+import NavBar from "./components/NavBar";
+import ResourceEditCard from "./components/ResourceEditCard";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;

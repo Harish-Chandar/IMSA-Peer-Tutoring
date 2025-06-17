@@ -1,5 +1,5 @@
 import { useState } from "react";
-import NavBar from "./resources-components/NavBar"; // Import NavBar component
+import NavBar from "./components/NavBar"; // Import NavBar component
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;

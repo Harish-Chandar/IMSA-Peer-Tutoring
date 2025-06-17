@@ -1,7 +1,7 @@
 import NavBar from "./NavBar.jsx";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import testimage from "../resource-images/gateway-arch.png";
+import testimage from "../../public/resourceImages/gateway-arch.png";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;

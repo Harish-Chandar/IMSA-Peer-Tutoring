@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 // import "./ResourceHero.css";
-import resourceHeroImage from "../resource-images/resourceHero.png";
+import resourceHeroImage from "../../public/resourceImage/resourceHero.png";
+
 class ResourceHero extends Component {
   render() {
     return (
