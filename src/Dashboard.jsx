@@ -96,21 +96,30 @@ function Dashboard() {
   const [tutors, setTutors] = useState([]);
   const [filteredTutors, setFilteredTutors] = useState([]);
 
-  // bulletin board states
+  // bulletin board states - updated for backend integration
   const [posts, setPosts] = useState([]);
 
-  // this one got fields so i can edit them directly and is easier
+  // updated form state to match database schema
   const [newPost, setNewPost] = useState({
-    name: "",
-    date: "",
-    time: "",
-    location: "",
-    description: "",
+    title: "",
+    content: "",
+    event_date: "",
+    author: "",
+    contact_info: "",
+    highpriority: false,
   });
 
-  // fetch tutors when page loads
+  // resources states for class management
+  const [resources, setResources] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [resourceSearchQuery, setResourceSearchQuery] = useState("");
+  const [filteredResources, setFilteredResources] = useState([]);
+
+  // fetch tutors, posts, and resources when page loads
   useEffect(() => {
     fetchTutors();
+    fetchPosts();
+    fetchResources();
   }, []);
 
   // new filtering code for filtering tutors when search query updates
@@ -124,6 +133,23 @@ function Dashboard() {
     }
   }, [tutorSearchQuery, tutors]);
 
+  // filter resources when search query updates
+  useEffect(() => {
+    if (resources.length > 0) {
+      const filtered = resources.filter((resource) => {
+        return (
+          resource.name
+            .toLowerCase()
+            .includes(resourceSearchQuery.toLowerCase()) ||
+          resource.classes
+            .toLowerCase()
+            .includes(resourceSearchQuery.toLowerCase())
+        );
+      });
+      setFilteredResources(filtered);
+    }
+  }, [resourceSearchQuery, resources]);
+
   // copy pasted from findtutors but it just fetches all tutors from api
   const fetchTutors = async () => {
     try {
@@ -135,11 +161,59 @@ function Dashboard() {
     }
   };
 
+  // fetch posts from database
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/bulletin");
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error("error fetching posts:", error);
+    }
+  };
+
+  // fetch resources from database
+  const fetchResources = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/resources");
+      const data = await response.json();
+      setResources(data);
+      setFilteredResources(data);
+    } catch (error) {
+      console.error("error fetching resources:", error);
+    }
+  };
+
   // delete tutors
-  const handleDeleteTutor = (tutorId) => {
-    setTutors((prev) => prev.filter((tutor) => tutor.id !== tutorId));
-    // Also update filtered tutors to reflect the change immediately
-    setFilteredTutors((prev) => prev.filter((tutor) => tutor.id !== tutorId));
+  // delete tutors with confirmation popup
+  // delete tutors with confirmation popup - remove from database
+  const handleDeleteTutor = async (tutorId) => {
+    const tutorToDelete = tutors.find((tutor) => tutor.id === tutorId);
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`
+    );
+
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/tutors/${tutorId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          // refresh tutors from database after successful deletion
+          fetchTutors();
+        } else {
+          const errorData = await response.json();
+          alert(`error deleting tutor: ${errorData.error}`);
+        }
+      } catch (error) {
+        console.error("error deleting tutor:", error);
+        alert("error deleting tutor. please try again.");
+      }
+    }
   };
 
   // handle form input changes for new post by changing a specified field's value
@@ -150,23 +224,149 @@ function Dashboard() {
     }));
   };
 
-  // handle creating a new post
-  const handleCreatePost = () => {
-    setPosts((prev) => [newPost, ...prev]); // add new post to the beginning
+  // handle creating a new post - save to database
+  const handleCreatePost = async () => {
+    if (newPost.title && newPost.event_date) {
+      try {
+        const response = await fetch("http://localhost:5000/api/bulletin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: newPost.title,
+            content: newPost.content,
+            event_date: newPost.event_date,
+            author: newPost.author || "Admin",
+            contact_info: newPost.contact_info,
+            highpriority: newPost.highpriority,
+          }),
+        });
 
-    // clear the form
-    setNewPost({
-      name: "",
-      date: "",
-      time: "",
-      location: "",
-      description: "",
-    });
+        if (response.ok) {
+          // refresh posts from database
+          fetchPosts();
+
+          // clear the form
+          setNewPost({
+            title: "",
+            content: "",
+            event_date: "",
+            author: "",
+            contact_info: "",
+            highpriority: false,
+          });
+        } else {
+          alert("error creating post. please try again.");
+        }
+      } catch (error) {
+        console.error("error creating post:", error);
+        alert("error creating post. please try again.");
+      }
+    } else {
+      alert("please fill in at least the event title and date.");
+    }
   };
 
-  // delete a post by filtering the posts and removing the post with the specified index
-  const handleDeletePost = (indexToDelete) => {
-    setPosts((prev) => prev.filter((_, index) => index !== indexToDelete));
+  // delete a post with confirmation popup - remove from database
+  const handleDeletePost = async (postId) => {
+    const postToDelete = posts.find((post) => post.id === postId);
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the event "${postToDelete.title}"? This action cannot be undone.`
+    );
+
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/bulletin/${postId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          // refresh posts from database
+          fetchPosts();
+        } else {
+          alert("error deleting post. please try again.");
+        }
+      } catch (error) {
+        console.error("error deleting post:", error);
+        alert("error deleting post. please try again.");
+      }
+    }
+  };
+
+  // handle resource upload
+  const handleResourceUpload = async () => {
+    if (!selectedFile || !selectedClass) {
+      alert("please select a file and a class.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/resources", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: selectedFile.name,
+          email: "admin@imsa.edu", // admin email
+          classes: selectedClass,
+          url: `/uploads/${selectedFile.name}`, // placeholder url
+          type: selectedFile.type || "file",
+        }),
+      });
+
+      if (response.ok) {
+        // refresh resources from database
+        fetchResources();
+
+        // clear form
+        setSelectedFile(null);
+        setSelectedClass(null);
+        setSearchTerm("");
+
+        alert("resource uploaded successfully!");
+      } else {
+        alert("error uploading resource. please try again.");
+      }
+    } catch (error) {
+      console.error("error uploading resource:", error);
+      alert("error uploading resource. please try again.");
+    }
+  };
+
+  // handle deleting a resource
+  const handleDeleteResource = async (resourceId) => {
+    const resourceToDelete = resources.find(
+      (resource) => resource.resource_id === resourceId
+    );
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the resource "${resourceToDelete.name}"? This action cannot be undone.`
+    );
+
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/resources/${resourceId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          // refresh resources from database
+          fetchResources();
+        } else {
+          alert("error deleting resource. please try again.");
+        }
+      } catch (error) {
+        console.error("error deleting resource:", error);
+        alert("error deleting resource. please try again.");
+      }
+    }
   };
 
   return (
@@ -185,7 +385,7 @@ function Dashboard() {
           </button>
 
           <p className="font-sans text-lg py-3 font-bold">
-            Submit hours for a tutor:
+            Search and manage tutors:
           </p>
           <p className="font-sans py-1">Name of tutor:</p>
           <input
@@ -208,7 +408,7 @@ function Dashboard() {
                     {tutor.fname} {tutor.lname} - {tutor.email}
                   </span>
                   <button
-                    onClick={() => handleDeleteTutor(tutor.id)} // Added functionality
+                    onClick={() => handleDeleteTutor(tutor.id)}
                     className="ml-2 text-blue-800 hover:text-blue-900"
                   >
                     ×
@@ -218,40 +418,6 @@ function Dashboard() {
             )}
             {tutors.length === 0 && <p>No tutors here.</p>}
           </div>
-          <p className="font-sans py-2">Start hours for tutor:</p>
-          <input
-            type="time"
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          ></input>
-          <p className="font-sans py-2">End hours for tutor:</p>
-          <input
-            type="time"
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          ></input>
-          <p className="font-sans py-2">Date of hours:</p>
-          <input
-            type="date"
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          ></input>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans">
-            Submit
-          </button>
-          {/* IMPROVE LEVEL OF SECURITY FOR THIS SECTION */}
-          <p className="font-sans py-2">Approve hours for tutors:</p>
-          <div className="w-full h-60 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2 scroll-auto">
-            {/* this is still hardcoded because i couldn't figure out how we would do this */}
-            <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center">
-              <span>
-                Aarav Shah - 18,394 hours - 5/7/25 <br></br>1:00 am - 2:00 pm
-              </span>
-              <button className="rounded-md py-1 px-1 ml-2 text-white bg-green-400 hover:bg-green-600">
-                Approve
-              </button>
-              <button className="rounded-md py-1 px-1 ml-2 text-white bg-red-400 hover:bg-red-600">
-                Decline
-              </button>
-            </div>
-          </div>
         </div>
 
         <div className="rounded-2xl shadow-md p-4 bg-white border">
@@ -259,67 +425,94 @@ function Dashboard() {
             Bulletin Board
           </h2>
           <h3 className="font-sans text-lg font-bold">Create new post:</h3>
-          <p className="font-sans">Name of event:</p>
+
+          <p className="font-sans">Title of event:</p>
           <input
             type="text"
-            placeholder="Enter event name..."
-            value={newPost.name}
-            onChange={(e) => handlePostInputChange("name", e.target.value)}
+            placeholder="Enter event title..."
+            value={newPost.title}
+            onChange={(e) => handlePostInputChange("title", e.target.value)}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
+
           <p className="font-sans">Date of event:</p>
           <input
             type="date"
-            value={newPost.date}
-            onChange={(e) => handlePostInputChange("date", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          />
-          <p className="font-sans">Time of event:</p>
-          <input
-            type="time"
-            value={newPost.time}
-            onChange={(e) => handlePostInputChange("time", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          />
-          <p className="font-sans">Location of event:</p>
-          <input
-            type="text"
-            placeholder="Enter event location..."
-            value={newPost.location}
-            onChange={(e) => handlePostInputChange("location", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          />
-          <p className="font-sans">Short description of event:</p>
-          <textarea
-            placeholder="Enter event description..."
-            value={newPost.description}
+            value={newPost.event_date}
             onChange={(e) =>
-              handlePostInputChange("description", e.target.value)
+              handlePostInputChange("event_date", e.target.value)
             }
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
+
+          <p className="font-sans">Author:</p>
+          <input
+            type="text"
+            placeholder="Enter author name..."
+            value={newPost.author}
+            onChange={(e) => handlePostInputChange("author", e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+          />
+
+          <p className="font-sans">Contact Info:</p>
+          <input
+            type="text"
+            placeholder="Enter contact information..."
+            value={newPost.contact_info}
+            onChange={(e) =>
+              handlePostInputChange("contact_info", e.target.value)
+            }
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+          />
+
+          <p className="font-sans">Description:</p>
+          <textarea
+            placeholder="Enter event description..."
+            value={newPost.content}
+            onChange={(e) => handlePostInputChange("content", e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+          />
+
+          <label className="flex items-center mb-2">
+            <input
+              type="checkbox"
+              checked={newPost.highpriority}
+              onChange={(e) =>
+                handlePostInputChange("highpriority", e.target.checked)
+              }
+              className="mr-2"
+            />
+            <span className="font-sans">High Priority</span>
+          </label>
+
           <button
             onClick={handleCreatePost}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans"
           >
             Post
           </button>
+
           <h3 className="font-sans text-lg mt-4">Current posts:</h3>
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
             {posts.length === 0 ? (
               <p className="text-gray-500">No posts yet.</p>
             ) : (
-              posts.map((post, index) => (
+              posts.map((post) => (
                 <div
-                  key={index}
+                  key={post.id}
                   className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
                 >
                   <span>
-                    {post.name}
-                    {post.location && ` in ${post.location}`} - {post.date}
+                    {post.title} - {post.event_date}
+                    {post.highpriority && (
+                      <span className="text-red-600 font-bold">
+                        {" "}
+                        (HIGH PRIORITY)
+                      </span>
+                    )}
                   </span>
                   <button
-                    onClick={() => handleDeletePost(index)}
+                    onClick={() => handleDeletePost(post.id)}
                     className="ml-2 text-blue-800 hover:text-blue-900"
                   >
                     ×
@@ -334,6 +527,8 @@ function Dashboard() {
           <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
             Class Management
           </h2>
+
+          <p className="font-sans mb-2">Select a class:</p>
           <input
             type="text"
             placeholder="Search for a class..."
@@ -344,7 +539,7 @@ function Dashboard() {
           />
 
           {searchTerm && !selectedClass && (
-            <ul className="border rounded-md bg-white shadow-md mt-1 max-h-40 overflow-y-auto">
+            <ul className="border rounded-md bg-white shadow-md mt-1 max-h-40 overflow-y-auto mb-2">
               {filteredClasses.length > 0 ? (
                 filteredClasses.map((className, idx) => (
                   <li
@@ -362,7 +557,7 @@ function Dashboard() {
           )}
 
           {selectedClass && (
-            <div className="mt-3 bg-blue-200 text-blue-800 px-3 py-2 rounded flex justify-between items-center w-fit">
+            <div className="mt-3 mb-3 bg-blue-200 text-blue-800 px-3 py-2 rounded flex justify-between items-center w-fit">
               <span>{selectedClass}</span>
               <button
                 className="ml-2 text-blue-800 hover:text-blue-900 font-bold"
@@ -372,33 +567,50 @@ function Dashboard() {
               </button>
             </div>
           )}
-          <p>Upload Supporting Materials:</p>
+
+          <p className="font-sans">Upload Supporting Materials:</p>
           <input
             type="file"
+            onChange={(e) => setSelectedFile(e.target.files[0])}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans">
+          <button
+            onClick={handleResourceUpload}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans"
+          >
             Upload
           </button>
-          <p className="font-sans">Delete Supporting Materials:</p>
+
+          <p className="font-sans mt-4">Search Supporting Materials:</p>
           <input
             type="text"
-            placeholder="The name of the file..."
+            placeholder="Search by file name or class..."
+            value={resourceSearchQuery}
+            onChange={(e) => setResourceSearchQuery(e.target.value)}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
+
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
-            <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center">
-              <span>Item name</span>
-              <button className="ml-2 text-blue-800 hover:text-blue-900">
-                ×
-              </button>
-            </div>
-            <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center">
-              <span>MI4 study sheet</span>
-              <button className="ml-2 text-blue-800 hover:text-blue-900">
-                ×
-              </button>
-            </div>
+            {filteredResources.length === 0 ? (
+              <p className="text-gray-500">No resources yet.</p>
+            ) : (
+              filteredResources.map((resource) => (
+                <div
+                  key={resource.resource_id}
+                  className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
+                >
+                  <span>
+                    {resource.name} - {resource.classes}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteResource(resource.resource_id)}
+                    className="ml-2 text-blue-800 hover:text-blue-900"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

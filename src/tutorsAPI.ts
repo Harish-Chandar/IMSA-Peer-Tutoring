@@ -117,6 +117,90 @@ app.get("/api/tutors/:id", (req: Request, res: Response) => {
   );
 });
 
+// create tutor endpoint
+app.post("/api/tutors", (req: Request, res: Response) => {
+  const {
+    fname,
+    lname,
+    fbname,
+    imsaid,
+    email,
+    blurb,
+    hall,
+    wing,
+    image,
+    availability,
+    physics,
+    chem,
+    biology,
+    sciother,
+    mathother,
+    mathcore,
+    cs,
+    language
+  } = req.body;
+
+  const sql = `INSERT INTO tutors 
+    (fname, lname, fbname, imsaid, email, blurb, hall, wing, image, availability, 
+     physics, chem, biology, sciother, mathother, mathcore, cs, language) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  db.run(sql, [
+    fname || '',
+    lname || '',
+    fbname || '',
+    imsaid || null,
+    email || '',
+    blurb || '',
+    hall || null,
+    wing || null,
+    image || '',
+    availability || '',
+    physics || '',
+    chem || '',
+    biology || '',
+    sciother || '',
+    mathother || '',
+    mathcore || '',
+    cs || '',
+    language || ''
+  ], function(err) {
+    if (err) {
+      console.error("tutor insert error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ id: this.lastID, message: 'tutor created successfully' });
+  });
+});
+
+// delete tutor endpoint
+app.delete("/api/tutors/:id", (req: Request, res: Response) => {
+  const tutorId = parseInt(req.params.id);
+
+  // validate tutorId
+  if (isNaN(tutorId) || tutorId <= 0) {
+    return res.status(400).json({ error: "invalid tutor id" });
+  }
+
+  const sql = "DELETE FROM tutors WHERE id = ?";
+
+  db.run(sql, tutorId, function (err) {
+    if (err) {
+      console.error("tutor delete error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    // check if any rows were actually deleted
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "tutor not found" });
+    }
+
+    res.json({ message: "tutor deleted successfully" });
+  });
+});
+
 // api route for retrieving parseable string of classes for a given tutor based on ID
 app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
   const tutorId = req.params.id;
@@ -170,4 +254,116 @@ app.get("/api/test", (req: Request, res: Response) => {
     res.status(200).json(rows);
   });
   console.log("Test route hit!");
+});
+
+// bulletin board api routes
+app.post("/api/bulletin", (req: Request, res: Response) => {
+  const { title, content, event_date, author, contact_info, highpriority } =
+    req.body;
+  const creation_date = new Date().toISOString();
+
+  const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority) 
+               VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+  db.run(
+    sql,
+    [
+      title || "",
+      content || "",
+      creation_date,
+      event_date || null,
+      author || "Admin",
+      contact_info || "",
+      highpriority || 0,
+    ],
+    function (err) {
+      if (err) {
+        console.error("bulletin insert error:", err);
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ id: this.lastID, message: "post created successfully" });
+    }
+  );
+});
+
+app.get("/api/bulletin", (req: Request, res: Response) => {
+  const sql = "SELECT * FROM bulletin ORDER BY creation_date DESC";
+
+  db.all(sql, [], (err: Error | null, rows: any[]) => {
+    if (err) {
+      console.error("bulletin fetch error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+app.delete("/api/bulletin/:id", (req: Request, res: Response) => {
+  const sql = "DELETE FROM bulletin WHERE id = ?";
+
+  db.run(sql, req.params.id, function (err) {
+    if (err) {
+      console.error("bulletin delete error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ message: "post deleted successfully" });
+  });
+});
+
+// resources routes
+app.post("/api/resources", (req: Request, res: Response) => {
+  const { name, email, classes, url, type } = req.body;
+  const time_created = new Date().toISOString();
+
+  const sql = `INSERT INTO resources (name, email, classes, url, type, time_created) 
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  db.run(
+    sql,
+    [
+      name || "",
+      email || "",
+      classes || "",
+      url || "",
+      type || "",
+      time_created,
+    ],
+    function (err) {
+      if (err) {
+        console.error("resource insert error:", err);
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ id: this.lastID, message: "resource created successfully" });
+    }
+  );
+});
+
+app.get("/api/resources", (req: Request, res: Response) => {
+  const sql = "SELECT * FROM resources ORDER BY time_created DESC";
+
+  db.all(sql, [], (err: Error | null, rows: any[]) => {
+    if (err) {
+      console.error("resource fetch error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+app.delete("/api/resources/:id", (req: Request, res: Response) => {
+  const sql = "DELETE FROM resources WHERE resource_id = ?";
+
+  db.run(sql, req.params.id, function (err) {
+    if (err) {
+      console.error("resource delete error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ message: "resource deleted successfully" });
+  });
 });
