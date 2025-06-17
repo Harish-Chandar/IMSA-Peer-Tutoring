@@ -1,12 +1,17 @@
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require("sqlite3").verbose();
+
+export const db = new sqlite3.Database(
+  "./peertutoringdb.sqlite",
+  (err: Error | null) => {
 
 export const db = new sqlite3.Database('./peertutoringdb.sqlite', (err) => {
     if (err) {
-        console.error('Error opening database:', err.message);
+      console.error("Error opening database:", err.message);
     } else {
-        console.log('Connected to SQLite database.');
+      console.log("Connected to SQLite database.");
     }
-});
+  }
+);
 
 const createTutorsTable = `
     CREATE TABLE IF NOT EXISTS tutors (
@@ -37,7 +42,8 @@ const createTutorsTable = `
     );
 `;
 
-db.run(createTutorsTable, (err) => {
+db.run(createTutorsTable, (err: Error | null) => {
+	
     if (err) {
         console.error('Error creating "tutors" table:', err.message);
     } else {
@@ -49,17 +55,16 @@ const createBulletinTable = `
     CREATE TABLE IF NOT EXISTS bulletin (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        content TEXT NOT NULL,
-        creation_date TEXT NOT NULL,
-        event_date TEXT,
+        course TEXT NOT NULL,
+        event_date TEXT,    
+        time TEXT,
         expiration_date TEXT,
-        author TEXT NOT NULL,
-        contact_info TEXT,
-        highpriority BOOLEAN DEFAULT 0
+        teachers TEXT NOT NULL,
+        highpriority INTEGER DEFAULT 0
     );
 `;
 
-db.run(createBulletinTable, (err) => {
+db.run(createBulletinTable, (err: Error | null) => {
     if (err) {
         console.error('Error creating "bulletin" table:', err.message);
     } else {
@@ -70,16 +75,19 @@ db.run(createBulletinTable, (err) => {
 const createResourcesTable = `
     CREATE TABLE IF NOT EXISTS resources (
         resource_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT NOT NULL,
+        teacher TEXT NOT NULL,
         email TEXT NOT NULL,
-        classes TEXT NOT NULL,
+        course TEXT NOT NULL,
+        department TEXT NOT NULL,
         url TEXT,
         type TEXT,
-        time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        search_field TEXT
+
     );
 `;
 
-db.run(createResourcesTable, (err) => {
+db.run(createResourcesTable, (err: Error | null) => {
     if (err) {
         console.error('Error creating "resources" table:', err.message);
     } else {
@@ -87,11 +95,10 @@ db.run(createResourcesTable, (err) => {
     }
 });
 
-db.close((err) => {
+db.close((err: Error | null) => {
     if (err) {
         console.error('Error closing database:', err.message);
     } else {
         console.log('Database setup complete.');
     }
 });
-
