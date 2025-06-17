@@ -1,6 +1,14 @@
 @tailwind base;
 @tailwind utilities;
 
+@theme {
+  --color-primary: #2194f3;
+  --color-secondary: #003a7d;
+  --color-textColor: #4d4d4d;
+  --color-primary-background: #ffffff;
+  --color-secondary-background: #f1f1f1;
+  --color-tertiary-background: #f5f7fa;
+}
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
 body {

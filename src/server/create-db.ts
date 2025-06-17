@@ -4,6 +4,7 @@ export const db = new sqlite3.Database(
   "./peertutoringdb.sqlite",
   (err: Error | null) => {
 
+export const db = new sqlite3.Database('./peertutoringdb.sqlite', (err) => {
     if (err) {
       console.error("Error opening database:", err.message);
     } else {
@@ -23,6 +24,7 @@ const createTutorsTable = `
         blurb TEXT,
         hall INTEGER,
         wing INTEGER,
+        image TEXT,
         totaltime INTEGER DEFAULT 0,
         approvedtime INTEGER DEFAULT 0,
         starttime INTEGER,
