@@ -1,5 +1,5 @@
 import FindTutors from "./FindTutors";
-import NavBar from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import Tutor from "./Tutor";
 export default function App() {
   return (
@@ -15,7 +15,7 @@ export default function App() {
         routing_link="/tutor/ashah"
         image="/ashah.jpg"
         /> */}
-      <NavBar></NavBar>
+      <Navbar></Navbar>
       <Tutor></Tutor>
     </div>
   );
