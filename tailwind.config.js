@@ -3,20 +3,21 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],  
-  theme: {
-    extend: {
-      colors: {
-        'primary': '#2194f3',
-        'secondary': "#003a7d",
-      },
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-      },
-      
-    },
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+	theme: {
+		extend: {
+			colors: {
+				'primary': '#2194f3',
+				'secondary': "#003a7d",
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+			},
 
+		},
+		content: ["./src/**/*.{js,jsx,ts,tsx}"],  theme: {
+			extend: {},
+		},
+		plugins: [],
+	}
+
+}
