@@ -3,7 +3,7 @@ import "./Resources.jsx";
 import { SearchBar } from "./components/SearchBar.jsx";
 import { SearchResultsList } from "./components/SearchResultsList.jsx";
 import ResourceHero from "./components/ResourceHero.jsx";
-import NavBar from "./components/NavBar.jsx";
+import Navbar from "./components/Navbar.jsx";
 import ResourceBoard from "./components/ResourceBoard.jsx";
 import ResourceCard from "./components/ResourceCard.jsx";
 
@@ -12,7 +12,7 @@ export const Resources = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <NavBar />
+      <Navbar />
       <ResourceHero />
       <div className="mx-auto w-1/2">
         <SearchBar setResults={setResults} />

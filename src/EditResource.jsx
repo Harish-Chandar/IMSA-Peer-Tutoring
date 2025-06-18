@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import NavBar from "./components/NavBar";
+import Navbar from "./components/Navbar";
 
 function EditResource() {
   const { id } = useParams();
@@ -156,7 +156,7 @@ function EditResource() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NavBar />
+      <Navbar />
 
       <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
         <div className="flex justify-between items-center mb-6">

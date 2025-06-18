@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../App.css";
-import testimage from "../../public/resourceImages/gateway-arch.png";
+import testimage from "../resourceImages/gateway-arch.png";
 
 function ResourceCard({ course, teacher, department, url, type }) {
   // All the colors needed for the background of notes

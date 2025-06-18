@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ResourceCard from "./components/ResourceCard.jsx";
 import ResourceHero from "./components/ResourceHero.jsx";
-import NavBar from "./components/NavBar.jsx";
+import Navbar from "./components/Navbar.jsx";
 import { Link } from "react-router-dom";
 
 function FindResources() {
@@ -80,7 +80,7 @@ function FindResources() {
   return (
     <div className="bg-[#F1F1F1] min-h-screen">
       <div className="bg-gray-100">
-        <NavBar />
+        <Navbar />
         <ResourceHero />
       </div>
 

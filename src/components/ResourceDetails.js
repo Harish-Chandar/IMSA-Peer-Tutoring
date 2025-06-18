@@ -1,7 +1,7 @@
-import NavBar from "./NavBar.jsx";
+import Navbar from "./Navbar.jsx";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import testimage from "../../public/resourceImages/gateway-arch.png";
+import testimage from "../resourceImages/gateway-arch.png";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -44,7 +44,7 @@ function ResourceDetails() {
   if (loading) {
     return (
       <div className="bg-[#F1F1F1] min-h-screen pt-16">
-        <NavBar />
+        <Navbar />
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-gray-600">Loading...</div>
         </div>
@@ -55,7 +55,7 @@ function ResourceDetails() {
   if (error) {
     return (
       <div className="bg-[#F1F1F1] min-h-screen pt-16">
-        <NavBar />
+        <Navbar />
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-red-600">Error: {error}</div>
         </div>
@@ -66,7 +66,7 @@ function ResourceDetails() {
   if (!resource) {
     return (
       <div className="bg-[#F1F1F1] min-h-screen pt-16">
-        <NavBar />
+        <Navbar />
         <div className="flex justify-center items-center h-64">
           <div className="text-lg text-gray-600">No resource found</div>
         </div>
@@ -76,7 +76,7 @@ function ResourceDetails() {
 
   return (
     <div className="bg-[#F1F1F1] min-h-screen">
-      <NavBar />
+      <Navbar />
 
       {/* Mobile-friendly container */}
       <div className="p-2 sm:p-4 lg:p-6 max-w-7xl mx-auto mt-16">
