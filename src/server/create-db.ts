@@ -1,10 +1,10 @@
 const sqlite3 = require("sqlite3").verbose();
 
-type SQLiteError = Error | null;
-
 export const db = new sqlite3.Database(
   "./peertutoringdb.sqlite",
-  (err: SQLiteError) => {
+  (err: Error | null) => {
+
+export const db = new sqlite3.Database('./peertutoringdb.sqlite', (err) => {
     if (err) {
       console.error("Error opening database:", err.message);
     } else {
@@ -42,12 +42,13 @@ const createTutorsTable = `
     );
 `;
 
-db.run(createTutorsTable, (err: SQLiteError) => {
-  if (err) {
-    console.error('Error creating "tutors" table:', err.message);
-  } else {
-    console.log('Successfully created "tutors" table.');
-  }
+db.run(createTutorsTable, (err: Error | null) => {
+	
+    if (err) {
+        console.error('Error creating "tutors" table:', err.message);
+    } else {
+        console.log('Successfully created "tutors" table.');
+    }
 });
 
 const createBulletinTable = `
@@ -75,12 +76,15 @@ db.run(createBulletinTable, (err: SQLiteError) => {
 const createResourcesTable = `
     CREATE TABLE IF NOT EXISTS resources (
         resource_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT NOT NULL,
+        teacher TEXT NOT NULL,
         email TEXT NOT NULL,
-        classes TEXT NOT NULL,
+        course TEXT NOT NULL,
+        department TEXT NOT NULL,
         url TEXT,
         type TEXT,
-        time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        search_field TEXT
+
     );
 `;
 
@@ -103,16 +107,24 @@ const createAdminTable = `
 
 db.run(createAdminTable, (err: SQLiteError) => {
   if (err) {
-    console.error('Error creating "admin" table:', err.message);
+    console.error('Error creating "resources" table:', err.message);
   } else {
-    console.log('Successfully created "admin" table.');
+    console.log('Successfully created "resources" table.');
   }
 });
 
-db.close((err: SQLiteError) => {
-  if (err) {
-    console.error("Error closing database:", err.message);
-  } else {
-    console.log("Database setup complete.");
-  }
+db.run(createResourcesTable, (err: Error | null) => {
+    if (err) {
+        console.error('Error creating "resources" table:', err.message);
+    } else {
+        console.log('Successfully created "resources" table.');
+    }
+});
+
+db.close((err: Error | null) => {
+    if (err) {
+        console.error('Error closing database:', err.message);
+    } else {
+        console.log('Database setup complete.');
+    }
 });

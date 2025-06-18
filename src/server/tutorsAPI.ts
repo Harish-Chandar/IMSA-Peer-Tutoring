@@ -9,6 +9,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.DBHOST || 5000;
 
+// import bulletinrouter from './bulletinapi.js';
+
 app.use(cors());
 
 // set up server
@@ -81,11 +83,51 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
       res.status(500).json({ error: "Error retrieving tutors" });
       return;
     }
+
+app.post('/api/schedule', (req, res) => {
+  const { title, course, teachers, location, date, time } = req.body;
+
+  const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  db.run(sql, [title, course, teachers, location, date, time], function(err) {
+    if (err) {
+      console.error('Error inserting data:', err.message);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ 
+      message: 'Schedule entry added',
+      id: this.lastID 
+    });
+  });
+});
+
+app.get("/api/tutors/:id", (req, res) => { 
+  const id = req.params.id;
+  db.all("SELECT * FROM tutors WHERE id = ?", [id], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+app.get("/api/tutors", (req, res) => {
+  
+  db.all("SELECT * FROM tutors WHERE is_available = 1", [], (err, rows) => {
+    if (err) {
+      console.error('Database error:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+    
     res.json(rows);
   });
 });
 
-// api route for retrieving name given an id
+// api route for retrieving a whole lot about a tutor based on ID
 app.get("/api/tutors/:id", (req: Request, res: Response) => {
   const tutorId = parseInt(req.params.id);
 
@@ -95,24 +137,19 @@ app.get("/api/tutors/:id", (req: Request, res: Response) => {
   }
 
   db.all(
-    "SELECT fname, lname FROM tutors WHERE id = ?",
+    "SELECT * FROM tutors WHERE id = ?",
     [tutorId],
     (err: Error | null, rows: any[]) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: "Error retrieving tutor name" });
+        return res.status(500).json({ error: "Error retrieving tutor data" });
       }
 
       if (rows.length === 0) {
         return res.status(404).json({ error: "Tutor not found" });
       }
 
-      res.status(200).json({
-        // 200 status means "ok", 404 is your typical "page not found" and "500" means there's some problem with the db
-        id: tutorId,
-        fname: rows[0].fname,
-        lname: rows[0].lname,
-      });
+      res.status(200).json(rows[0]);
     }
   );
 });
@@ -240,6 +277,28 @@ app.post("/api/login", (req: Request, res: Response) => {
       res.json({ success: true, access: row.access, email: row.email });
     });
   });
+
+// api route for retrieving schedule string for a tutor
+app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
+  const tutorId = req.params.id;
+
+  db.get(
+    "SELECT availability FROM tutors WHERE id = ?",
+    [tutorId],
+    (err: Error | null, row: any) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ error: "Error retrieving schedule" });
+      }
+
+      if (!row) {
+        return res.status(404).json({ error: "Tutor not found" });
+      }
+
+      // Return the raw schedule string
+      res.status(200).json({ availability: row.availability || "" });
+    }
+  );
 });
 
 // test api route for fun
