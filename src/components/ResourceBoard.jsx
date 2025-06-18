@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../App.css";
-import ResourceCard from "./ResourceCard";
+import ResourceCard from "./ResourceCard.jsx";
 
 function ResourceBoard() {
   return (

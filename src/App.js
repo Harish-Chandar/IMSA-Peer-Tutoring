@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ResourceForm from "./ResourceForm";
-import ResourceDetails from "./components/ResourceDetails";
-import FindResources from "./FindResources";
-import AddResource from "./AddResource";
-import ModifyResources from "./ModifyResources";
-import EditResource from "./EditResource";
-import EditResourceInfo from "./components/EditResourceInfo";
+import ResourceForm from "./ResourceForm.js";
+import ResourceDetails from "./components/ResourceDetails.js";
+import FindResources from "./FindResources.js";
+import AddResource from "./AddResource.jsx";
+import ModifyResources from "./ModifyResources.jsx";
+import EditResource from "./EditResource.jsx";
+import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
 export default function App() {
   return (
