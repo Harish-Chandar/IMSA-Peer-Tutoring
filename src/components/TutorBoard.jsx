@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./../App.css";
 import TutorNote from "./TutorNote.jsx";
-import { API_URL } from "../config.js";
+// import { API_URL } from "../config.js";
 
 function TutorBoard() {
   const [tutorNotes, setTutorNotes] = useState([]);
@@ -10,6 +10,7 @@ function TutorBoard() {
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
+		  const API_URL = 'localhost:5000/api'
         console.log('Fetching tutor data...');
         console.log(API_URL)
         const response = await fetch(`${API_URL}/tutors`);

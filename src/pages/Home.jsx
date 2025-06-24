@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGroup, faBuilding, faThumbTack } from '@fortawesome/free-solid-svg-icons';
 
 
-function Homepage() {
+export default function Home() {
   return (
     <>
       <div className="w-full h-15"></div>     
@@ -47,4 +47,4 @@ function Homepage() {
   );
 }
 
-export default Homepage;
+// export default Homepage;

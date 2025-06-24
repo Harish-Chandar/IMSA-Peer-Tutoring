@@ -8,11 +8,13 @@ import ModifyResources from "./ModifyResources.jsx";
 import EditResource from "./EditResource.jsx";
 import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
+import Home from "./pages/Home.jsx";
+
 export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<FindResources />} />
+        <Route path="/" element={<Home />} />
         <Route path="/resources/new" element={<AddResource />} />
         <Route path="/resources/modify" element={<ModifyResources />} />{" "}
         <Route path="/resources/:id/edit" element={<EditResource />} />
@@ -21,6 +23,7 @@ export default function App() {
       </Routes>
     </Router>
   );
+	// return ( <Homepage /> );
 }
 
 //import "./App.css";
