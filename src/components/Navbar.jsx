@@ -5,8 +5,9 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-slate-50 w-full h-15 fixed top-0 left-0 flex  items-center px-6 shadow-md z-50">
+    <nav className="bg-slate-50 w-full p-3 fixed top-0 left-0 flex  items-center px-6 shadow-md z-50">
       <button
+	  type="button"
         className="!bg-slate-50 !border-slate-50 !text-blue-500 text-3xl md:hidden"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
@@ -54,6 +55,7 @@ function Navbar() {
         </h3>
 
         <button
+	  type="button"
           className="bg-blue-500 text-slate-50 text-md font-bold mt-1 mb-3 ml-10 md:ml-3 rounded mb-1 md:mb-0 md:mt-0 md:ml-3"
           onClick={() => (window.location.href = "/login")}
         >
