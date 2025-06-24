@@ -9,11 +9,13 @@ import EditResource from "./EditResource.jsx";
 import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
 import Home from "./pages/Home.jsx";
+import Navbar from "./components/Navbar.jsx";
 
 export default function App() {
   return (
     <Router>
-      <Routes>
+      <Navbar />
+      <Routes> 
         <Route path="/" element={<Home />} />
         <Route path="/resources/new" element={<AddResource />} />
         <Route path="/resources/modify" element={<ModifyResources />} />{" "}
