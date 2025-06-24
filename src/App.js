@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ResourceForm from "./ResourceForm.js";
 import ResourceDetails from "./components/ResourceDetails.js";
 import FindResources from "./FindResources.js";
 import AddResource from "./AddResource.jsx";
@@ -17,6 +16,7 @@ export default function App() {
       <Navbar />
       <Routes> 
         <Route path="/" element={<Home />} />
+        <Route path="/resources" element={<FindResources />} />
         <Route path="/resources/new" element={<AddResource />} />
         <Route path="/resources/modify" element={<ModifyResources />} />{" "}
         <Route path="/resources/:id/edit" element={<EditResource />} />
@@ -25,7 +25,6 @@ export default function App() {
       </Routes>
     </Router>
   );
-	// return ( <Homepage /> );
 }
 
 //import "./App.css";
