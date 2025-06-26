@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 // import "./ResourceHero.css";
-import resourceHeroImage from "../resourceImages/resourceHero.png";
 
 class ResourceHero extends Component {
   render() {
@@ -17,7 +16,7 @@ class ResourceHero extends Component {
               Sort by teacher, subject, and more!
             </h2>
           </div>
-          <img src={resourceHeroImage} alt="Resource Hero" />{" "}
+          <img src="/resourceHero.png" alt="Resource Hero" />{" "}
         </div>
       </div>
     );
