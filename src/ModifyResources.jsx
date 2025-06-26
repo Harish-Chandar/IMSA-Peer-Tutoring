@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
 import ResourceEditCard from "./components/ResourceEditCard";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
@@ -102,10 +101,8 @@ function ModifyResources() {
   };
 
   return (
-    <div className="bg-[#F1F1F1] min-h-screen">
-      <Navbar />
-
-      <div className="p-4 max-w-6xl mx-auto mt-16">
+    <div className="bg-[#F1F1F1] min-h-screen w-screen">
+      <div className="w-full max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
         <h1 className="text-3xl font-bold text-center mb-6">
           Modify Resources
         </h1>
