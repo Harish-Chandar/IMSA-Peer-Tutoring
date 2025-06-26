@@ -1,17 +1,12 @@
-const sqlite3 = require("sqlite3").verbose();
+import sqlite3 from "sqlite3";
 
-export const db = new sqlite3.Database(
-  "./peertutoringdb.sqlite",
-  (err: Error | null) => {
-
-export const db = new sqlite3.Database('./peertutoringdb.sqlite', (err) => {
-    if (err) {
-      console.error("Error opening database:", err.message);
-    } else {
-      console.log("Connected to SQLite database.");
-    }
+const db = new sqlite3.Database("./peertutoringdb.sqlite", (err) => {
+  if (err) {
+    console.error("Error opening database:", err.message);
+  } else {
+    console.log("Connected to SQLite database.");
   }
-);
+});
 
 const createTutorsTable = `
     CREATE TABLE IF NOT EXISTS tutors (
@@ -42,13 +37,12 @@ const createTutorsTable = `
     );
 `;
 
-db.run(createTutorsTable, (err: Error | null) => {
-	
-    if (err) {
-        console.error('Error creating "tutors" table:', err.message);
-    } else {
-        console.log('Successfully created "tutors" table.');
-    }
+db.run(createTutorsTable, (err) => {
+  if (err) {
+    console.error('Error creating "tutors" table:', err.message);
+  } else {
+    console.log('Successfully created "tutors" table.');
+  }
 });
 
 const createBulletinTable = `
@@ -65,7 +59,7 @@ const createBulletinTable = `
     );
 `;
 
-db.run(createBulletinTable, (err: SQLiteError) => {
+db.run(createBulletinTable, (err) => {
   if (err) {
     console.error('Error creating "bulletin" table:', err.message);
   } else {
@@ -88,7 +82,7 @@ const createResourcesTable = `
     );
 `;
 
-db.run(createResourcesTable, (err: SQLiteError) => {
+db.run(createResourcesTable, (err: Error | null) => {
   if (err) {
     console.error('Error creating "resources" table:', err.message);
   } else {
@@ -105,26 +99,38 @@ const createAdminTable = `
     );
 `;
 
-db.run(createAdminTable, (err: SQLiteError) => {
+db.run(createAdminTable, (err) => {
   if (err) {
-    console.error('Error creating "resources" table:', err.message);
+    console.error('Error creating "admins" table:', err.message);
   } else {
-    console.log('Successfully created "resources" table.');
+    console.log('Successfully created "admins" table.');
   }
 });
 
-db.run(createResourcesTable, (err: Error | null) => {
-    if (err) {
-        console.error('Error creating "resources" table:', err.message);
-    } else {
-        console.log('Successfully created "resources" table.');
-    }
+const createScheduleTable = `
+    CREATE TABLE IF NOT EXISTS schedule (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        course TEXT NOT NULL,
+        teachers TEXT NOT NULL,
+        location TEXT NOT NULL,
+        date TEXT NOT NULL,
+        time TEXT NOT NULL
+    );
+`;
+
+db.run(createScheduleTable, (err) => {
+  if (err) {
+    console.error('Error creating "schedule" table:', err.message);
+  } else {
+    console.log('Successfully created "schedule" table.');
+  }
 });
 
-db.close((err: Error | null) => {
-    if (err) {
-        console.error('Error closing database:', err.message);
-    } else {
-        console.log('Database setup complete.');
-    }
+db.close((err) => {
+  if (err) {
+    console.error("Error closing database:", err.message);
+  } else {
+    console.log("Database setup complete.");
+  }
 });

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Navbar from "./components/Navbar"; // Import Navbar component
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -103,9 +102,8 @@ function ResourceForm() {
   };
 
   return (
-    <div className="bg-[#F1F1F1] min-h-screen">
-      <Navbar />
-      <div className="max-w-2xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
+    <div className="bg-[#F1F1F1] min-h-screen w-screen">
+      <div className="w-full max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
         {" "}
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Add New Resource

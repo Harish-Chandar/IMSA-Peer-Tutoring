@@ -4,7 +4,12 @@ import ResourceHero from "./components/ResourceHero.jsx";
 import Navbar from "./components/Navbar.jsx";
 import { Link } from "react-router-dom";
 
+const DBPORT = process.env.REACT_APP_DBPORT;
+const HOST = process.env.REACT_APP_HOST;
+
 function FindResources() {
+  const baseUrl = `http://${HOST}:${DBPORT}`;
+
   const [resources, setResources] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
@@ -31,9 +36,7 @@ function FindResources() {
 
   const fetchResources = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/resources/search"
-      );
+      const response = await fetch(`${baseUrl}/api/resources/search`);
       const data = await response.json();
       setResources(data);
     } catch (error) {
@@ -51,7 +54,7 @@ function FindResources() {
       console.log("Query Params:", queryParams.toString()); // Debugging
 
       const response = await fetch(
-        `http://localhost:5000/api/resources/search?${queryParams.toString()}` // change hardcoding
+        `${baseUrl}/api/resources/search?${queryParams.toString()}` // change hardcoding
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

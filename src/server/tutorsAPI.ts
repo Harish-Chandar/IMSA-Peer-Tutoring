@@ -84,26 +84,30 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
       return;
     }
 
-app.post('/api/schedule', (req, res) => {
+    res.json(rows);
+  });
+});
+
+app.post("/api/schedule", (req, res) => {
   const { title, course, teachers, location, date, time } = req.body;
 
   const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
                VALUES (?, ?, ?, ?, ?, ?)`;
 
-  db.run(sql, [title, course, teachers, location, date, time], function(err) {
+  db.run(sql, [title, course, teachers, location, date, time], function (err) {
     if (err) {
-      console.error('Error inserting data:', err.message);
+      console.error("Error inserting data:", err.message);
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ 
-      message: 'Schedule entry added',
-      id: this.lastID 
+    res.json({
+      message: "Schedule entry added",
+      id: this.lastID,
     });
   });
 });
 
-app.get("/api/tutors/:id", (req, res) => { 
+app.get("/api/tutors/:id", (req, res) => {
   const id = req.params.id;
   db.all("SELECT * FROM tutors WHERE id = ?", [id], (err, rows) => {
     if (err) {
@@ -116,13 +120,12 @@ app.get("/api/tutors/:id", (req, res) => {
 });
 
 app.get("/api/tutors", (req, res) => {
-  
   db.all("SELECT * FROM tutors WHERE is_available = 1", [], (err, rows) => {
     if (err) {
-      console.error('Database error:', err.message);
+      console.error("Database error:", err.message);
       return res.status(500).json({ error: err.message });
     }
-    
+
     res.json(rows);
   });
 });
@@ -174,7 +177,7 @@ app.post("/api/tutors", (req: Request, res: Response) => {
     mathother,
     mathcore,
     cs,
-    language
+    language,
   } = req.body;
 
   const sql = `INSERT INTO tutors 
@@ -182,33 +185,37 @@ app.post("/api/tutors", (req: Request, res: Response) => {
      physics, chem, biology, sciother, mathother, mathcore, cs, language) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  db.run(sql, [
-    fname || '',
-    lname || '',
-    fbname || '',
-    imsaid || null,
-    email || '',
-    blurb || '',
-    hall || null,
-    wing || null,
-    image || '',
-    availability || '',
-    physics || '',
-    chem || '',
-    biology || '',
-    sciother || '',
-    mathother || '',
-    mathcore || '',
-    cs || '',
-    language || ''
-  ], function(err) {
-    if (err) {
-      console.error("tutor insert error:", err);
-      res.status(500).json({ error: err.message });
-      return;
+  db.run(
+    sql,
+    [
+      fname || "",
+      lname || "",
+      fbname || "",
+      imsaid || null,
+      email || "",
+      blurb || "",
+      hall || null,
+      wing || null,
+      image || "",
+      availability || "",
+      physics || "",
+      chem || "",
+      biology || "",
+      sciother || "",
+      mathother || "",
+      mathcore || "",
+      cs || "",
+      language || "",
+    ],
+    function (err) {
+      if (err) {
+        console.error("tutor insert error:", err);
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ id: this.lastID, message: "tutor created successfully" });
     }
-    res.json({ id: this.lastID, message: 'tutor created successfully' });
-  });
+  );
 });
 
 // delete tutor endpoint
@@ -269,7 +276,7 @@ app.post("/api/login", (req: Request, res: Response) => {
     if (!row)
       return res.status(401).json({ error: "Invalid email or password" });
 
-    bcrypt.compare(password, row.pwd, (err, result: Boolean) => {
+    bcrypt.compare(password, row.pwd, (err: Error | null, result: Boolean) => {
       if (err) return res.status(500).json({ error: "Hash comparison error" });
       if (!result)
         return res.status(401).json({ error: "Invalid email or password" });
@@ -277,6 +284,7 @@ app.post("/api/login", (req: Request, res: Response) => {
       res.json({ success: true, access: row.access, email: row.email });
     });
   });
+});
 
 // api route for retrieving schedule string for a tutor
 app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
@@ -373,56 +381,292 @@ app.delete("/api/bulletin/:id", (req: Request, res: Response) => {
 });
 
 // resources routes
+
+// api route for inserting new data into the resources table
 app.post("/api/resources", (req: Request, res: Response) => {
-  const { name, email, classes, url, type } = req.body;
-  const time_created = new Date().toISOString();
+  const { teacher, email, course, department, url, type, links } = req.body;
 
-  const sql = `INSERT INTO resources (name, email, classes, url, type, time_created) 
-               VALUES (?, ?, ?, ?, ?, ?)`;
+  console.log("Request body:", req.body); // Log the entire request body
+  console.log("Links received:", links); // Log just the links
 
+  // Create search field for easier searching
+  const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
+
+  // First insert the main resource
   db.run(
-    sql,
-    [
-      name || "",
-      email || "",
-      classes || "",
-      url || "",
-      type || "",
-      time_created,
-    ],
-    function (err) {
+    "INSERT INTO resources (teacher, email, course, department, url, type, search_field) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [teacher, email, course, department, url, type, search_field],
+    function (this: any, err: Error | null) {
       if (err) {
-        console.error("resource insert error:", err);
-        res.status(500).json({ error: err.message });
-        return;
+        console.error("Error inserting resource:", err);
+        return res.status(500).json({ error: "Error adding resource" });
       }
-      res.json({ id: this.lastID, message: "resource created successfully" });
+
+      // Get the ID of the newly inserted resource
+      const resourceId = this.lastID;
+      console.log(`Created resource with ID: ${resourceId}`);
+
+      // Now handle the links array if it exists
+      if (links && Array.isArray(links) && links.length > 0) {
+        console.log(
+          `Processing ${links.length} links for resource ${resourceId}`
+        );
+
+        // Use direct inserts instead of prepared statements
+        let insertedLinks = 0;
+        let errorCount = 0;
+
+        links.forEach((link: { label: string; url: string }, index: number) => {
+          console.log(`Inserting link ${index + 1}:`, link);
+
+          db.run(
+            "INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
+            [resourceId, link.label, link.url],
+            function (err: Error | null) {
+              if (err) {
+                console.error(`Error inserting link ${index + 1}:`, err);
+                errorCount++;
+              } else {
+                console.log(
+                  `Link ${index + 1} inserted with ID: ${this.lastID}`
+                );
+                insertedLinks++;
+              }
+
+              // If this is the last link (whether success or error), send the response
+              if (insertedLinks + errorCount === links.length) {
+                res.status(201).json({
+                  id: resourceId,
+                  message: `Resource created successfully. ${insertedLinks} links inserted. ${errorCount} links failed.`,
+                });
+              }
+            }
+          );
+        });
+      } else {
+        // No links to insert, send response immediately
+        res.status(201).json({
+          id: resourceId,
+          message: "Resource created successfully with no links.",
+        });
+      }
     }
   );
 });
 
+// api route for retrieving all resources
 app.get("/api/resources", (req: Request, res: Response) => {
-  const sql = "SELECT * FROM resources ORDER BY time_created DESC";
-
-  db.all(sql, [], (err: Error | null, rows: any[]) => {
+  db.all("SELECT * FROM resources", (err: Error | null, rows: any[]) => {
     if (err) {
-      console.error("resource fetch error:", err);
-      res.status(500).json({ error: err.message });
-      return;
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Error retrieving resources" });
     }
     res.json(rows);
   });
 });
 
-app.delete("/api/resources/:id", (req: Request, res: Response) => {
-  const sql = "DELETE FROM resources WHERE resource_id = ?";
+// api route for retrieving resources by department
+app.get("/api/resources/search", (req: Request, res: Response) => {
+  const searchQuery = req.query.searchQuery as string; // Make sure you use searchQuery
+  const departmentParam = req.query.department as string;
 
-  db.run(sql, req.params.id, function (err) {
+  console.log("API received searchQuery:", searchQuery); // Debug
+  console.log("API received department:", departmentParam); // Debug
+
+  let query = "SELECT * FROM resources WHERE 1=1"; // 1=1 lets you append more conditions easily with AND operator.
+  const params: (string | number)[] = [];
+
+  if (searchQuery) {
+    // search for searchQuery in search_field column
+    //trim so there is no whitespace
+    const trimmedCourse = searchQuery.trim();
+    query += " AND LOWER(search_field) LIKE LOWER(?)";
+    params.push(`%${trimmedCourse}%`);
+  }
+  if (departmentParam) {
+    // the frontend sends back a comma list for multiple departments, so handle that
+    if (departmentParam.includes(",")) {
+      const departmentList = departmentParam.split(",").map((d) => d.trim());
+
+      if (departmentList.length === 0) {
+        return res.status(400).json({ error: "Invalid department parameter" });
+      }
+
+      //appends to query and params for multiple departments
+      query +=
+        " AND LOWER(department) IN (" +
+        departmentList.map(() => "?").join(",") +
+        ")";
+      params.push(...departmentList.map((d) => d.toLowerCase()));
+
+      // for when there is only 1 dept
+    } else {
+      query += " AND LOWER(department) = LOWER(?)";
+      params.push(departmentParam.trim().toLowerCase());
+    }
+  }
+
+  // debug log statement of query
+  console.log("Executing Query:", query, "Params:", params);
+
+  // execute the query
+  db.all(query, params, (err: Error | null, rows: any[]) => {
     if (err) {
-      console.error("resource delete error:", err);
-      res.status(500).json({ error: err.message });
+      console.error("Database error:", err);
+      res.status(500).json({ error: "Error retrieving resources" });
       return;
     }
-    res.json({ message: "resource deleted successfully" });
+
+    console.log("Query Results:", rows); // Log the query results
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "No resources found" });
+    }
+    res.json(rows || []); // Always return an array
   });
+});
+
+app.get("/api/resources/departments", (req: Request, res: Response) => {
+  db.all(
+    "SELECT DISTINCT department FROM resources ORDER BY department",
+    [],
+    (err: Error | null, departments: { department: string }[]) => {
+      if (err) {
+        return res.status(500).json({ error: "Database error" });
+      }
+      const departmentNames = departments.map((row) => row.department);
+      res.json(departmentNames);
+    }
+  );
+});
+
+// route to get details of a resource by ID
+app.get("/api/resources/:id", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+
+  // First, get the resource
+  db.get(
+    "SELECT * FROM resources WHERE resource_id = ?",
+    [resourceId],
+    (err, resource) => {
+      if (err) {
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      if (!resource) {
+        return res.status(404).json({ error: "Resource not found" });
+      }
+
+      // Then, get all links for this resource
+      db.all(
+        "SELECT link_id, label, url FROM resource_links WHERE resource_id = ?",
+        [resourceId],
+        (err, links) => {
+          if (err) {
+            // Even if there's an error getting links, return the resource
+            return res.json({
+              ...resource,
+              links: [],
+            });
+          }
+
+          // Return the resource with links
+          return res.json({
+            ...resource,
+            links: links || [],
+          });
+        }
+      );
+    }
+  );
+});
+
+// Add a new link to a resource
+app.post("/api/resources/:id/links", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  const { label, url } = req.body;
+
+  if (!label || !url) {
+    return res.status(400).json({ error: "Label and URL are required" });
+  }
+
+  db.run(
+    "INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
+    [resourceId, label, url],
+    function (this: any, err: Error | null) {
+      if (err) {
+        console.error("Error adding link:", err);
+        return res.status(500).json({ error: "Error adding link" });
+      }
+
+      res.status(201).json({
+        linkId: this.lastID,
+        message: "Link added successfully",
+      });
+    }
+  );
+});
+
+// Delete a link
+app.delete(
+  "/api/resources/:id/links/:linkId",
+  (req: Request, res: Response) => {
+    const linkId = parseInt(req.params.linkId);
+
+    db.run(
+      "DELETE FROM resource_links WHERE link_id = ?",
+      [linkId],
+      (err: Error | null) => {
+        if (err) {
+          console.error("Error deleting link:", err);
+          return res.status(500).json({ error: "Error deleting link" });
+        }
+
+        res.json({ message: "Link deleted successfully" });
+      }
+    );
+  }
+);
+
+// Update the main resource URL (for legacy resources)
+app.patch("/api/resources/:id", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  const { url } = req.body;
+
+  db.run(
+    "UPDATE resources SET url = ? WHERE resource_id = ?",
+    [url, resourceId],
+    (err: Error | null) => {
+      if (err) {
+        console.error("Error updating resource:", err);
+        return res.status(500).json({ error: "Error updating resource" });
+      }
+
+      res.json({ message: "Resource updated successfully" });
+    }
+  );
+});
+
+// Update resource information
+app.patch("/api/resources/:id/info", (req: Request, res: Response) => {
+  const resourceId = parseInt(req.params.id);
+  const { teacher, email, course, department, type } = req.body;
+
+  // Create search field for easier searching
+  const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
+
+  db.run(
+    "UPDATE resources SET teacher = ?, email = ?, course = ?, department = ?, type = ?, search_field = ? WHERE resource_id = ?",
+    [teacher, email, course, department, type, search_field, resourceId],
+    (err: Error | null) => {
+      if (err) {
+        console.error("Error updating resource information:", err);
+        return res
+          .status(500)
+          .json({ error: "Error updating resource information" });
+      }
+
+      res.json({ message: "Resource information updated successfully" });
+    }
+  );
 });

@@ -7,7 +7,7 @@ function Navbar() {
   return (
     <nav className="bg-slate-50 w-full p-3 fixed top-0 left-0 flex  items-center px-6 shadow-md z-50">
       <button
-	  type="button"
+        type="button"
         className="!bg-slate-50 !border-slate-50 !text-blue-500 text-3xl md:hidden"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
@@ -34,9 +34,9 @@ function Navbar() {
           </a>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="findresources" className="!text-slate-500 !font-bold">
+          <Link to="/resources" className="!text-slate-500 !font-bold">
             Class Resources
-          </a>
+          </Link>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
           <a href="bulletinboard" className="!text-slate-500 !font-bold">
@@ -55,7 +55,7 @@ function Navbar() {
         </h3>
 
         <button
-	  type="button"
+          type="button"
           className="bg-blue-500 text-slate-50 text-md font-bold mt-1 mb-3 ml-10 md:ml-3 rounded mb-1 md:mb-0 md:mt-0 md:ml-3"
           onClick={() => (window.location.href = "/login")}
         >
