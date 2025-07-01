@@ -9,6 +9,14 @@ import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
 import Home from "./pages/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Bulletin from "./components/BulletinBoard.jsx";
+
+import Login from "./pages/Login.jsx";
+import AddTutor from "./pages/AddTutor.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import FindTutors from "./pages/FindTutors.jsx";
+import Tutor from "./pages/Tutor.jsx";
+
 
 export default function App() {
   return (
@@ -16,12 +24,18 @@ export default function App() {
       <Navbar />
       <Routes> 
         <Route path="/" element={<Home />} />
+        <Route path="/bulletinboard" element={<Bulletin />} />
         <Route path="/resources" element={<FindResources />} />
         <Route path="/resources/new" element={<AddResource />} />
-        <Route path="/resources/modify" element={<ModifyResources />} />{" "}
+        <Route path="/resources/modify" element={<ModifyResources />} />
         <Route path="/resources/:id/edit" element={<EditResource />} />
         <Route path="/resources/:id/edit-info" element={<EditResourceInfo />} />
         <Route path="/resources/:id" element={<ResourceDetails />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/addTutor" element={<AddTutor />} />
+        <Route path="/adminDashboard" element={<Dashboard />} />
+        <Route path="/findTutors" element={<FindTutors />} />
+        <Route path="/tutor/:id" element={<Tutor />} />
       </Routes>
     </Router>
   );
