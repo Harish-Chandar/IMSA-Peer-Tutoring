@@ -9,6 +9,7 @@ import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
 import Home from "./pages/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
+import ScheduleForm from "./pages/ScheduleForm.jsx";
 import Bulletin from "./components/BulletinBoard.jsx";
 
 import Login from "./pages/Login.jsx";
@@ -24,7 +25,8 @@ export default function App() {
       <Navbar />
       <Routes> 
         <Route path="/" element={<Home />} />
-        <Route path="/bulletinboard" element={<Bulletin />} />
+        <Route path="/scheduleForm" element={<ScheduleForm />} />
+        <Route path="/bulletinBoard" element={<Bulletin />} />
         <Route path="/resources" element={<FindResources />} />
         <Route path="/resources/new" element={<AddResource />} />
         <Route path="/resources/modify" element={<ModifyResources />} />

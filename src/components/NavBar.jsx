@@ -39,12 +39,12 @@ function Navbar() {
           </Link>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="bulletinboard" className="!text-slate-500 !font-bold">
+          <a href="bulletinBoard" className="!text-slate-500 !font-bold">
             Bulletin Board
           </a>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="findtutors" className="!text-slate-500 !font-bold">
+          <a href="findTutors" className="!text-slate-500 !font-bold">
             Tutors
           </a>
         </h3>
