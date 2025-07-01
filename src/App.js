@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ResourceDetails from "./components/ResourceDetails.js";
-import FindResources from "./FindResources.js";
-import AddResource from "./AddResource.jsx";
-import ModifyResources from "./ModifyResources.jsx";
-import EditResource from "./EditResource.jsx";
+import FindResources from "./pages/FindResources.jsx";
+import AddResource from "./pages/AddResource.jsx";
+import ModifyResources from "./pages/ModifyResources.jsx";
+import EditResource from "./pages/EditResource.jsx";
 import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
 import Home from "./pages/Home.jsx";

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ResourceCard from "./components/ResourceCard.jsx";
-import ResourceHero from "./components/ResourceHero.jsx";
-import Navbar from "./components/Navbar.jsx";
+import ResourceCard from "../components/ResourceCard.jsx";
+import ResourceHero from "../components/ResourceHero.jsx";
+import Navbar from "../components/Navbar.jsx";
 import { Link } from "react-router-dom";
 
 const DBPORT = process.env.REACT_APP_DBPORT;

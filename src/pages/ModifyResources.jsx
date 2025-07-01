@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ResourceEditCard from "./components/ResourceEditCard";
+import ResourceEditCard from "../components/ResourceEditCard";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
