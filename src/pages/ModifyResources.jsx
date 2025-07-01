@@ -103,7 +103,7 @@ function ModifyResources() {
   return (
     <div className="bg-[#F1F1F1] min-h-screen w-screen">
       <div className="w-full max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
-        <h1 className="text-3xl font-bold text-center mb-6">
+        <h1 className="text-3xl text-gray-700 font-bold text-center mb-6">
           Modify Resources
         </h1>
 
@@ -115,7 +115,7 @@ function ModifyResources() {
               type="text"
               value={input}
               onChange={(e) => handleInputChange(e.target.value)}
-              className="w-full p-3 border rounded"
+              className="w-full p-3 border rounded bg-white"
               placeholder="Search by course, teacher, or department..."
             />
           </div>

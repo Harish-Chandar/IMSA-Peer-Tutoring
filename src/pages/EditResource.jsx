@@ -155,12 +155,10 @@ function EditResource() {
     return <div className="text-center p-10">Resource not found</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-
+    <div className="min-h-screen w-screen">
       <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl text-gray-700 font-bold">
             Edit Resource: {resource.course}
           </h1>
           <div className="flex space-x-2">
@@ -172,7 +170,7 @@ function EditResource() {
             </button>
             <button
               onClick={() => navigate(`/resources/${id}`)}
-              className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+              className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
             >
               Back to Resource
             </button>
@@ -181,24 +179,29 @@ function EditResource() {
 
         {/* Resource Information */}
         <div className="mb-6 p-4 bg-gray-50 rounded">
-          <h2 className="text-lg font-semibold mb-2">Resource Information</h2>
-          <p>
+          <h2 className="text-lg text-gray-700 font-semibold mb-2">
+            Resource Information
+          </h2>
+          <p className="text-gray-700">
             <strong>Course:</strong> {resource.course}
           </p>
-          <p>
+          <p className="text-gray-700">
             <strong>Department:</strong> {resource.department}
           </p>
-          <p>
+          <p className="text-gray-700">
             <strong>Teacher:</strong> {resource.teacher}
           </p>
-          <p>
+          <p className="text-gray-700">
+            {" "}
             <strong>Email:</strong> {resource.email}
           </p>
         </div>
 
         {/* Current Links */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Current Links</h2>
+          <h2 className="text-xl text-gray-700 font-semibold mb-4">
+            Current Links
+          </h2>
 
           {links.length === 0 && (
             <p className="text-gray-500 italic">
@@ -212,7 +215,7 @@ function EditResource() {
               className="flex items-center mb-3 p-3 border rounded"
             >
               <div className="flex-grow">
-                <p className="font-medium">{link.label}</p>
+                <p className="text-gray-900 font-medium">{link.label}</p>
                 <p className="text-sm text-gray-500 truncate">{link.url}</p>
               </div>
               <button
@@ -228,7 +231,9 @@ function EditResource() {
 
         {/* Add New Link */}
         <div className="border-t pt-6">
-          <h2 className="text-xl font-semibold mb-4">Add New Link</h2>
+          <h2 className="text-xl text-gray-700 font-semibold mb-4">
+            Add New Link
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
@@ -237,7 +242,7 @@ function EditResource() {
                 type="text"
                 value={newLink.label}
                 onChange={(e) => handleNewLinkChange("label", e.target.value)}
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded bg-white text-gray-700"
                 placeholder="e.g., Lecture Notes, Practice Problems"
               />
             </div>
@@ -248,7 +253,7 @@ function EditResource() {
                 type="text"
                 value={newLink.url}
                 onChange={(e) => handleNewLinkChange("url", e.target.value)}
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded bg-white text-gray-700"
                 placeholder="https://..."
               />
             </div>
@@ -257,10 +262,10 @@ function EditResource() {
           <button
             onClick={addNewLink}
             disabled={isSubmitting || !newLink.label || !newLink.url}
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 rounded  ${
               isSubmitting || !newLink.label || !newLink.url
-                ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
+                ? "bg-blue-200 cursor-not-allowed text-blue-800"
+                : "bg-blue-600 hover:bg-blue-700 text-blue-800"
             }`}
           >
             {isSubmitting ? "Adding..." : "Add Link"}

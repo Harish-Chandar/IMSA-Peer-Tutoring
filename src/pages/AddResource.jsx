@@ -112,7 +112,7 @@ function ResourceForm() {
           <div className="flex flex-col">
             <label className="text-gray-700 mb-1">Teacher Name</label>
             <input
-              className="border rounded p-2"
+              className="border rounded p-2 bg-white text-gray-900"
               name="teacher"
               value={formData.teacher}
               onChange={handleChange}
@@ -124,7 +124,7 @@ function ResourceForm() {
           <div className="flex flex-col">
             <label className="text-gray-700 mb-1">Email</label>
             <input
-              className="border rounded p-2"
+              className="border rounded p-2 bg-white text-gray-900"
               name="email"
               type="email"
               value={formData.email}
@@ -137,7 +137,7 @@ function ResourceForm() {
           <div className="flex flex-col">
             <label className="text-gray-700 mb-1">Course</label>
             <input
-              className="border rounded p-2"
+              className="border rounded p-2 bg-white text-gray-900"
               name="course" // Changed from classes to course
               value={formData.course}
               onChange={handleChange}
@@ -149,7 +149,7 @@ function ResourceForm() {
           <div className="flex flex-col">
             <label className="text-gray-700 mb-1">Department</label>
             <select
-              className="border rounded p-2"
+              className="border rounded p-2 bg-white text-gray-900"
               name="department"
               value={formData.department}
               onChange={handleChange}
@@ -169,7 +169,7 @@ function ResourceForm() {
           <div className="flex flex-col">
             <label className="text-gray-700 mb-1">Resource Type</label>
             <input
-              className="border rounded p-2"
+              className="border rounded p-2 bg-white text-gray-900"
               name="type"
               value={formData.type}
               onChange={handleChange}
@@ -201,7 +201,7 @@ function ResourceForm() {
                 <div className="flex flex-col mb-2">
                   <label className="text-gray-700 mb-1">Label</label>
                   <input
-                    className="border rounded p-2"
+                    className="border rounded p-2 bg-white text-gray-900"
                     value={link.label}
                     onChange={(e) =>
                       handleLinkChange(index, "label", e.target.value)
@@ -214,7 +214,7 @@ function ResourceForm() {
                 <div className="flex flex-col">
                   <label className="text-gray-700 mb-1">URL</label>
                   <input
-                    className="border rounded p-2"
+                    className="border rounded p-2 bg-white text-gray-900"
                     value={link.url}
                     onChange={(e) =>
                       handleLinkChange(index, "url", e.target.value)

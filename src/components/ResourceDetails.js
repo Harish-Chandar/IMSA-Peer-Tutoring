@@ -135,7 +135,7 @@ function ResourceDetails() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-blue-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded shadow hover:bg-blue-600 transition w-full text-center block text-sm sm:text-base"
+                    className="bg-blue-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded shadow hover:bg-blue-600 hover:text-white transition w-full text-center block text-sm sm:text-base"
                   >
                     View {link.label}
                   </a>
