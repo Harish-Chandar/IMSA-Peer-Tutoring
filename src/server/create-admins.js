@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
-const sqlite3 = require("sqlite3").verbose();
+import bcrypt from 'bcrypt';
+import sqlite3 from "sqlite3"; 
 
 
 const db = new sqlite3.Database('./peertutoringdb.sqlite', (err) => {

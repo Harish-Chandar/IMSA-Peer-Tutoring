@@ -5,7 +5,7 @@
   "type": "module",
   "main": "tutorsapi.ts",
   "scripts": {
-    "start": "node --loader ts-node/esm tutorsapi.ts",
+    "start": "tsx ./tutorsAPI.ts",
     "build": "tsc"
   },
   "dependencies": {
