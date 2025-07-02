@@ -120,7 +120,7 @@ function FindResources() {
                 {filterOptions.map((filter, index) => (
                   <button
                     key={index}
-                    className="w-full text-left p-2 hover:bg-blue-100 text-sm sm:text-base"
+                    className="w-full bg-white text-gray-700 text-left p-2 hover:bg-blue-100 text-sm sm:text-base"
                     onClick={() => addFilter(filter)}
                   >
                     {filter}
