@@ -191,7 +191,7 @@ function ResourceForm() {
                     <button
                       type="button"
                       onClick={() => removeLink(index)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 bg-red-200 border border-transparent hover:border-red-500 focus:border-red-500 focus:outline-none"
                     >
                       Remove
                     </button>
