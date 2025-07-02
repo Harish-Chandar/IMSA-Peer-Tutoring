@@ -128,9 +128,6 @@ function ResourceDetails() {
 
               {links.map((link, index) => (
                 <div key={link.link_id || index} className="space-y-2">
-                  <p className="text-sm sm:text-base text-gray-700 font-medium">
-                    {link.label}
-                  </p>
                   <a
                     href={link.url}
                     target="_blank"

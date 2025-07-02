@@ -106,7 +106,7 @@ function ResourceForm() {
       <div className="w-full max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
         {" "}
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          Add New Resource
+          Add New Course
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col">
