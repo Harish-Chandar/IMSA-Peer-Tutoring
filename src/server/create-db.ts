@@ -78,7 +78,6 @@ const createResourcesTable = `
         type TEXT,
         time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         search_field TEXT
-
     );
 `;
 

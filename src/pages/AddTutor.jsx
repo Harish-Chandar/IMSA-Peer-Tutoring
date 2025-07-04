@@ -287,15 +287,15 @@ function AddTutor() {
       <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
         {/* left side - add tutor form */}
         <div className="rounded-2xl shadow-md p-4 bg-white border max-h-screen overflow-y-auto">
-          <h3 className="text-lg font-bold mb-4">Add New Tutor</h3>
+          <h3 className="text-lg font-bold mb-4 text-blue-500">Add New Tutor</h3>
 
-          <p className="font-sans">First Name:</p>
+          <p className="font-sans text-black">First Name:</p>
           <input
             type="text"
             placeholder="Enter first name..."
             value={newTutor.fname}
             onChange={(e) => handleInputChange("fname", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Last Name:</p>
@@ -304,7 +304,7 @@ function AddTutor() {
             placeholder="Enter last name..."
             value={newTutor.lname}
             onChange={(e) => handleInputChange("lname", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Facebook Name (optional):</p>
@@ -313,7 +313,7 @@ function AddTutor() {
             placeholder="Enter facebook name..."
             value={newTutor.fbname}
             onChange={(e) => handleInputChange("fbname", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Email:</p>
@@ -322,7 +322,7 @@ function AddTutor() {
             placeholder="Enter email..."
             value={newTutor.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">IMSA ID:</p>
@@ -331,7 +331,7 @@ function AddTutor() {
             placeholder="Enter IMSA ID..."
             value={newTutor.imsaid}
             onChange={(e) => handleInputChange("imsaid", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Hall:</p>
@@ -340,7 +340,7 @@ function AddTutor() {
             placeholder="Enter hall number..."
             value={newTutor.hall}
             onChange={(e) => handleInputChange("hall", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Wing:</p>
@@ -349,7 +349,7 @@ function AddTutor() {
             placeholder="Enter wing number..."
             value={newTutor.wing}
             onChange={(e) => handleInputChange("wing", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Blurb:</p>
@@ -357,7 +357,7 @@ function AddTutor() {
             placeholder="Enter tutor description..."
             value={newTutor.blurb}
             onChange={(e) => handleInputChange("blurb", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <p className="font-sans">Availability:</p>
@@ -365,7 +365,7 @@ function AddTutor() {
             placeholder="Format: sunday,5:30-6:00,6:00-6:30;tuesday,9:00-9:30"
             value={newTutor.availability}
             onChange={(e) => handleInputChange("availability", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white"
           />
 
           {/* class selection sections */}

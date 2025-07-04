@@ -326,9 +326,11 @@ function Dashboard() {
           <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
             Bulletin Board
           </h2>
-          <h3 className="font-sans text-lg font-bold">Create new post:</h3>
+          <h3 className="font-sans text-lg font-bold text-gray-600 mb-3">
+            Create or Delete Posts:
+          </h3>
 
-          <p className="font-sans">Title of event:</p>
+          <p className="font-sans text-gray-700 text-left">Title of event:</p>
           <input
             type="text"
             placeholder="Enter event title..."
@@ -337,7 +339,7 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Date of event:</p>
+          <p className="font-sans text-gray-700 text-left">Date of event:</p>
           {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
           <input
             type="date"
@@ -348,7 +350,7 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
           />
 
-          <p className="font-sans">Author:</p>
+          <p className="font-sans text-gray-700 text-left">Author:</p>
           <input
             type="text"
             placeholder="Enter author name..."
@@ -357,7 +359,7 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Contact Info:</p>
+          <p className="font-sans text-gray-700 text-left">Contact Info:</p>
           <input
             type="text"
             placeholder="Enter contact information..."
@@ -368,7 +370,7 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Description:</p>
+          <p className="font-sans text-gray-700 text-left">Description:</p>
           <textarea
             placeholder="Enter event description..."
             value={newPost.content}
@@ -385,7 +387,7 @@ function Dashboard() {
               }
               className="mr-2 appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 accent-white"
             />
-            <span className="font-sans text-gray-400">High Priority</span>
+            <span className="font-sans text-gray-700">High Priority</span>
           </label>
 
           <button
@@ -395,7 +397,7 @@ function Dashboard() {
             Post
           </button>
 
-          <h3 className="font-sans text-lg mt-4">Current posts:</h3>
+          <h3 className="font-sans text-lg mt-4 text-left">Current posts:</h3>
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
             {posts.length === 0 ? (
               <p className="text-gray-500">No posts yet.</p>
@@ -428,10 +430,13 @@ function Dashboard() {
 
         <div className="rounded-2xl shadow-md p-4 bg-white border">
           <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
-            Class Management
+            Resource Management
           </h2>
+          <h3 className="font-sans text-lg font-bold text-gray-600 mb-3">
+            Add or Remove Resources:
+          </h3>
 
-          <p className="font-sans mb-2">Select a class:</p>
+          <p className="font-sans mb-2 text-left text-gray-700">Select a class:</p>
           <input
             type="text"
             placeholder="Search for a class..."
@@ -471,7 +476,7 @@ function Dashboard() {
             </div>
           )}
 
-          <p className="font-sans">Upload Supporting Materials:</p>
+          <p className="font-sans text-left text-gray-700">Upload Supporting Materials:</p>
           <input
             type="file"
             onChange={(e) => setSelectedFile(e.target.files[0])}
@@ -484,7 +489,9 @@ function Dashboard() {
             Upload
           </button>
 
-          <p className="font-sans mt-4">Search Supporting Materials:</p>
+          <p className="font-sans mt-4 text-left text-gray-700">
+            Search Supporting Materials:
+          </p>
           <input
             type="text"
             placeholder="Search by teacher, course, or department..."
