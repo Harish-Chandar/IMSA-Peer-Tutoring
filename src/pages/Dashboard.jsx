@@ -91,11 +91,6 @@ function Dashboard() {
     setSearchTerm("");
   };
 
-  // lotta states so that you can search for tutors
-  const [tutorSearchQuery, setTutorSearchQuery] = useState("");
-  const [tutors, setTutors] = useState([]);
-  const [filteredTutors, setFilteredTutors] = useState([]);
-
   // bulletin board states - updated for backend integration
   const [posts, setPosts] = useState([]);
 
@@ -115,51 +110,34 @@ function Dashboard() {
   const [resourceSearchQuery, setResourceSearchQuery] = useState("");
   const [filteredResources, setFilteredResources] = useState([]);
 
-  // fetch tutors, posts, and resources when page loads
+  // fetch posts and resources when page loads
   useEffect(() => {
-    fetchTutors();
     fetchPosts();
     fetchResources();
   }, []);
 
-  // new filtering code for filtering tutors when search query updates
-  useEffect(() => {
-    if (tutors.length > 0) {
-      const filtered = tutors.filter((tutor) => {
-        const fullName = `${tutor.fname} ${tutor.lname}`.toLowerCase();
-        return fullName.includes(tutorSearchQuery.toLowerCase());
-      });
-      setFilteredTutors(filtered);
-    }
-  }, [tutorSearchQuery, tutors]);
-
-  // filter resources when search query updates
+  // filter resources when search query updates WITH UPDATED RESOURCES TABLE STUFF
   useEffect(() => {
     if (resources.length > 0) {
       const filtered = resources.filter((resource) => {
         return (
-          resource.name
-            .toLowerCase()
-            .includes(resourceSearchQuery.toLowerCase()) ||
-          resource.classes
-            .toLowerCase()
-            .includes(resourceSearchQuery.toLowerCase())
+          (resource.teacher &&
+            resource.teacher
+              .toLowerCase()
+              .includes(resourceSearchQuery.toLowerCase())) ||
+          (resource.course &&
+            resource.course
+              .toLowerCase()
+              .includes(resourceSearchQuery.toLowerCase())) ||
+          (resource.department &&
+            resource.department
+              .toLowerCase()
+              .includes(resourceSearchQuery.toLowerCase()))
         );
       });
       setFilteredResources(filtered);
     }
   }, [resourceSearchQuery, resources]);
-
-  // copy pasted from findtutors but it just fetches all tutors from api
-  const fetchTutors = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/tutors/search");
-      const data = await response.json();
-      setTutors(data);
-    } catch (error) {
-      console.error("Error fetching tutors:", error);
-    }
-  };
 
   // fetch posts from database
   const fetchPosts = async () => {
@@ -172,7 +150,7 @@ function Dashboard() {
     }
   };
 
-  // fetch resources from database
+  // updated fetchResources to have the new structure of the resources table
   const fetchResources = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/resources");
@@ -181,38 +159,6 @@ function Dashboard() {
       setFilteredResources(data);
     } catch (error) {
       console.error("error fetching resources:", error);
-    }
-  };
-
-  // delete tutors
-  // delete tutors with confirmation popup
-  // delete tutors with confirmation popup - remove from database
-  const handleDeleteTutor = async (tutorId) => {
-    const tutorToDelete = tutors.find((tutor) => tutor.id === tutorId);
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`
-    );
-
-    if (confirmDelete) {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/tutors/${tutorId}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (response.ok) {
-          // refresh tutors from database after successful deletion
-          fetchTutors();
-        } else {
-          const errorData = await response.json();
-          alert(`error deleting tutor: ${errorData.error}`);
-        }
-      } catch (error) {
-        console.error("error deleting tutor:", error);
-        alert("error deleting tutor. please try again.");
-      }
     }
   };
 
@@ -311,10 +257,11 @@ function Dashboard() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: selectedFile.name,
-          email: "admin@imsa.edu", // admin email
-          classes: selectedClass,
-          url: `/uploads/${selectedFile.name}`, // placeholder url
+          teacher: "Admin",
+          email: "admin@imsa.edu",
+          course: selectedClass,
+          department: "General",
+          url: `/uploads/${selectedFile.name}`,
           type: selectedFile.type || "file",
         }),
       });
@@ -344,7 +291,7 @@ function Dashboard() {
       (resource) => resource.resource_id === resourceId
     );
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete the resource "${resourceToDelete.name}"? This action cannot be undone.`
+      `Are you sure you want to delete the resource for "${resourceToDelete.course}"? This action cannot be undone.`
     );
 
     if (confirmDelete) {
@@ -370,56 +317,11 @@ function Dashboard() {
   };
 
   return (
-    <div className="p-6 bg-gray-100">
-      <h1 className="text-4xl font-sans mb-6 text-center font-bold py-10">
+    <div className="p-6 bg-gray-100 pt-14">
+      <h1 className="text-4xl font-sans mb-6 text-center font-bold py-10 text-blue-500">
         Administrator Dashboard
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="rounded-2xl shadow-md p-4 bg-white border">
-          <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
-            Tutor Management
-          </h2>
-          {/* ROUTE TO THE ADD TUTOR PAGE */}
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans">
-            Add / Delete Tutor →
-          </button>
-
-          <p className="font-sans text-lg py-3 font-bold">
-            Search and manage tutors:
-          </p>
-          <p className="font-sans py-1">Name of tutor:</p>
-          <input
-            type="text"
-            placeholder="The name of the tutor..."
-            value={tutorSearchQuery}
-            onChange={(e) => setTutorSearchQuery(e.target.value)}
-            className="w-full border rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="w-full h-60 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2 scroll-auto">
-            {filteredTutors.length === 0 && tutors.length > 0 ? (
-              <p>No tutors match your search.</p>
-            ) : (
-              filteredTutors.map((tutor) => (
-                <div
-                  key={tutor.id}
-                  className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
-                >
-                  <span>
-                    {tutor.fname} {tutor.lname} - {tutor.email}
-                  </span>
-                  <button
-                    onClick={() => handleDeleteTutor(tutor.id)}
-                    className="ml-2 text-blue-800 hover:text-blue-900"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))
-            )}
-            {tutors.length === 0 && <p>No tutors here.</p>}
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="rounded-2xl shadow-md p-4 bg-white border">
           <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
             Bulletin Board
@@ -432,17 +334,18 @@ function Dashboard() {
             placeholder="Enter event title..."
             value={newPost.title}
             onChange={(e) => handlePostInputChange("title", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
           <p className="font-sans">Date of event:</p>
+          {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
           <input
             type="date"
             value={newPost.event_date}
             onChange={(e) =>
               handlePostInputChange("event_date", e.target.value)
             }
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
           />
 
           <p className="font-sans">Author:</p>
@@ -451,7 +354,7 @@ function Dashboard() {
             placeholder="Enter author name..."
             value={newPost.author}
             onChange={(e) => handlePostInputChange("author", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
           <p className="font-sans">Contact Info:</p>
@@ -462,7 +365,7 @@ function Dashboard() {
             onChange={(e) =>
               handlePostInputChange("contact_info", e.target.value)
             }
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
           <p className="font-sans">Description:</p>
@@ -470,7 +373,7 @@ function Dashboard() {
             placeholder="Enter event description..."
             value={newPost.content}
             onChange={(e) => handlePostInputChange("content", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
           <label className="flex items-center mb-2">
@@ -480,9 +383,9 @@ function Dashboard() {
               onChange={(e) =>
                 handlePostInputChange("highpriority", e.target.checked)
               }
-              className="mr-2"
+              className="mr-2 appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 accent-white"
             />
-            <span className="font-sans">High Priority</span>
+            <span className="font-sans text-gray-400">High Priority</span>
           </label>
 
           <button
@@ -513,7 +416,7 @@ function Dashboard() {
                   </span>
                   <button
                     onClick={() => handleDeletePost(post.id)}
-                    className="ml-2 text-blue-800 hover:text-blue-900"
+                    className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none"
                   >
                     ×
                   </button>
@@ -532,7 +435,7 @@ function Dashboard() {
           <input
             type="text"
             placeholder="Search for a class..."
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             disabled={selectedClass !== null}
@@ -584,10 +487,10 @@ function Dashboard() {
           <p className="font-sans mt-4">Search Supporting Materials:</p>
           <input
             type="text"
-            placeholder="Search by file name or class..."
+            placeholder="Search by teacher, course, or department..."
             value={resourceSearchQuery}
             onChange={(e) => setResourceSearchQuery(e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
@@ -600,11 +503,12 @@ function Dashboard() {
                   className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
                 >
                   <span>
-                    {resource.name} - {resource.classes}
+                    {resource.teacher} - {resource.course} (
+                    {resource.department})
                   </span>
                   <button
                     onClick={() => handleDeleteResource(resource.resource_id)}
-                    className="ml-2 text-blue-800 hover:text-blue-900"
+                    className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none"
                   >
                     ×
                   </button>
