@@ -68,7 +68,8 @@ function FindTutors() {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <div className="p-4 max-w-6xl mx-auto">
+      
+      <div className="p-4 max-w-6xl mx-auto py-10">
         <h1 className="text-5xl mb-6 text-center font-sans font-bold tracking-wide text-gray-700">
           Find Tutors Below!
         </h1>
@@ -93,7 +94,7 @@ function FindTutors() {
         <div className="flex items-center gap-4 mt-4">
           <div className="relative">
             <button
-              className="w-40 p-2 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100"
+              className="w-40 p-2 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold font-sans bg-white hover:bg-blue-100"
               onClick={() => setFilterDropdown(!filterDropdown)}
             >
               + Add Filter

@@ -282,8 +282,8 @@ function AddTutor() {
   };
 
   return (
-    <div>
-      <h1 className="text-4xl font-sans mb-6 text-center">Add Tutor</h1>
+    <div className="py-[6rem]">
+      <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">Manage Tutors</h1>
       <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
         {/* left side - add tutor form */}
         <div className="rounded-2xl shadow-md p-4 bg-white border max-h-screen overflow-y-auto">
