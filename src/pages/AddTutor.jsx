@@ -282,11 +282,11 @@ function AddTutor() {
   };
 
   return (
-    <div className="py-[6rem]">
+    <div className="min-h-screen overflow-x-hidden overflow-y-auto py-[6rem]">
       <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">Manage Tutors</h1>
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* left side - add tutor form */}
-        <div className="rounded-2xl shadow-md p-4 bg-white border max-h-screen overflow-y-auto">
+        <div className="rounded-2xl shadow-md p-4 bg-white border  overflow-y-auto w-full overflow-x-hidden">
           <h3 className="text-lg font-bold mb-4 text-blue-500">Add New Tutor</h3>
 
           <p className="font-sans text-black">First Name:</p>
@@ -295,86 +295,86 @@ function AddTutor() {
             placeholder="Enter first name..."
             value={newTutor.fname}
             onChange={(e) => handleInputChange("fname", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Last Name:</p>
+          <p className="font-sans text-black">Last Name:</p>
           <input
             type="text"
             placeholder="Enter last name..."
             value={newTutor.lname}
             onChange={(e) => handleInputChange("lname", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Facebook Name (optional):</p>
+          <p className="font-sans text-black">Facebook Name (optional):</p>
           <input
             type="text"
             placeholder="Enter facebook name..."
             value={newTutor.fbname}
             onChange={(e) => handleInputChange("fbname", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Email:</p>
+          <p className="font-sans text-black">Email:</p>
           <input
             type="email"
             placeholder="Enter email..."
             value={newTutor.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">IMSA ID:</p>
+          <p className="font-sans text-black">IMSA ID:</p>
           <input
             type="number"
             placeholder="Enter IMSA ID..."
             value={newTutor.imsaid}
             onChange={(e) => handleInputChange("imsaid", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Hall:</p>
+          <p className="font-sans text-black">Hall:</p>
           <input
             type="number"
             placeholder="Enter hall number..."
             value={newTutor.hall}
             onChange={(e) => handleInputChange("hall", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Wing:</p>
+          <p className="font-sans text-black">Wing:</p>
           <input
             type="number"
             placeholder="Enter wing number..."
             value={newTutor.wing}
             onChange={(e) => handleInputChange("wing", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Blurb:</p>
+          <p className="font-sans text-black">Blurb:</p>
           <textarea
             placeholder="Enter tutor description..."
             value={newTutor.blurb}
             onChange={(e) => handleInputChange("blurb", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans">Availability:</p>
+          <p className="font-sans text-black">Availability:</p>
           <textarea
             placeholder="Format: sunday,5:30-6:00,6:00-6:30;tuesday,9:00-9:30"
             value={newTutor.availability}
             onChange={(e) => handleInputChange("availability", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
           />
 
           {/* class selection sections */}
           {Object.entries(classCategories).map(([category, classes]) => (
             <div key={category} className="mb-4">
-              <p className="font-sans font-bold capitalize">
+              <p className="font-sans font-bold capitalize text-black">
                 {category} Classes:
               </p>
-              <div className="border rounded-md p-2 max-h-32 overflow-y-auto">
+              <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
                 {classes.map((className) => (
                   <label key={className} className="flex items-center mb-1">
                     <input
