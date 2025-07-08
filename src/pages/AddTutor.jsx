@@ -406,16 +406,16 @@ function AddTutor() {
 
         {/* right side - delete tutor section */}
         <div className="rounded-2xl shadow-md p-4 bg-white border">
-          <h3 className="font-sans text-lg font-bold mb-4">Delete Tutor</h3>
+          <h3 className="font-sans text-lg font-bold mb-4 text-blue-500">Delete Tutor</h3>
           <input
             type="text"
             placeholder="Search tutor name..."
             value={deleteSearchQuery}
             onChange={(e) => setDeleteSearchQuery(e.target.value)}
-            className="w-full border rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            className="w-full border rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
           />
 
-          <div className="w-full h-96 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
+          <div className="w-full h-96 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2 text-black">
             {filteredTutors.length === 0 && tutors.length > 0 ? (
               <p>No tutors match your search.</p>
             ) : (
@@ -429,7 +429,7 @@ function AddTutor() {
                   </span>
                   <button
                     onClick={() => handleDeleteTutor(tutor.id)}
-                    className="ml-2 text-blue-800 hover:text-blue-900 font-bold"
+                    className="ml-2 text-blue-800 hover:text-blue-900 font-bold bg-white"
                   >
                     ×
                   </button>
