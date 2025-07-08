@@ -67,7 +67,7 @@ function FindTutors() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen py-20">
       
       <div className="p-4 max-w-6xl mx-auto py-10">
         <h1 className="text-5xl mb-6 text-center font-sans font-bold tracking-wide text-gray-700">
@@ -82,7 +82,7 @@ function FindTutors() {
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-3 text-blue-500 focus:outline-none"
+            className="w-full p-3 text-blue-500 focus:outline-none bg-white"
           />
           <button
             onClick={handleSearch}
