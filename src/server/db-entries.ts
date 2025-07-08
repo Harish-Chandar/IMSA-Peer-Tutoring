@@ -1,5 +1,4 @@
-// Create a new database connection
-const sqlite3 = require("sqlite3").verbose();
+import sqlite3 from "sqlite3";
 
 // Define error type for SQLite
 type SQLiteError = Error | null;
