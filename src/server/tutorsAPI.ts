@@ -107,17 +107,17 @@ app.post("/api/schedule", (req, res) => {
   });
 });
 
-app.get("/api/tutors/:id", (req, res) => {
-  const id = req.params.id;
-  db.all("SELECT * FROM tutors WHERE id = ?", [id], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).send("Internal Server Error");
-    } else {
-      res.json(rows);
-    }
-  });
-});
+// app.get("/api/tutors/:id", (req, res) => {
+//   const id = req.params.id;
+//   db.all("SELECT * FROM tutors WHERE id = ?", [id], (err, rows) => {
+//     if (err) {
+//       console.error(err.message);
+//       res.status(500).send("Internal Server Error");
+//     } else {
+//       res.json(rows);
+//     }
+//   });
+// });
 
 app.get("/api/tutors", (req, res) => {
   db.all("SELECT * FROM tutors WHERE is_available = 1", [], (err, rows) => {

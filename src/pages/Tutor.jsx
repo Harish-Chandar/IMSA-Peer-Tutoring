@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+// Base URL for API calls
+const API_BASE_URL = "http://localhost:5000";
+
 // helper function to parse class strings
 function parseClasses(classesString) {
   if (!classesString) return [];
@@ -9,8 +12,7 @@ function parseClasses(classesString) {
 
 // helper function to get wing letter (1=A, 2=B, etc.)
 function assignWing(wingNum) {
-  const wings = ["A", "B", "C", "D"];
-  return wings[wingNum - 1] || "";
+  return String.fromCharCode(wingNum + 64);
 }
 
 // helper function to parse schedule string from raw format into structured object
@@ -91,9 +93,7 @@ function Tutor() {
         setDebugInfo((prev) => ({ ...prev, step: "starting fetch" }));
 
         // fetch basic tutor information
-        const tutorResponse = await fetch(
-          `http://localhost:5000/api/tutors/${id}`
-        );
+        const tutorResponse = await fetch(`${API_BASE_URL}/api/tutors/${id}`);
         setDebugInfo((prev) => ({
           ...prev,
           tutorResponseOk: tutorResponse.ok,
@@ -119,7 +119,7 @@ function Tutor() {
 
         // fetch classes the tutor can teach
         const classesResponse = await fetch(
-          `http://localhost:5000/api/tutors/${id}/classes`
+          `${API_BASE_URL}/api/tutors/${id}/classes`
         );
         setDebugInfo((prev) => ({
           ...prev,
@@ -150,7 +150,7 @@ function Tutor() {
 
         // fetch tutor's availability schedule
         const scheduleResponse = await fetch(
-          `http://localhost:5000/api/tutors/${id}/schedule`
+          `${API_BASE_URL}/api/tutors/${id}/schedule`
         );
         setDebugInfo((prev) => ({
           ...prev,
@@ -221,13 +221,21 @@ function Tutor() {
           // empty cells for days outside current month
           week.push(null);
         } else {
-          week.push(day);
+          // Store the actual date object instead of just the day number
+          const dateObj = new Date(currentYear, currentMonth, day);
+          week.push({ day, dateObj });
           day++;
         }
       }
       calendarDays.push(week);
     }
     return calendarDays;
+  };
+
+  // get current month name
+  const getCurrentMonthName = () => {
+    const today = new Date();
+    return today.toLocaleString("default", { month: "long", year: "numeric" });
   };
 
   // get the calendar data
@@ -260,62 +268,75 @@ function Tutor() {
   // prepare display information with safety checks
   const fullName = `${tutor.fname || ""} ${tutor.lname || ""}`;
 
-  // safely handle wing with fallback
-  const wingDisplay = tutor.wing !== undefined ? assignWing(tutor.wing) : "";
+  // safely handle wing with fallback - use the same logic as TutorCard
+  const wingDisplay = tutor.wing ? assignWing(tutor.wing) : "";
 
-  // construct location string safely
-  const location = tutor.hall
-    ? `${tutor.hall}${wingDisplay ? ` ${wingDisplay} wing` : ""}`
-    : "location unknown";
+  // construct location string safely - match TutorCard format
+  const location =
+    tutor.hall && tutor.wing
+      ? `${tutor.hall}, ${wingDisplay} wing`
+      : tutor.hall
+      ? `${tutor.hall}`
+      : "location unknown";
 
+  // handle image with fallback - match FindTutors logic
   const profileImage = tutor.image || "https://placehold.co/600x600";
 
   // render main component
   return (
-    <div className="flex flex-col md:flex-row px-4 md:px-[10rem] py-4 gap-6 items-start w-full">
+    <div className="flex flex-col md:flex-row px-4 md:px-[6rem] py-4 gap-8 items-start w-full pt-20 min-h-screen">
       {/* tutor profile image section */}
-      <div className="w-full md:w-1/2 flex justify-center">
+      <div className="w-full md:w-2/5 flex justify-center items-center md:min-h-[600px]">
         <img
           src={profileImage}
           alt={fullName}
-          className="rounded-2xl shadow-md w-full md:w-[50vh] object-cover h-auto"
+          className="rounded-2xl shadow-md w-[500px] h-[500px] object-cover"
         />
       </div>
 
       {/* tutor information section */}
-      <div className="bg-white shadow-xl p-4 w-full md:w-1/2 rounded-2xl max-w-full md:mr-6">
+      <div className="bg-white shadow-xl p-6 w-full md:w-3/5 rounded-2xl">
         {/* tutor name, location and classes */}
-        <div className="mb-4">
+        <div className="mb-6">
           <h2 className="text-3xl md:text-5xl font-semibold text-gray-800 font-sans py-5">
             {fullName}
           </h2>
-          <p className="text-xl text-gray-500 font-sans">{location}</p>
-          <p className="text-xl text-gray-600 mt-2 font-sans">
-            <span className="font-bold">classes taught:</span>{" "}
+          <p className="text-xl text-gray-500 font-sans mb-3">{location}</p>
+          <p className="text-lg text-gray-600 font-sans">
+            <span className="font-bold">Classes taught:</span>{" "}
             {classes.length > 0 ? classes.join(", ") : "no classes listed"}
           </p>
         </div>
 
         {/* calendar and schedule section */}
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* interactive calendar view */}
           <div className="flex-1">
+            <h3 className="font-semibold mb-4 text-2xl text-gray-500 text-center">
+              {getCurrentMonthName()}
+            </h3>
             <div className="grid grid-cols-7 gap-2 text-center mb-4">
               {daysOfWeek.map((day) => (
-                <div key={day} className="text-sm font-medium text-gray-600">
+                <div
+                  key={day}
+                  className="text-sm font-medium text-gray-600 pb-2"
+                >
                   {day}
                 </div>
               ))}
-              {calendar.flat().map((date, index) =>
-                date ? (
+              {calendar.flat().map((dateInfo, index) =>
+                dateInfo ? (
                   <div
                     key={index}
                     className={`p-2 rounded-md cursor-pointer hover:bg-blue-100 transition ${
-                      selectedDate === date ? "bg-blue-500 text-white" : ""
+                      selectedDate &&
+                      selectedDate.getTime() === dateInfo.dateObj.getTime()
+                        ? "bg-blue-500 text-white"
+                        : ""
                     }`}
-                    onClick={() => setSelectedDate(date)}
+                    onClick={() => setSelectedDate(dateInfo.dateObj)}
                   >
-                    {date}
+                    {dateInfo.day}
                   </div>
                 ) : (
                   <div key={index} className="p-2"></div>
@@ -324,23 +345,33 @@ function Tutor() {
             </div>
           </div>
 
-          {/* weekly schedule display */}
+          {/* selected day schedule display */}
           <div className="flex-1 text-sm text-gray-700">
-            <h3 className="font-semibold mb-2 text-3xl text-gray-500">
-              weekly schedule:
+            <h3 className="font-semibold mb-4 text-2xl text-gray-500">
+              {selectedDate
+                ? `Schedule for ${selectedDate.toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                  })}`
+                : "Select a date to view schedule"}
             </h3>
-            <ul className="list-disc pl-5 space-y-1 text-xl">
-              {fullDayNames.map((day) => (
-                <li key={day} className="py-1">
-                  <span className="font-medium">
-                    {capitalizeFirstLetter(day)}:
-                  </span>{" "}
-                  {schedule[day] && schedule[day].length > 0
-                    ? schedule[day].join(", ")
-                    : "-"}
-                </li>
-              ))}
-            </ul>
+            {selectedDate ? (
+              <div className="text-xl">
+                {(() => {
+                  const dayName = fullDayNames[selectedDate.getDay()];
+
+                  return schedule[dayName] && schedule[dayName].length > 0
+                    ? schedule[dayName].join(", ")
+                    : "No schedule available for this day";
+                })()}
+              </div>
+            ) : (
+              <div className="text-xl text-gray-400">
+                Click on a date above to see the tutor's availability for that
+                day.
+              </div>
+            )}
           </div>
         </div>
       </div>
