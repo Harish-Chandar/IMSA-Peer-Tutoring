@@ -73,8 +73,39 @@ function TutorCard({
     return diff;
   });
 
-  // truncate to only first 3 classes
-  const displayClasses = taughtClasses.slice(0, 3);
+  // Build display text by adding classes one by one until overflow
+  const maxCharsPerLine = 20; // Approximate characters per line for small text
+  const maxChars = maxCharsPerLine * 3; // 3 lines worth
+  
+  let displayText = "";
+  let currentLength = "Classes: ".length; // Start with the label length
+  
+  for (let i = 0; i < taughtClasses.length; i++) {
+    const classToAdd = taughtClasses[i];
+    const separator = i === 0 ? "" : ", ";
+    const additionalLength = separator.length + classToAdd.length;
+    
+    // Check if adding this class would exceed the limit
+    if (currentLength + additionalLength > maxChars) {
+      // If this isn't the first class and adding would overflow, add ellipsis
+      if (i > 0) {
+        displayText += "...";
+      } else {
+        // If even the first class is too long, truncate it
+        const availableSpace = maxChars - currentLength - 3; // -3 for "..."
+        displayText = classToAdd.substring(0, availableSpace) + "...";
+      }
+      break;
+    }
+    
+    displayText += separator + classToAdd;
+    currentLength += additionalLength;
+  }
+  
+  // Fallback if no classes
+  if (!displayText && taughtClasses.length === 0) {
+    displayText = "No classes listed";
+  }
 
   return (
     <div className="relative w-64 flex flex-col items-center">
@@ -94,11 +125,10 @@ function TutorCard({
         <p className="text-sm text-gray-400 font-sans">
           {hall}, {assignWing(wing)} wing
         </p>
-        <p className="text-sm text-gray-700 font-sans overflow-hidden">
+        <div className="text-sm text-gray-700 font-sans h-16 overflow-hidden">
           <span className="font-bold">Classes: </span>
-          {displayClasses.join(", ")}
-          {taughtClasses.length > 3 ? "..." : ""}
-        </p>
+          <span>{displayText}</span>
+        </div>
         <a
           href={routing_link}
           className="text-blue-500 font-medium mt-auto pt-2 block"
