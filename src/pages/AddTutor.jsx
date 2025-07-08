@@ -1,99 +1,10 @@
 import React, { useState, useEffect } from "react";
-import './custom.css';
+import "./custom.css";
 
 function AddTutor() {
-  // class categories based on database fields
-  const classCategories = {
-    physics: [
-      "Scientific Inquiries - Physics",
-      "Physics: Sound and Light",
-      "Physics C: Mechanics",
-      "Physics C: Electricity & Magnetism",
-      "Planetary Science",
-      "Modern Physics",
-      "Computational Science",
-    ],
-    chem: [
-      "Scientific Inquiries - Chemistry",
-      "Advanced Chemistry - Structure and Properties",
-      "Advanced Chemistry - Chemical Reactions",
-      "The Physical Chemistry of Materials",
-      "Organic Chemistry I",
-      "Organic Chemistry II",
-      "Biochemistry",
-      "Environmental Chemistry",
-      "Medicinal Chemistry",
-    ],
-    biology: [
-      "Biology: Evolution & Environment",
-      "Biology: Molecular & Cellular",
-      "Evolution, Biodiversity, and Ecology",
-      "Cancer Biology",
-      "Environmental Microbiology",
-      "Pathophysiology",
-      "Biology of Behavior",
-    ],
-    sciother: [
-      "Methods of Scientific Inquiries",
-      "Electronics",
-      "Engineering",
-      "Engineering: Statics & Dynamics",
-    ],
-    mathother: [
-      "Introduction to Proofs",
-      "Modern Geometries",
-      "Statistical Exploration and Description",
-      "Statistical Experimentation and Inference",
-      "Number Theory",
-      "Discrete Mathematics",
-      "Multi-Variable Calculus",
-      "Theory of Analysis",
-      "Differential Equations",
-      "Linear Algebra",
-      "Abstract Algebra",
-    ],
-    mathcore: [
-      "Geometry",
-      "MI I/II",
-      "MI II",
-      "MI III",
-      "MI IV",
-      "AB Calculus I",
-      "AB Calculus II",
-      "BC Calculus I",
-      "BC Calculus II",
-      "BC Calculus III",
-      "BC Calculus I/II",
-      "BC Calculus II/III",
-    ],
-    cs: [
-      "Computer Science Inquiry",
-      "Object Oriented Programming",
-      "Web Technologies",
-      "Advanced Programming",
-      "Microcontroller Applications (CS)",
-      "CS Seminar: Android Apps Development",
-      "CS Seminar: Linux and Cybersecurity",
-      "CS Seminar: Machine Learning",
-    ],
-    language: [
-      "French I",
-      "French II",
-      "French III",
-      "French IV",
-      "French V",
-      "Spanish II",
-      "Spanish III",
-      "Spanish IV",
-      "Spanish V",
-      "German I",
-      "German II",
-      "German III",
-      "Mandarin Chinese I",
-      "Mandarin Chinese II",
-      "Mandarin Chinese III",
-    ],
-  };
+  // state for class categories from database
+  const [classCategories, setClassCategories] = useState({});
+  const [isLoadingClasses, setIsLoadingClasses] = useState(true);
 
   // form state for new tutor
   const [newTutor, setNewTutor] = useState({
@@ -110,26 +21,29 @@ function AddTutor() {
   });
 
   // selected classes for each category
-  const [selectedClasses, setSelectedClasses] = useState({
-    physics: [],
-    chem: [],
-    biology: [],
-    sciother: [],
-    mathother: [],
-    mathcore: [],
-    cs: [],
-    language: [],
-  });
+  const [selectedClasses, setSelectedClasses] = useState({});
 
   // state for searching and deleting tutors
   const [deleteSearchQuery, setDeleteSearchQuery] = useState("");
   const [tutors, setTutors] = useState([]);
   const [filteredTutors, setFilteredTutors] = useState([]);
 
-  // automatically fetch tutors when component loads
+  // fetch classes from database when component loads
   useEffect(() => {
+    fetchClasses();
     fetchTutors();
   }, []);
+
+  // initialize selectedClasses when classCategories changes
+  useEffect(() => {
+    if (Object.keys(classCategories).length > 0) {
+      const initialSelectedClasses = {};
+      Object.keys(classCategories).forEach((department) => {
+        initialSelectedClasses[department] = [];
+      });
+      setSelectedClasses(initialSelectedClasses);
+    }
+  }, [classCategories]);
 
   // filter tutors when search query or tutors array changes
   useEffect(() => {
@@ -141,6 +55,39 @@ function AddTutor() {
       setFilteredTutors(filtered);
     }
   }, [deleteSearchQuery, tutors]);
+
+  // fetch classes from database and organize by department
+  const fetchClasses = async () => {
+    try {
+      setIsLoadingClasses(true);
+      const response = await fetch("http://localhost:5000/api/classes");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const classes = await response.json();
+
+      // organize classes by department
+      const organizedClasses = {};
+      classes.forEach((classItem) => {
+        const { department, class_name } = classItem;
+        if (!organizedClasses[department]) {
+          organizedClasses[department] = [];
+        }
+        organizedClasses[department].push(class_name);
+      });
+
+      setClassCategories(organizedClasses);
+      console.log("Fetched classes from database:", organizedClasses);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      // fallback to empty object if API fails
+      setClassCategories({});
+    } finally {
+      setIsLoadingClasses(false);
+    }
+  };
 
   // fetch all tutors from api
   const fetchTutors = async () => {
@@ -179,7 +126,7 @@ function AddTutor() {
   // handle creating a new tutor
   const handleCreateTutor = async () => {
     if (!newTutor.fname || !newTutor.lname || !newTutor.email) {
-      alert("please fill in at least first name, last name, and email.");
+      console.log("please fill in at least first name, last name, and email.");
       return;
     }
 
@@ -230,25 +177,21 @@ function AddTutor() {
           availability: "",
         });
 
-        setSelectedClasses({
-          physics: [],
-          chem: [],
-          biology: [],
-          sciother: [],
-          mathother: [],
-          mathcore: [],
-          cs: [],
-          language: [],
+        // reset selected classes
+        const resetSelectedClasses = {};
+        Object.keys(classCategories).forEach((department) => {
+          resetSelectedClasses[department] = [];
         });
+        setSelectedClasses(resetSelectedClasses);
 
-        alert("tutor added successfully!");
+        console.log("tutor added successfully!");
       } else {
         const errorData = await response.json();
-        alert(`error creating tutor: ${errorData.error}`);
+        console.log(`error creating tutor: ${errorData.error}`);
       }
     } catch (error) {
       console.error("error creating tutor:", error);
-      alert("error creating tutor. please try again.");
+      console.log("error creating tutor. please try again.");
     }
   };
 
@@ -273,24 +216,28 @@ function AddTutor() {
           fetchTutors();
         } else {
           const errorData = await response.json();
-          alert(`error deleting tutor: ${errorData.error}`);
+          console.log(`error deleting tutor: ${errorData.error}`);
         }
       } catch (error) {
         console.error("error deleting tutor:", error);
-        alert("error deleting tutor. please try again.");
+        console.log("error deleting tutor. please try again.");
       }
     }
   };
 
   return (
     <div className="min-h-screen overflow-x-hidden overflow-y-auto py-[6rem] px-4 custom-container">
-      <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">Manage Tutors</h1>
+      <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">
+        Manage Tutors
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* left side - add tutor form */}
-        <div className="rounded-2xl shadow-md p-4 bg-white border  overflow-y-auto w-full overflow-x-hidden">
-          <h3 className="text-lg font-bold mb-4 text-blue-500">Add New Tutor</h3>
+        <div className="rounded-2xl shadow-md p-4 bg-white border overflow-y-auto w-full overflow-x-hidden">
+          <h3 className="text-lg font-bold mb-4 text-blue-500">
+            Add New Tutor
+          </h3>
 
-          <p className="font-sans text-black">First Name:</p>
+          <p className="font-sans text-gray-700 text-left">First Name:</p>
           <input
             type="text"
             placeholder="Enter first name..."
@@ -299,7 +246,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Last Name:</p>
+          <p className="font-sans text-gray-700 text-left">Last Name:</p>
           <input
             type="text"
             placeholder="Enter last name..."
@@ -308,7 +255,9 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Facebook Name (optional):</p>
+          <p className="font-sans text-gray-700 text-left">
+            Facebook Name (optional):
+          </p>
           <input
             type="text"
             placeholder="Enter facebook name..."
@@ -317,7 +266,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Email:</p>
+          <p className="font-sans text-gray-700 text-left">Email:</p>
           <input
             type="email"
             placeholder="Enter email..."
@@ -326,7 +275,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">IMSA ID:</p>
+          <p className="font-sans text-gray-700 text-left">IMSA ID:</p>
           <input
             type="number"
             placeholder="Enter IMSA ID..."
@@ -335,7 +284,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Hall:</p>
+          <p className="font-sans text-gray-700 text-left">Hall:</p>
           <input
             type="number"
             placeholder="Enter hall number..."
@@ -344,7 +293,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Wing:</p>
+          <p className="font-sans text-gray-700 text-left">Wing:</p>
           <input
             type="number"
             placeholder="Enter wing number..."
@@ -353,7 +302,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Blurb:</p>
+          <p className="font-sans text-gray-700 text-left">Blurb:</p>
           <textarea
             placeholder="Enter tutor description..."
             value={newTutor.blurb}
@@ -361,7 +310,7 @@ function AddTutor() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans text-black">Availability:</p>
+          <p className="font-sans text-gray-700 text-left">Availability:</p>
           <textarea
             placeholder="Format: sunday,5:30-6:00,6:00-6:30;tuesday,9:00-9:30"
             value={newTutor.availability}
@@ -370,43 +319,63 @@ function AddTutor() {
           />
 
           {/* class selection sections */}
-          {Object.entries(classCategories).map(([category, classes]) => (
-            <div key={category} className="mb-4">
-              <p className="font-sans font-bold capitalize text-black">
-                {category} Classes:
-              </p>
-              <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
-                {classes.map((className) => (
-                  <label key={className} className="flex items-center mb-1">
-                    <input
-                      type="checkbox"
-                      checked={selectedClasses[category].includes(className)}
-                      onChange={() => handleClassToggle(category, className)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{className}</span>
-                  </label>
-                ))}
-              </div>
-              {selectedClasses[category].length > 0 && (
-                <p className="text-xs text-blue-600 mt-1">
-                  Selected: {selectedClasses[category].join(", ")}
-                </p>
-              )}
+          {isLoadingClasses ? (
+            <div className="mb-4">
+              <p className="font-sans text-gray-500">Loading classes...</p>
             </div>
-          ))}
+          ) : Object.keys(classCategories).length === 0 ? (
+            <div className="mb-4">
+              <p className="font-sans text-red-500">
+                Error loading classes. Please refresh the page.
+              </p>
+            </div>
+          ) : (
+            Object.entries(classCategories).map(([category, classes]) => (
+              <div key={category} className="mb-4">
+                <p className="font-sans font-bold capitalize text-gray-700 text-left">
+                  {category} Classes:
+                </p>
+                <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
+                  {classes.map((className) => (
+                    <label key={className} className="flex items-center mb-1">
+                      <input
+                        type="checkbox"
+                        checked={
+                          selectedClasses[category]?.includes(className) ||
+                          false
+                        }
+                        onChange={() => handleClassToggle(category, className)}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">{className}</span>
+                    </label>
+                  ))}
+                </div>
+                {selectedClasses[category]?.length > 0 && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    Selected: {selectedClasses[category].join(", ")}
+                  </p>
+                )}
+              </div>
+            ))
+          )}
 
           <button
             onClick={handleCreateTutor}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans mt-4 w-full"
+            disabled={
+              isLoadingClasses || Object.keys(classCategories).length === 0
+            }
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-sans mt-4 w-full"
           >
-            Add Tutor
+            {isLoadingClasses ? "Loading..." : "Add Tutor"}
           </button>
         </div>
 
         {/* right side - delete tutor section */}
         <div className="rounded-2xl shadow-md p-4 bg-white border">
-          <h3 className="font-sans text-lg font-bold mb-4 text-blue-500">Delete Tutor</h3>
+          <h3 className="font-sans text-lg font-bold mb-4 text-blue-500">
+            Delete Tutor
+          </h3>
           <input
             type="text"
             placeholder="Search tutor name..."
@@ -429,7 +398,7 @@ function AddTutor() {
                   </span>
                   <button
                     onClick={() => handleDeleteTutor(tutor.id)}
-                    className="ml-2 text-blue-800 hover:text-blue-900 font-bold bg-white"
+                    className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none hover:border-none"
                   >
                     ×
                   </button>

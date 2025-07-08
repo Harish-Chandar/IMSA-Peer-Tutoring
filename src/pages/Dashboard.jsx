@@ -106,7 +106,7 @@ function Dashboard() {
 
   // resources states for class management
   const [resources, setResources] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [resourceUrl, setResourceUrl] = useState("");
   const [resourceSearchQuery, setResourceSearchQuery] = useState("");
   const [filteredResources, setFilteredResources] = useState([]);
 
@@ -203,14 +203,14 @@ function Dashboard() {
             highpriority: false,
           });
         } else {
-          alert("error creating post. please try again.");
+          console.log("error creating post. please try again.");
         }
       } catch (error) {
         console.error("error creating post:", error);
-        alert("error creating post. please try again.");
+        console.log("error creating post. please try again.");
       }
     } else {
-      alert("please fill in at least the event title and date.");
+      console.log("please fill in at least the event title and date.");
     }
   };
 
@@ -234,19 +234,19 @@ function Dashboard() {
           // refresh posts from database
           fetchPosts();
         } else {
-          alert("error deleting post. please try again.");
+          console.log("error deleting post. please try again.");
         }
       } catch (error) {
         console.error("error deleting post:", error);
-        alert("error deleting post. please try again.");
+        console.log("error deleting post. please try again.");
       }
     }
   };
 
   // handle resource upload
   const handleResourceUpload = async () => {
-    if (!selectedFile || !selectedClass) {
-      alert("please select a file and a class.");
+    if (!resourceUrl || !selectedClass) {
+      console.log("please provide a URL and select a class.");
       return;
     }
 
@@ -261,8 +261,8 @@ function Dashboard() {
           email: "admin@imsa.edu",
           course: selectedClass,
           department: "General",
-          url: `/uploads/${selectedFile.name}`,
-          type: selectedFile.type || "file",
+          url: resourceUrl,
+          type: "link",
         }),
       });
 
@@ -271,17 +271,17 @@ function Dashboard() {
         fetchResources();
 
         // clear form
-        setSelectedFile(null);
+        setResourceUrl("");
         setSelectedClass(null);
         setSearchTerm("");
 
-        alert("resource uploaded successfully!");
+        console.log("resource uploaded successfully!");
       } else {
-        alert("error uploading resource. please try again.");
+        console.log("error uploading resource. please try again.");
       }
     } catch (error) {
       console.error("error uploading resource:", error);
-      alert("error uploading resource. please try again.");
+      console.log("error uploading resource. please try again.");
     }
   };
 
@@ -307,11 +307,11 @@ function Dashboard() {
           // refresh resources from database
           fetchResources();
         } else {
-          alert("error deleting resource. please try again.");
+          console.log("error deleting resource. please try again.");
         }
       } catch (error) {
         console.error("error deleting resource:", error);
-        alert("error deleting resource. please try again.");
+        console.log("error deleting resource. please try again.");
       }
     }
   };
@@ -478,8 +478,10 @@ function Dashboard() {
 
           <p className="font-sans text-left text-gray-700">Upload Supporting Materials:</p>
           <input
-            type="file"
-            onChange={(e) => setSelectedFile(e.target.files[0])}
+            type="url"
+            placeholder="Enter URL for the resource..."
+            value={resourceUrl}
+            onChange={(e) => setResourceUrl(e.target.value)}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
           <button
@@ -509,10 +511,23 @@ function Dashboard() {
                   key={resource.resource_id}
                   className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
                 >
-                  <span>
-                    {resource.teacher} - {resource.course} (
-                    {resource.department})
-                  </span>
+                  <div className="flex-1 mr-2">
+                    <div className="font-medium">
+                      {resource.teacher} - {resource.course} (
+                      {resource.department})
+                    </div>
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm underline truncate block"
+                      title={resource.url}
+                    >
+                      {resource.url.length > 50 
+                        ? `${resource.url.substring(0, 50)}...` 
+                        : resource.url}
+                    </a>
+                  </div>
                   <button
                     onClick={() => handleDeleteResource(resource.resource_id)}
                     className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none"

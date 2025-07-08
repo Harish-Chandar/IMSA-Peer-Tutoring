@@ -210,100 +210,253 @@ const tutors: Tutor[] = [
   },
 ];
 
-// First delete any existing tutors to avoid duplicates
-db.run("DELETE FROM tutors", [], (err: SQLiteError) => {
-  if (err) {
-    console.error("Error deleting existing tutors:", err?.message);
-    return;
-  }
-  console.log("Cleared existing tutor data.");
+// Define the class categories
+const classCategories = {
+  physics: [
+    "Scientific Inquiries - Physics",
+    "Physics: Sound and Light",
+    "Physics C: Mechanics",
+    "Physics C: Electricity & Magnetism",
+    "Planetary Science",
+    "Modern Physics",
+    "Computational Science",
+  ],
+  chem: [
+    "Scientific Inquiries - Chemistry",
+    "Advanced Chemistry - Structure and Properties",
+    "Advanced Chemistry - Chemical Reactions",
+    "The Physical Chemistry of Materials",
+    "Organic Chemistry I",
+    "Organic Chemistry II",
+    "Biochemistry",
+    "Environmental Chemistry",
+    "Medicinal Chemistry",
+  ],
+  biology: [
+    "Biology: Evolution & Environment",
+    "Biology: Molecular & Cellular",
+    "Evolution, Biodiversity, and Ecology",
+    "Cancer Biology",
+    "Environmental Microbiology",
+    "Pathophysiology",
+    "Biology of Behavior",
+  ],
+  sciother: [
+    "Methods of Scientific Inquiries",
+    "Electronics",
+    "Engineering",
+    "Engineering: Statics & Dynamics",
+  ],
+  mathother: [
+    "Introduction to Proofs",
+    "Modern Geometries",
+    "Statistical Exploration and Description",
+    "Statistical Experimentation and Inference",
+    "Number Theory",
+    "Discrete Mathematics",
+    "Multi-Variable Calculus",
+    "Theory of Analysis",
+    "Differential Equations",
+    "Linear Algebra",
+    "Abstract Algebra",
+  ],
+  mathcore: [
+    "Geometry",
+    "MI I/II",
+    "MI II",
+    "MI III",
+    "MI IV",
+    "AB Calculus I",
+    "AB Calculus II",
+    "BC Calculus I",
+    "BC Calculus II",
+    "BC Calculus III",
+    "BC Calculus I/II",
+    "BC Calculus II/III",
+  ],
+  cs: [
+    "Computer Science Inquiry",
+    "Object Oriented Programming",
+    "Web Technologies",
+    "Advanced Programming",
+    "Microcontroller Applications (CS)",
+    "CS Seminar: Android Apps Development",
+    "CS Seminar: Linux and Cybersecurity",
+    "CS Seminar: Machine Learning",
+  ],
+  language: [
+    "French I",
+    "French II",
+    "French III",
+    "French IV",
+    "French V",
+    "Spanish II",
+    "Spanish III",
+    "Spanish IV",
+    "Spanish V",
+    "German I",
+    "German II",
+    "German III",
+    "Mandarin Chinese I",
+    "Mandarin Chinese II",
+    "Mandarin Chinese III",
+  ],
+};
 
-  // Begin inserting the new tutors
+// Function to insert classes
+function insertClasses(callback: () => void) {
+  console.log("Starting insertion of class data...");
+
+  // Delete existing classes to avoid duplicates
+  db.run("DELETE FROM classes", [], (err: SQLiteError) => {
+    if (err) {
+      console.error("Error deleting existing classes:", err?.message);
+      return;
+    }
+    console.log("Cleared existing class data.");
+
+    // Prepare statement for inserting classes
+    const insertClassStmt = db.prepare(
+      "INSERT INTO classes (class_name, department) VALUES (?, ?)"
+    );
+
+    let insertedCount = 0;
+    let totalClasses = 0;
+
+    // Count total classes
+    for (const classes of Object.values(classCategories)) {
+      totalClasses += classes.length;
+    }
+
+    // Insert all classes
+    for (const [department, classes] of Object.entries(classCategories)) {
+      for (const className of classes) {
+        insertClassStmt.run(className, department, function (err: SQLiteError) {
+          if (err) {
+            console.error(
+              `Error inserting class "${className}":`,
+              err?.message
+            );
+          } else {
+            insertedCount++;
+            console.log(
+              `Successfully inserted class: ${className} (Department: ${department})`
+            );
+          }
+
+          // Check if all classes have been processed
+          if (insertedCount === totalClasses) {
+            insertClassStmt.finalize();
+            console.log(`Total of ${insertedCount} classes inserted.`);
+            callback(); // Call the callback to proceed with tutors
+          }
+        });
+      }
+    }
+  });
+}
+
+// Function to insert tutors
+function insertTutors() {
   console.log("Starting insertion of tutor data...");
 
-  // Use a prepared statement for better performance
-  const insertStmt = db.prepare(`
-        INSERT INTO tutors (
-            id, fname, lname, fbname, imsaid, email, blurb, hall, wing, image, 
-            totaltime, approvedtime, starttime, is_available, availability, courses,
-            physics, chem, biology, sciother, mathother, mathcore, cs, language
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+  // First delete any existing tutors to avoid duplicates
+  db.run("DELETE FROM tutors", [], (err: SQLiteError) => {
+    if (err) {
+      console.error("Error deleting existing tutors:", err?.message);
+      return;
+    }
+    console.log("Cleared existing tutor data.");
+
+    // Use a prepared statement for better performance
+    const insertStmt = db.prepare(`
+      INSERT INTO tutors (
+          id, fname, lname, fbname, imsaid, email, blurb, hall, wing, image, 
+          totaltime, approvedtime, starttime, is_available, availability, courses,
+          physics, chem, biology, sciother, mathother, mathcore, cs, language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `);
 
-  // Insert each tutor
-  tutors.forEach((tutor) => {
-    insertStmt.run(
-      tutor.id,
-      tutor.fname,
-      tutor.lname,
-      tutor.fbname,
-      tutor.imsaid,
-      tutor.email,
-      tutor.blurb,
-      tutor.hall,
-      tutor.wing,
-      tutor.image,
-      tutor.totaltime,
-      tutor.approvedtime,
-      tutor.starttime,
-      tutor.is_available,
-      tutor.availability,
-      tutor.courses,
-      tutor.physics,
-      tutor.chem,
-      tutor.biology,
-      tutor.sciother,
-      tutor.mathother,
-      tutor.mathcore,
-      tutor.cs,
-      tutor.language,
-      function (err: SQLiteError) {
-        if (err) {
-          console.error(`Error inserting tutor ${tutor.id}:`, err?.message);
-        } else {
-          console.log(
-            `Successfully inserted tutor: ${tutor.fname} ${tutor.lname} (ID: ${tutor.id})`
-          );
+    // Insert each tutor
+    tutors.forEach((tutor) => {
+      insertStmt.run(
+        tutor.id,
+        tutor.fname,
+        tutor.lname,
+        tutor.fbname,
+        tutor.imsaid,
+        tutor.email,
+        tutor.blurb,
+        tutor.hall,
+        tutor.wing,
+        tutor.image,
+        tutor.totaltime,
+        tutor.approvedtime,
+        tutor.starttime,
+        tutor.is_available,
+        tutor.availability,
+        tutor.courses,
+        tutor.physics,
+        tutor.chem,
+        tutor.biology,
+        tutor.sciother,
+        tutor.mathother,
+        tutor.mathcore,
+        tutor.cs,
+        tutor.language,
+        function (err: SQLiteError) {
+          if (err) {
+            console.error(`Error inserting tutor ${tutor.id}:`, err?.message);
+          } else {
+            console.log(
+              `Successfully inserted tutor: ${tutor.fname} ${tutor.lname} (ID: ${tutor.id})`
+            );
+          }
         }
+      );
+    });
+
+    // Finalize the prepared statement
+    insertStmt.finalize();
+
+    // Define a type for database rows
+    type TutorRow = {
+      id: number;
+      fname: string;
+      lname: string;
+      hall: number;
+      wing: number;
+      image: string;
+      availability: string;
+    };
+
+    // Verify the data was inserted
+    db.all(
+      "SELECT id, fname, lname, hall, wing, image, availability FROM tutors",
+      [],
+      (err: SQLiteError, rows: TutorRow[]) => {
+        if (err) {
+          console.error("Error verifying inserted data:", err?.message);
+        } else {
+          console.log("Inserted tutors:");
+          console.table(rows);
+          console.log(`Total of ${rows.length} tutors inserted.`);
+        }
+
+        // Close the database connection
+        db.close((err: SQLiteError) => {
+          if (err) {
+            console.error("Error closing database:", err?.message);
+          } else {
+            console.log("Database connection closed.");
+          }
+        });
       }
     );
   });
+}
 
-  // Finalize the prepared statement
-  insertStmt.finalize();
-
-  // Define a type for database rows
-  type TutorRow = {
-    id: number;
-    fname: string;
-    lname: string;
-    hall: number;
-    wing: number;
-    image: string;
-    availability: string;
-  };
-
-  // Verify the data was inserted
-  db.all(
-    "SELECT id, fname, lname, hall, wing, image, availability FROM tutors",
-    [],
-    (err: SQLiteError, rows: TutorRow[]) => {
-      if (err) {
-        console.error("Error verifying inserted data:", err?.message);
-      } else {
-        console.log("Inserted tutors:");
-        console.table(rows);
-        console.log(`Total of ${rows.length} tutors inserted.`);
-      }
-
-      // Close the database connection
-      db.close((err: SQLiteError) => {
-        if (err) {
-          console.error("Error closing database:", err?.message);
-        } else {
-          console.log("Database connection closed.");
-        }
-      });
-    }
-  );
+// Start the insertion process: classes first, then tutors
+insertClasses(() => {
+  insertTutors();
 });

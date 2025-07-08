@@ -670,3 +670,20 @@ app.patch("/api/resources/:id/info", (req: Request, res: Response) => {
     }
   );
 });
+
+// api route for fetching all classes organized by department
+app.get("/api/classes", (req: Request, res: Response) => {
+  db.all(
+    "SELECT * FROM classes ORDER BY department, class_name",
+    [],
+    (err: Error | null, rows: any[]) => {
+      if (err) {
+        console.error("Database error:", err);
+        res.status(500).json({ error: "Error retrieving classes" });
+        return;
+      }
+
+      res.json(rows);
+    }
+  );
+});

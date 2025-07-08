@@ -126,6 +126,22 @@ db.run(createScheduleTable, (err) => {
   }
 });
 
+const createClassesTable = `
+    CREATE TABLE IF NOT EXISTS classes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_name TEXT NOT NULL,
+        department TEXT NOT NULL
+    );
+`;
+
+db.run(createClassesTable, (err) => {
+  if (err) {
+    console.error('Error creating "classes" table:', err.message);
+  } else {
+    console.log('Successfully created "classes" table.');
+  }
+});
+
 db.close((err) => {
   if (err) {
     console.error("Error closing database:", err.message);
