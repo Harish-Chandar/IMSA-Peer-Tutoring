@@ -361,9 +361,15 @@ function Tutor() {
                 {(() => {
                   const dayName = fullDayNames[selectedDate.getDay()];
 
-                  return schedule[dayName] && schedule[dayName].length > 0
-                    ? schedule[dayName].join(", ")
-                    : "No schedule available for this day";
+                  if (schedule[dayName] && schedule[dayName].length > 0) {
+                    return schedule[dayName].map((timeSlot, index) => (
+                      <div key={index} className="mb-1">
+                        {timeSlot}
+                      </div>
+                    ));
+                  } else {
+                    return "No schedule available for this day";
+                  }
                 })()}
               </div>
             ) : (
