@@ -42,14 +42,14 @@ function ScheduleForm() {
   }
 
   return (
-    <div className="display-flex flex-col w-full">
+    <div className="display-flex flex-col w-full mt-16">
       <div className="flex flex-col md:flex-row justify-evenly w-screen h-auto md:h-80 bg-slate-100 px-4 mt-13 md:px-0">
       <div className="self-start flex flex-col text-left h-full justify-center py-8 ml-10">
                   <h2 className="text-gray-700 text-3xl md:text-4xl font-bold">Schedule A <span className="text-blue-500">Tutoring Session</span></h2>
                   <h2 className="text-gray-400 text-md font-bold mb-3">Use the form below and schedule a tutoring sessions with your own peers!</h2>
                   
                 </div>
-                <img src="/public/smartguy.png" className="w-full md:w-auto max-w-md mx-auto"></img>
+                <img src="/smartguy.png" className="w-full md:w-auto max-w-md mx-auto"></img>
         </div>              
       
       <div className="mt-6 mb-4 px-4 md:px-0">

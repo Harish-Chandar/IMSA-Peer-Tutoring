@@ -9,7 +9,6 @@ const db = new (verbose().Database)('peertutoringdb.sqlite', (err: Error | null)
     console.log('Connected to SQLite database.');
 });
 
-// Clear the bulletin table
 db.run('DELETE FROM bulletin', (err) => {
     if (err) {
         console.error('Error clearing bulletin table:', err.message);
@@ -17,7 +16,6 @@ db.run('DELETE FROM bulletin', (err) => {
         console.log('Bulletin table cleared successfully!');
     }
     
-    // Close the database connection
     db.close((err) => {
         if (err) {
             console.error('Error closing database:', err.message);

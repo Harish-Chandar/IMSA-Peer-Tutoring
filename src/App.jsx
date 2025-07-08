@@ -4,6 +4,7 @@ import Homepage from "./pages/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
 import ScheduleForm from "./pages/ScheduleForm.jsx";
 
+
 function App() {
   return (
     <Router>
@@ -12,6 +13,7 @@ function App() {
         <Routes>    
           <Route path="/" element={<Homepage />} />
           <Route path="/scheduleform" element={<ScheduleForm />} />
+
         </Routes>
       </div>
     </Router>

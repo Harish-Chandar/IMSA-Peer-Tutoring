@@ -39,7 +39,6 @@ const sampleData = [
     }
 ];
 
-// First, clear any existing data
 db.run('DELETE FROM bulletin', (err) => {
     if (err) {
         console.error('Error clearing table:', err.message);
@@ -47,7 +46,6 @@ db.run('DELETE FROM bulletin', (err) => {
         return;
     }
 
-    // Then insert new data
     const stmt = db.prepare(`
         INSERT INTO bulletin (
             title, course, event_date, time,

@@ -10,7 +10,6 @@ function Bulletin() {
   const API_URL = "http://localhost:5000/api";
   useEffect(() => {
     const fetchBulletinData = async () => {
-      console.log("Fetching bulletin data...");
       const response = await fetch(`${API_URL}/bulletin`);
 
       if (!response.ok) {
@@ -19,7 +18,6 @@ function Bulletin() {
 
       const data = await response.json();
 
-      // Sort the data by event_date in ascending order (oldest first)
       const sortedData = data.sort((a, b) => {
         return new Date(a.event_date) - new Date(b.event_date);
       });
@@ -33,7 +31,10 @@ function Bulletin() {
 
   return (
     <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center font-sans shadow-2xl">
-      <h1 className="text-4xl text-gray-700 font-bold mb-8">Bulletin Board</h1>
+      <h1 className="text-4xl text-gray-700 font-bold mb-8">Bulletin</h1>
+
+      {bulletinNotes.length > 0 && 
+
       <div className="flex flex-row flex-wrap justify-center gap-4 w-full">
         {bulletinNotes.map((note) => (
           <Note
@@ -47,7 +48,10 @@ function Bulletin() {
             color={note.highpriority}
           />
         ))}
-      </div>
+      </div>}
+      {bulletinNotes.length === 0 && (
+        <div className="text-gray-500 text-2xl flex flex-1 items-center">No current events</div>
+      )}
     </div>
   );
 }

@@ -3,22 +3,22 @@ import TutorBoard from '../components/TutorBoard';
 import Bulletin from '../components/BulletinBoard';
 import '../App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserGroup, faBuilding, faThumbTack } from '@fortawesome/free-solid-svg-icons';
+import { faUserGroup, faBuilding, faThumbTack , faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
 
 export default function Home() {
   return (
     <>
-      <div className="w-full h-15"></div>     
-      <div className="flex flex-col md:flex-row justify-evenly w-full h-auto md:h-80 bg-slate-100 px-4 md:px-0">
-        <div className="self-start flex flex-col text-left h-full justify-center py-8 ml-10">
+      <div className="w-full mt-16"></div>     
+      <div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
+        <div className="flex flex-col text-left h-full justify-center py-8">
           <h2 className="text-gray-700 text-3xl md:text-4xl font-bold">Find resources from <span className="text-blue-500">IMSA students</span></h2>
           <h2 className="text-gray-400 text-sm font-bold mb-3">Find help in your very own hall! Discover tutors and find them during their schedules!</h2>
-          <button className="w-full md:w-1/2 max-w-50 bg-blue-500 text-white py-2 px-4 rounded">Find tutors now</button>
+          <button className="w-1/3 bg-blue-500 text-white py-2 px-4 rounded"><a href="/findTutors">Find tutors now →</a></button>
         </div>
-        <img src="/public/smartguy.png" className="w-full md:w-auto max-w-md mx-auto"></img>
+        <img src="/smartguy.png" className="w-full md:w-auto"></img>
       </div>
-      <div className="mt-6 mb-4 px-4 md:px-0">
+      <div className="mt-10 mx-20 mb-4 px-4 md:px-0">
         <h2 className="text-gray-700 text-3xl md:text-5xl font-bold w-full">IMSA students <span className="text-blue-500">for their peers</span></h2>
         <div className="mt-8 flex flex-col md:flex-row w-full justify-evenly gap-4">
           <div className="bg-slate-50 p-4 w-full md:w-2/7">
@@ -39,7 +39,9 @@ export default function Home() {
         </div>
       </div>
       <div className="mt-20 flex flex-col justify-center items-center p-4 md:p-10 w-full">
-        <Bulletin />
+        <div id="bulletinboard" className="w-full">
+          <Bulletin />
+        </div>
         <div className="m-4 md:m-10"></div>
         <TutorBoard/>
       </div>
