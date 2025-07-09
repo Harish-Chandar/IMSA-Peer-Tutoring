@@ -33,39 +33,42 @@ export function Login() {
 	};
 
 	return (
-		<div className="flex flex-col md:flex-row py-20 gap-6 items-start w-full">
-			
-			<div className="bg-white shadow-xl p-6 w-full md:w-1/2 rounded-2xl max-w-full mx-auto">
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<h3 className="text-2xl font-semibold text-gray-800 mb-2 font-sans">Administrator Login</h3>
+		<div className="min-h-screen flex justify-center items-center bg-gray-100">
+			<div className="bg-white shadow-2xl p-10 w-full max-w-2xl rounded-2xl">
+				<form onSubmit={handleSubmit} className="space-y-6">
+					<h3 className="text-3xl font-bold text-blue-500 text-center">Admin Login</h3>
+
 					<div>
-						<label className="block text-gray-600 mb-1 font-sans">Email:</label>
+						<label className="block text-gray-700 mb-1 font-medium">Email</label>
 						<input 
 							type="email" 
 							value={email} 
 							onChange={(e) => setEmail(e.target.value)} 
 							required
-							className="w-full p-2 border border-gray-300 rounded-md"
+							className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 					</div>
+
 					<div>
-						<label className="block text-gray-600 mb-1 font-sans">Password:</label>
+						<label className="block text-gray-700 mb-1 font-medium">Password</label>
 						<input 
 							type="password" 
 							value={password} 
 							onChange={(e) => setPassword(e.target.value)} 
 							required
-							className="w-full p-2 border border-gray-300 rounded-md"
+							className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 					</div>
+
 					<button 
 						type="submit"
-						className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans"
+						className="w-full text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"
 					>
-						Log In!
+						Log In
 					</button>
+
+					{error && <p className="text-red-600 text-center text-sm font-medium">{error}</p>}
 				</form>
-			<p className="py-4 text-3xl text-red-600 font-sans">{error}</p>
 			</div>
 		</div>
 	);
