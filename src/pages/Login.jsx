@@ -66,7 +66,6 @@ export function Login() {
 					>
 						Log In
 					</button>
-
 					{error && <p className="text-red-600 text-center text-sm font-medium">{error}</p>}
 				</form>
 			</div>

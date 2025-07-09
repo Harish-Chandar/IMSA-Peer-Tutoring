@@ -106,7 +106,7 @@ function Dashboard() {
 
   // resources states for class management
   const [resources, setResources] = useState([]);
-  const [resourceUrl, setResourceUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [resourceSearchQuery, setResourceSearchQuery] = useState("");
   const [filteredResources, setFilteredResources] = useState([]);
 
@@ -203,14 +203,14 @@ function Dashboard() {
             highpriority: false,
           });
         } else {
-          console.log("error creating post. please try again.");
+          alert("error creating post. please try again.");
         }
       } catch (error) {
         console.error("error creating post:", error);
-        console.log("error creating post. please try again.");
+        alert("error creating post. please try again.");
       }
     } else {
-      console.log("please fill in at least the event title and date.");
+      alert("please fill in at least the event title and date.");
     }
   };
 
@@ -234,19 +234,19 @@ function Dashboard() {
           // refresh posts from database
           fetchPosts();
         } else {
-          console.log("error deleting post. please try again.");
+          alert("error deleting post. please try again.");
         }
       } catch (error) {
         console.error("error deleting post:", error);
-        console.log("error deleting post. please try again.");
+        alert("error deleting post. please try again.");
       }
     }
   };
 
   // handle resource upload
   const handleResourceUpload = async () => {
-    if (!resourceUrl || !selectedClass) {
-      console.log("please provide a URL and select a class.");
+    if (!selectedFile || !selectedClass) {
+      alert("please select a file and a class.");
       return;
     }
 
@@ -261,8 +261,8 @@ function Dashboard() {
           email: "admin@imsa.edu",
           course: selectedClass,
           department: "General",
-          url: resourceUrl,
-          type: "link",
+          url: `/uploads/${selectedFile.name}`,
+          type: selectedFile.type || "file",
         }),
       });
 
@@ -271,17 +271,17 @@ function Dashboard() {
         fetchResources();
 
         // clear form
-        setResourceUrl("");
+        setSelectedFile(null);
         setSelectedClass(null);
         setSearchTerm("");
 
-        console.log("resource uploaded successfully!");
+        alert("resource uploaded successfully!");
       } else {
-        console.log("error uploading resource. please try again.");
+        alert("error uploading resource. please try again.");
       }
     } catch (error) {
       console.error("error uploading resource:", error);
-      console.log("error uploading resource. please try again.");
+      alert("error uploading resource. please try again.");
     }
   };
 
@@ -307,97 +307,27 @@ function Dashboard() {
           // refresh resources from database
           fetchResources();
         } else {
-          console.log("error deleting resource. please try again.");
+          alert("error deleting resource. please try again.");
         }
       } catch (error) {
         console.error("error deleting resource:", error);
-        console.log("error deleting resource. please try again.");
+        alert("error deleting resource. please try again.");
       }
     }
   };
 
   return (
     <div className="p-6 bg-gray-100 pt-14">
-      <h1 className="text-4xl font-sans mb-6 text-center font-bold py-10 text-blue-500">
+      <h1 className="text-4xl mb-6 text-center font-bold py-10 text-blue-500">
         Administrator Dashboard
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="rounded-2xl shadow-md p-4 bg-white border">
-          <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
+          <h2 className="py-4 text-3xl font-bold mb-2 font-sans text-blue-500">
             Bulletin Board
           </h2>
-          <h3 className="font-sans text-lg font-bold text-gray-600 mb-3">
-            Create or Delete Posts:
-          </h3>
 
-          <p className="font-sans text-gray-700 text-left">Title of event:</p>
-          <input
-            type="text"
-            placeholder="Enter event title..."
-            value={newPost.title}
-            onChange={(e) => handlePostInputChange("title", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
-
-          <p className="font-sans text-gray-700 text-left">Date of event:</p>
-          {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
-          <input
-            type="date"
-            value={newPost.event_date}
-            onChange={(e) =>
-              handlePostInputChange("event_date", e.target.value)
-            }
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
-          />
-
-          <p className="font-sans text-gray-700 text-left">Author:</p>
-          <input
-            type="text"
-            placeholder="Enter author name..."
-            value={newPost.author}
-            onChange={(e) => handlePostInputChange("author", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
-
-          <p className="font-sans text-gray-700 text-left">Contact Info:</p>
-          <input
-            type="text"
-            placeholder="Enter contact information..."
-            value={newPost.contact_info}
-            onChange={(e) =>
-              handlePostInputChange("contact_info", e.target.value)
-            }
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
-
-          <p className="font-sans text-gray-700 text-left">Description:</p>
-          <textarea
-            placeholder="Enter event description..."
-            value={newPost.content}
-            onChange={(e) => handlePostInputChange("content", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
-
-          <label className="flex items-center mb-2">
-            <input
-              type="checkbox"
-              checked={newPost.highpriority}
-              onChange={(e) =>
-                handlePostInputChange("highpriority", e.target.checked)
-              }
-              className="mr-2 appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 accent-white"
-            />
-            <span className="font-sans text-gray-700">High Priority</span>
-          </label>
-
-          <button
-            onClick={handleCreatePost}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans"
-          >
-            Post
-          </button>
-
-          <h3 className="font-sans text-lg mt-4 text-left">Current posts:</h3>
+        <h3 className="font-sans text-xl font-bold text-gray-600 mb-3  mt-2">Manage Posts</h3>
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
             {posts.length === 0 ? (
               <p className="text-gray-500">No posts yet.</p>
@@ -426,17 +356,90 @@ function Dashboard() {
               ))
             )}
           </div>
+
+          <h3 className="font-sans text-xl font-bold text-gray-600 mb-2 mt-8">
+            Create Post
+          </h3>
+
+          <p className="font-sans font-bold text-gray-700 text-left">Title of event:</p>
+          <input
+            type="text"
+            placeholder="Enter event title..."
+            value={newPost.title}
+            onChange={(e) => handlePostInputChange("title", e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
+          />
+
+          <p className="font-sans font-bold text-gray-700 text-left py-2">Date of event:</p>
+          {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
+          <input
+            type="date"
+            value={newPost.event_date}
+            onChange={(e) =>
+              handlePostInputChange("event_date", e.target.value)
+            }
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
+          />
+
+          <p className="font-bold py-2 font-sans text-gray-700 text-left">Author:</p>
+          <input
+            type="text"
+            placeholder="Enter author name..."
+            value={newPost.author}
+            onChange={(e) => handlePostInputChange("author", e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
+          />
+
+          <p className=" font-bold py-2 font-sans text-gray-700 text-left">Contact Info:</p>
+          <input
+            type="text"
+            placeholder="Enter contact information..."
+            value={newPost.contact_info}
+            onChange={(e) =>
+              handlePostInputChange("contact_info", e.target.value)
+            }
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
+          />
+
+          <p className="font-bold py-2 font-sans text-gray-700 text-left">Description:</p>
+          <textarea
+            placeholder="Enter event description..."
+            value={newPost.content}
+            onChange={(e) => handlePostInputChange("content", e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
+          />
+
+          <label className="flex items-center mb-2">
+            <input
+              type="checkbox"
+              checked={newPost.highpriority}
+              onChange={(e) =>
+                handlePostInputChange("highpriority", e.target.checked)
+              }
+              className="mr-2 appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 accent-white"
+            />
+            <span className="font-sans text-gray-700">High Priority</span>
+          </label>
+
+          <button
+            onClick={handleCreatePost}
+            className="w-1/3 text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"
+          >
+            Post
+          </button>
+
+          
         </div>
 
         <div className="rounded-2xl shadow-md p-4 bg-white border">
-          <h2 className="text-xl font-semibold mb-2 font-sans text-blue-500">
+          <h2 className="py-4 text-3xl font-bold mb-2 font-sans text-blue-500">
             Resource Management
           </h2>
           <h3 className="font-sans text-lg font-bold text-gray-600 mb-3">
-            Add or Remove Resources:
+            Add Resource
           </h3>
 
-          <p className="font-sans mb-2 text-left text-gray-700">Select a class:</p>
+          <p className="font-sans mb-2 text-left text-gray-700 font-bold">Select a class:</p>
           <input
             type="text"
             placeholder="Search for a class..."
@@ -476,22 +479,21 @@ function Dashboard() {
             </div>
           )}
 
-          <p className="font-sans text-left text-gray-700">Upload Supporting Materials:</p>
+          <p className="font-sans text-left text-gray-700 py-2  font-bold">Link(s) of resources:</p>
           <input
-            type="url"
-            placeholder="Enter URL for the resource..."
-            value={resourceUrl}
-            onChange={(e) => setResourceUrl(e.target.value)}
+            type="file" // ATHARV PLEASE CHANGE THIS TO TEXT AND CHANGE THAT METHOD TO BE LINKS INSTEAD
+            onChange={(e) => setSelectedFile(e.target.files[0])}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
+          <div className="py-2"></div>
           <button
             onClick={handleResourceUpload}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-sans"
+            className="w-1/3 text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"
           >
             Upload
           </button>
 
-          <p className="font-sans mt-4 text-left text-gray-700">
+          <p className="font-sans mt-4 text-left text-gray-700 font-bold py-2">
             Search Supporting Materials:
           </p>
           <input
@@ -511,23 +513,10 @@ function Dashboard() {
                   key={resource.resource_id}
                   className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
                 >
-                  <div className="flex-1 mr-2">
-                    <div className="font-medium">
-                      {resource.teacher} - {resource.course} (
-                      {resource.department})
-                    </div>
-                    <a
-                      href={resource.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 text-sm underline truncate block"
-                      title={resource.url}
-                    >
-                      {resource.url.length > 50 
-                        ? `${resource.url.substring(0, 50)}...` 
-                        : resource.url}
-                    </a>
-                  </div>
+                  <span>
+                    {resource.teacher} - {resource.course} (
+                    {resource.department})
+                  </span>
                   <button
                     onClick={() => handleDeleteResource(resource.resource_id)}
                     className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none"
