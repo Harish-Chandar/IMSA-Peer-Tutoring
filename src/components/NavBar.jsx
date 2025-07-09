@@ -33,33 +33,28 @@ function Navbar() {
             Home
           </a>
         </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
           <Link to="/resources" className="!text-slate-500 !font-bold">
             Class Resources
           </Link>
         </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="bulletinBoard" className="!text-slate-500 !font-bold">
-            Bulletin Board
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+          <a href="#bulletinboard" className="!text-slate-500 !font-bold">
+            Bulletin
           </a>
         </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="findTutors" className="!text-slate-500 !font-bold">
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+          <a href="/findTutors" className="!text-slate-500 !font-bold">
             Tutors
-          </a>
-        </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="aboutus" className="!text-slate-500 !font-bold">
-            About Us
           </a>
         </h3>
 
         <button
           type="button"
-          className="bg-blue-500 text-slate-50 text-md font-bold mt-1 mb-3 ml-10 md:ml-3 rounded mb-1 md:mb-0 md:mt-0 md:ml-3"
+          className="bg-blue-500 text-slate-50 text-lg font-bold mt-1 mb-3 p-1 px-2 ml-10 rounded mb-1 md:mb-0 md:mt-0 md:ml-3"
           onClick={() => (window.location.href = "/login")}
         >
-          Login In
+          Login
         </button>
       </div>
     </nav>

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import {useNavigate } from 'react-router-dom';
 
 export function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState(null);
+	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
+		// navigate("/adminDashboard", { replace: true }); TESTING PURPOSES ONLY
 		try {
 			const res = await fetch("http://localhost:5000/api/login", {
 				method: "POST",
@@ -17,22 +19,23 @@ export function Login() {
 
 			const data = await res.json();
 			if (res.ok) {
-				// alert("Login successful!"); DO SOMETHING IF YOU LOG IN WELL!
+				navigate("/adminDashboard", { replace: true });
 				console.log("User access level:", data.access);
+
 			} else {
 				
-				setError("⚠️ Login failed. ⚠️");
+				setError("Login failed.");
 			}
 		} catch (err) {
 			console.error("Error during login:", err);
-			setError("⚠️ Login failed due to server error. ⚠️");
+			setError("Login failed due to server error.");
 		}
 	};
 
 	return (
 		<div className="flex flex-col md:flex-row py-20 gap-6 items-start w-full">
 			
-			<div className="shadow-xl p-6 w-full md:w-1/2 rounded-2xl max-w-full mx-auto">
+			<div className="bg-white shadow-xl p-6 w-full md:w-1/2 rounded-2xl max-w-full mx-auto">
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<h3 className="text-2xl font-semibold text-gray-800 mb-2 font-sans">Administrator Login</h3>
 					<div>
