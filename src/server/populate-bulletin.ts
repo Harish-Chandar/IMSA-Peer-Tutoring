@@ -9,32 +9,36 @@ const db = new (verbose().Database)('peertutoringdb.sqlite', (err: Error | null)
     console.log('Connected to SQLite database.');
 });
 
+
 const sampleData = [
     {
         title: "Study Session #1",
-        course: "MI III",
-        event_date: "2025-04-25",
-        time: "6:00 PM",
+        content: "MI III",
+        creation_date: new Date().toISOString(),
+        event_date: "2025-04-25 18:00",
         expiration_date: "2025-04-30",
-        teachers: "Dr. Trimm",
+        author: "Dr. Trimm",
+        contact_info: "trimm@imsa.edu",
         highpriority: 1
     },
     {
         title: "Study Session #2",
-        course: "BC 1/2",
-        event_date: "2025-04-26",
-        time: "7:00 PM",
+        content: "BC 1/2",
+        creation_date: new Date().toISOString(),
+        event_date: "2025-04-26 19:00",
         expiration_date: "2025-04-30",
-        teachers: "Dr. Krouse",
+        author: "Dr. Krouse",
+        contact_info: "krouse@imsa.edu",
         highpriority: 2
     },
     {
         title: "Study Session #3",
-        course: "MI IV",
-        event_date: "2025-04-27",
-        time: "5:00 PM",
+        content: "MI IV",
+        creation_date: new Date().toISOString(),
+        event_date: "2025-04-27 17:00",
         expiration_date: "2025-04-30",
-        teachers: "Dr. Fogel",
+        author: "Dr. Fogel",
+        contact_info: "fogel@imsa.edu",
         highpriority: 3
     }
 ];
@@ -48,20 +52,20 @@ db.run('DELETE FROM bulletin', (err) => {
 
     const stmt = db.prepare(`
         INSERT INTO bulletin (
-            title, course, event_date, time,
-            expiration_date, teachers, highpriority
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            title, content, creation_date, event_date, expiration_date, author, contact_info, highpriority
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     let completed = 0;
     sampleData.forEach(data => {
         stmt.run(
             data.title,
-            data.course,
+            data.content,
+            data.creation_date,
             data.event_date,
-            data.time,
             data.expiration_date,
-            data.teachers,
+            data.author,
+            data.contact_info,
             data.highpriority,
             (err: Error | null) => {
                 if (err) {
@@ -81,4 +85,4 @@ db.run('DELETE FROM bulletin', (err) => {
             }
         );
     });
-}); 
+});

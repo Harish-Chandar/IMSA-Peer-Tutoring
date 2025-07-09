@@ -7,10 +7,50 @@ function TutorBoard() {
   const [tutorNotes, setTutorNotes] = useState([]);
   const [error, setError] = useState(null);
 
+  // got from tutorcard
+  function assignWing(wingNum) {
+    return String.fromCharCode(wingNum + 64);
+  }
+
+  function getCourses(tutor){
+    let classes = [];
+    if(tutor.mathcore !== ""){
+      classes = classes.concat(tutor.mathcore.replace(/_/g, ' ').split(";"))
+    }
+    if(tutor.physics !== ""){
+      classes = classes.concat(tutor.physics.replace(/_/g, ' ').split(";"))
+    }
+    if(tutor.chem !== ""){
+      classes = classes.concat(tutor.chem.replace(/_/g, ' ').split(";"))
+    } 
+    if(tutor.biology !== ""){
+      classes = classes.concat(tutor.biology.replace(/_/g, ' ').split(";")) 
+    }
+    if(tutor.cs !== ""){
+      classes = classes.concat(tutor.cs.replace(/_/g, ' ').split(";"))
+    }
+    if(tutor.sciother !== ""){
+      classes = classes.concat(tutor.sciother.replace(/_/g, ' ').split(";"))
+    }
+    if(tutor.mathother !== ""){
+      classes = classes.concat(tutor.mathother.replace(/_/g, ' ').split(";"))
+    }
+    if(tutor.language !== ""){
+      classes = classes.concat(tutor.language.replace(/_/g, ' ').split(";"))  
+    }
+
+    while(classes.length > 3){
+      classes.pop();
+    }
+
+    return classes.join(', ');
+  }
+  
+
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-		  const API_URL = 'localhost:5000/api'
+		  const API_URL = 'http://localhost:5000/api'
         const response = await fetch(`${API_URL}/tutors`);
         
         if (!response.ok) {
@@ -35,15 +75,19 @@ function TutorBoard() {
       <button className="!bg-slate-200 hover:!border-slate-300 !border-2 text-blue-500 mt-3 px-4 py-2 rounded"><a href="/findTutors">Find All Tutors</a></button>
       {tutorNotes.length > 0 && (
         <div className="flex flex-row flex-wrap justify-center gap-4 w-full mt-8">
-        {tutorNotes.map(tutor => (
-          <TutorNote
-            key={tutor.id}
-            name={`${tutor.fname} ${tutor.lname}`}
-            hall={`${tutor.hall} ${tutor.wing}-Wing`}
-            classes={tutor.courses}
-            img={tutor.image}
-          />
-        ))}
+        {tutorNotes.map(tutor => {    
+          tutor.courses = getCourses(tutor);
+          return (
+            <TutorNote
+              key={tutor.id}
+              id={tutor.id}
+              name={`${tutor.fname} ${tutor.lname}`}
+              hall={`${tutor.hall} ${assignWing(tutor.wing)}-Wing`}
+              classes={tutor.courses}
+              img={tutor.image}
+            />
+          );
+        })}
       </div>
       )}
       {tutorNotes.length === 0 && (

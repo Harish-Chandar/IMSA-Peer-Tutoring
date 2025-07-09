@@ -41,11 +41,13 @@ function Bulletin() {
             key={note.id}
             title={note.title}
             course={note.course}
-            teachers={note.teachers}
+            teachers={note.author}
             location="IN2"
-            date={note.event_date}
-            time={note.time}
+            date={note.event_date.split(" ")[0]}
+            time={note.event_date.split(" ")[1]}
+            contact={note.contact_info}
             color={note.highpriority}
+            description={note.content}
           />
         ))}
       </div>}
