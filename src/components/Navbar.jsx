@@ -39,7 +39,7 @@ function Navbar() {
           </Link>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="#bulletinboard" className="!text-slate-500 !font-bold">
+          <a href="/#bulletinboard" className="!text-slate-500 !font-bold">
             Bulletin
           </a>
         </h3>

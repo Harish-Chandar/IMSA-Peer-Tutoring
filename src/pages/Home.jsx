@@ -12,13 +12,13 @@ export default function Home() {
       <div className="w-full mt-16"></div>     
       <div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
         <div className="flex flex-col text-left h-full justify-center py-8">
-          <h2 className="text-gray-700 text-3xl md:text-4xl font-bold">Find resources from <span className="text-blue-500">IMSA students</span></h2>
+          <h2 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">Find resources from <span className="text-blue-500">IMSA students</span></h2>
           <h2 className="text-gray-400 text-sm font-bold mb-3">Find help in your very own hall! Discover tutors and find them during their schedules!</h2>
-          <button className="w-1/3 bg-blue-500 text-white py-2 px-4 rounded"><a href="/findTutors">Find tutors now →</a></button>
+          <button className="md:w-1/3 bg-blue-500 text-white py-2 px-4 rounded"><a href="/findTutors">Find tutors now →</a></button>
         </div>
         <img src="/smartguy.png" className="w-full md:w-auto"></img>
       </div>
-      <div className="mt-10 mx-20 mb-4 px-4 md:px-0">
+      <div className="mt-10 mx-2 mb-4 px-4 md:mx-20 md:px-0">
         <h2 className="text-gray-700 text-3xl md:text-5xl font-bold w-full">IMSA students <span className="text-blue-500">for their peers</span></h2>
         <div className="mt-8 flex flex-col md:flex-row w-full justify-evenly gap-4">
           <div className="bg-slate-50 p-4 w-full md:w-2/7">
