@@ -42,7 +42,6 @@ function Bulletin() {
             title={note.title}
             course={note.course}
             teachers={note.author}
-            location="IN2"
             date={note.event_date.split(" ")[0]}
             time={note.event_date.split(" ")[1]}
             contact={note.contact_info}
@@ -52,7 +51,7 @@ function Bulletin() {
         ))}
       </div>}
       {bulletinNotes.length === 0 && (
-        <div className="text-gray-500 text-2xl flex flex-1 items-center">No current events</div>
+        <div className="text-gray-500 text-2xl flex flex-1 items-center">No upcoming events</div>
       )}
     </div>
   );

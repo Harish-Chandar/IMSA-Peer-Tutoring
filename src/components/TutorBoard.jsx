@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import "./../App.css";
 import TutorNote from "./TutorNote.jsx";
-// import { API_URL } from "../config.js";
 
 function TutorBoard() {
   const [tutorNotes, setTutorNotes] = useState([]);
   const [error, setError] = useState(null);
+  const port = process.env.DB_API_PORT || 5000;
 
   // got from tutorcard
   function assignWing(wingNum) {
@@ -75,7 +75,9 @@ function TutorBoard() {
       <button className="!bg-slate-200 hover:!border-slate-300 !border-2 text-blue-500 mt-3 px-4 py-2 rounded"><a href="/findTutors">Find All Tutors</a></button>
       {tutorNotes.length > 0 && (
         <div className="flex flex-row flex-wrap justify-center gap-4 w-full mt-8">
-        {tutorNotes.map(tutor => {    
+        {tutorNotes
+        .filter(tutor => tutor.is_available === 1)
+        .map(tutor => {    
           tutor.courses = getCourses(tutor);
           return (
             <TutorNote

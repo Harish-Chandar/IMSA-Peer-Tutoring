@@ -1,12 +1,10 @@
 import { useState } from "react";
 import "./../App.css";
 
-function Note({ title, course, teachers, location, date, time, color, contact,description }) {
+function Note({ title, course, teachers, date, color, contact,description }) {
   const colorClasses = {
-    1: "bg-[#c1e6fd]",
-    2: "bg-[#5ebcf9]",
-    3: "bg-[#48a4ea]",
-    blue: "bg-blue-100",
+    0: "bg-[#c1e6fd]",
+    1: "bg-[#48a4ea]",
   };
 
   return (
@@ -14,8 +12,7 @@ function Note({ title, course, teachers, location, date, time, color, contact,de
       <div className="p-4 pb-0 flex-1 flex flex-col justify-between">
         <h3 className="font-sans text-black font-bold text-lg mb-1">{title}</h3>
         <h3 className="font-sans text-black text-sm mb-1">{course}</h3>
-        <h3 className="font-sans text-black text-sm mb-1"><b>Teachers:</b> {teachers}</h3>
-        <h3 className="font-sans text-black text-sm mb-1"><b>Location:</b> {location}</h3>
+        <h3 className="font-sans text-black text-sm mb-1"><b>Author:</b> {teachers}</h3>
         <h3 className="font-sans text-black text-sm mb-1"><b>Date:</b> {date}</h3>
         <h3 className="font-sans text-black text-sm mb-1"><b>Contact:</b> {contact}</h3>
         <h3 className="font-sans text-black text-sm"><b>Description:</b> {description}</h3>
