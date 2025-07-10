@@ -11,7 +11,7 @@ export default function Home() {
     <>
       <div className="w-full mt-16"></div>     
       <div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
-        <div className="flex flex-col text-left h-full justify-center py-8">
+        <div className="flex flex-col md:text-left h-full justify-center py-8">
           <h2 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">Find resources from <span className="text-blue-500">IMSA students</span></h2>
           <h2 className="text-gray-400 text-sm font-bold mb-3">Find help in your very own hall! Discover tutors and find them during their schedules!</h2>
           <button className="md:w-1/3 bg-blue-500 text-white py-2 px-4 rounded"><a href="/findTutors">Find tutors now →</a></button>
@@ -38,8 +38,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="mt-20 flex flex-col justify-center items-center p-4 md:p-10 w-full">
-        <div id ="bulletinboard"className="w-full">
+      <div id ="bulletinboard" className="mt-20 flex flex-col justify-center items-center p-4 md:p-10 w-full">
+        <div className="w-full">
           <Bulletin />
         </div>
         <div className="m-4 md:m-10"></div>
