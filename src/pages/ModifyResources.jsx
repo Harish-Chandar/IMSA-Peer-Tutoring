@@ -101,7 +101,7 @@ function ModifyResources() {
   };
 
   return (
-    <div className="bg-[#F1F1F1] min-h-screen w-screen">
+    <div className="bg-[#F1F1F1] min-h-screen w-full">
       <div className="w-full max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
         <h1 className="text-3xl text-gray-700 font-bold text-center mb-6">
           Modify Resources

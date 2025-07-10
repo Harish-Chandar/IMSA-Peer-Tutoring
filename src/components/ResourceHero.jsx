@@ -6,7 +6,7 @@ class ResourceHero extends Component {
     return (
       <div>
         <div className="w-full h-15 mt-8"></div>
-        <div className="flex flex-row justify-evenly w-screen h-80 bg-slate-100">
+        <div className="flex flex-row justify-evenly w-full h-80 bg-slate-100">
           <div className="self-start flex flex-col text-left h-full justify-center">
             <h2 className="text-gray-700 text-4xl font-bold">
               Find resources{" "}

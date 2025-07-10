@@ -59,7 +59,7 @@ const tutors: Tutor[] = [
     totaltime: 0,
     approvedtime: 0,
     starttime: null,
-    is_available: 1,
+    is_available: 0,
     availability:
       "monday,3:30-4:00,4:00-4:30;tuesday,7:00-7:30;wednesday,3:30-4:00",
     courses: "",
