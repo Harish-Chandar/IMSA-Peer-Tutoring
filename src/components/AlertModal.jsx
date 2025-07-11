@@ -1,0 +1,69 @@
+import React, { useState } from 'react';
+
+/*
+Here is how to implement this modal:
+
+Put this code in the function for each page:
+	const [showAlert, setShowAlert] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertTitle, setAlertTitle] = useState('');
+
+Put this code in your HTML:
+<AlertModal
+	isOpen={showAlert}
+	message={alertMessage}
+	onConfirm={(result) => {
+		// true for OK, false for Cancel
+		setShowAlert(false);
+	}}
+	title={alertTitle}
+/>
+
+All you need to do to call the alert is this:
+	setAlertTitle("Your Alert Title");
+	setAlertMessage("A Custom Message");
+	setShowAlert(true);
+*/
+
+export function AlertModal({ isOpen, message, onConfirm, title = "Warning" }) {
+	const [isVisible, setIsVisible] = useState(false);
+
+	React.useEffect(() => {
+		setIsVisible(isOpen);
+	}, [isOpen]);
+
+	const handleConfirm = () => {
+		setIsVisible(false);
+		if (onConfirm) {
+			onConfirm(true); 
+		}
+	};
+
+	const handleCancel = () => {
+		setIsVisible(false);
+		if (onConfirm) {
+			onConfirm(false); 
+		}
+	};
+
+	if (!isVisible) return null;
+
+	return (
+		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+			<div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+				<div className="mb-4">
+					<h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+				</div>
+				<div className="mb-6">
+					<p className="text-gray-700">{message}</p>
+				</div>
+				<div className="flex justify-end space-x-3">
+					<button onClick={handleCancel} className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md font-medium transition-colors duration-200">Cancel</button>
+					<button onClick={handleConfirm} className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transition-colors duration-200">OK</button>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export default AlertModal; 

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
+import AlertModal from '../components/AlertModal';
 
 export function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState(null);
+	const [showModal, setShowModal] = useState(false);
+	const [modalMessage, setModalMessage] = useState('');
+	const [modalTitle, setModalTitle] = useState('');
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
@@ -30,6 +34,13 @@ export function Login() {
 			console.error("Error during login:", err);
 			setError("Login failed due to server error.");
 		}
+	};
+
+	// example for showing the alert
+	const handleTestButtonClick = () => {
+		setModalTitle("testing");
+		setModalMessage("lehfsgs etg");
+		setShowModal(true);
 	};
 
 	return (
@@ -59,6 +70,13 @@ export function Login() {
 							className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 					</div>
+					<button
+						type="button"
+						className="w-full text-lg bg-gray-400 hover:bg-gray-500 text-white py-3 rounded-md font-semibold transition-all duration-200 mb-2"
+						onClick={handleTestButtonClick}
+					>
+						Test Button
+					</button>
 
 					<button 
 						type="submit"
@@ -69,6 +87,20 @@ export function Login() {
 					{error && <p className="text-red-600 text-center text-sm font-medium">{error}</p>}
 				</form>
 			</div>
+			
+			<AlertModal
+				isOpen={showModal}
+				message={modalMessage}
+				onConfirm={(result) => {
+					if (result) {
+						console.log("Alert OK");
+					} else {
+						console.log("Alert Cancel");
+					}
+					setShowModal(false);
+				}}
+				title={modalTitle}
+			/>
 		</div>
 	);
 }
