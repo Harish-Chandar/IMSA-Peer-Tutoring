@@ -19,10 +19,13 @@ import FindTutors from "./pages/FindTutors.jsx";
 import Tutor from "./pages/Tutor.jsx";
 
 
+
 export default function App() {
   return (
     <Router>
+      
       <Navbar />
+      
       <Routes> 
         <Route path="/" element={<Home />} />
         {/* <Route path="/scheduleForm" element={<ScheduleForm />} /> */}
@@ -40,5 +43,6 @@ export default function App() {
         <Route path="/tutor/:id" element={<Tutor />} />
       </Routes>
     </Router>
+    
   );
 }

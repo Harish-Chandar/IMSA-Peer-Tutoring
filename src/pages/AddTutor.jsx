@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
+import UploadWidget from "../components/UploadWidget.js";
 
 function AddTutor() {
   // state for class categories from database
@@ -319,6 +320,8 @@ function AddTutor() {
               onChange={(e) => handleInputChange("availability", e.target.value)}
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
             />
+
+            <UploadWidget/>
 
             {/* class selection sections */}
             {isLoadingClasses ? (
