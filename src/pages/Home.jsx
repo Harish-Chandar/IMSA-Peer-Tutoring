@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import TutorBoard from '../components/TutorBoard';
 import Bulletin from '../components/BulletinBoard';
 import '../App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGroup, faBuilding, faThumbTack , faArrowRight} from '@fortawesome/free-solid-svg-icons';
-
+import { useLocation } from "react-router-dom";
 
 export default function Home() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if(location.hash === "#bulletinboard"){
+      document.getElementById("bulletinboard").scrollIntoView()
+    }
+  })
+
   return (
     <>
       <div className="w-full mt-16"></div>     

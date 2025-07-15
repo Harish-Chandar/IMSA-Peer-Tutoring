@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import "./../App.css";
 import Note from "./BulletinNote.jsx";
-// import {API_URL} from "../config.js";
 
 function Bulletin() {
   const [bulletinNotes, setBulletinNotes] = useState([]);
   const [error, setError] = useState(null);
   // i (atharv) added the http:// it was causing network errors
-  const API_URL = "http://localhost:5000/api";
+
+  const DBPORT = process.env.REACT_APP_DBPORT;
+  const HOST = process.env.REACT_APP_HOST;
+  const API_URL = `http://${HOST}:${DBPORT}/api`;
+
   useEffect(() => {
     const fetchBulletinData = async () => {
       const response = await fetch(`${API_URL}/bulletin`);
@@ -35,15 +38,18 @@ function Bulletin() {
 
       {bulletinNotes.length > 0 && 
 
-      <div className="flex flex-row flex-wrap justify-center gap-4 w-full">
+      <div className="flex flex-row flex-wrap justify-center gap-2 w-full">
         {bulletinNotes.map((note) => (
           <Note
             key={note.id}
             title={note.title}
             course={note.course}
             teachers={note.author}
-            date={note.event_date.split(" ")[0]}
-            time={note.event_date.split(" ")[1]}
+            date={new Date(note.event_date).toLocaleDateString("en-US",{
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            })}
             contact={note.contact_info}
             color={note.highpriority}
             description={note.content}

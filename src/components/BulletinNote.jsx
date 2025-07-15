@@ -8,7 +8,7 @@ function Note({ title, course, teachers, date, color, contact,description }) {
   };
 
   return (
-    <div className={`w-60 h-80 shadow-2xl rounded-2xl m-5 mb-20 relative hover:scale-105 duration-300 flex flex-col ${colorClasses[color]}`}>
+    <div className={`w-60 h-80 shadow-2xl rounded-2xl m-5 relative hover:scale-105 duration-300 flex flex-col ${colorClasses[color]}`}>
       <div className="p-4 pb-0 flex-1 flex flex-col justify-between">
         <h3 className="font-sans text-black font-bold text-lg mb-1">{title}</h3>
         <h3 className="font-sans text-black text-sm mb-1">{course}</h3>

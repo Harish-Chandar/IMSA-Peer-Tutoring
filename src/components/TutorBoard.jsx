@@ -5,7 +5,10 @@ import TutorNote from "./TutorNote.jsx";
 function TutorBoard() {
   const [tutorNotes, setTutorNotes] = useState([]);
   const [error, setError] = useState(null);
-  const port = process.env.DB_API_PORT || 5000;
+
+  const DBPORT = process.env.REACT_APP_DBPORT;
+  const HOST = process.env.REACT_APP_HOST;
+  const API_URL = `http://${HOST}:${DBPORT}/api`;
 
   // got from tutorcard
   function assignWing(wingNum) {
@@ -50,7 +53,6 @@ function TutorBoard() {
   useEffect(() => {
     const fetchTutorData = async () => {
       try {
-		  const API_URL = 'http://localhost:5000/api'
         const response = await fetch(`${API_URL}/tutors`);
         
         if (!response.ok) {
@@ -72,7 +74,7 @@ function TutorBoard() {
   return (
     <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center font-sans shadow-2xl">
       <h1 className="text-4xl text-grey-700 font-bold mb-8">Available Tutors</h1>
-      <button className="!bg-slate-200 hover:!border-slate-300 !border-2 text-blue-500 mt-3 px-4 py-2 rounded"><a href="/findTutors">Find All Tutors</a></button>
+      <button className="bg-blue-500 text-white py-2 px-4 rounded"><a href="/findTutors">Find All Tutors</a></button>
       {tutorNotes.length > 0 && (
         <div className="flex flex-row flex-wrap justify-center gap-4 w-full mt-8">
         {tutorNotes
