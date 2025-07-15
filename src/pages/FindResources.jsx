@@ -97,11 +97,11 @@ function FindResources() {
               setSearchQuery(e.target.value);
               console.log("Search Query:", e.target.value);
             }}
-            className="w-full p-3 text-blue-500 focus:outline-none bg-white text-sm sm:text-base"
+            className="w-full p-4 text-blue-500 focus:outline-none bg-white text-sm sm:text-base"
           />
           <button
             onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 text-xl sm:text-3xl w-full sm:w-auto"
+            className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 text-xl sm:text-3xl w-full sm:w-auto pb-4"
           >
             ⌕
           </button>

@@ -82,11 +82,11 @@ function FindTutors() {
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-3 text-blue-500 focus:outline-none bg-white"
+            className="w-full p-4 text-blue-500 focus:outline-none bg-white"
           />
           <button
             onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 text-3xl"
+            className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 text-3xl pb-4"
           >
             ⌕
           </button>

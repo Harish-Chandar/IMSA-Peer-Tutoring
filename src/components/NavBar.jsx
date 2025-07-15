@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { use, useState } from "react";
+import { Link , useLocation} from "react-router-dom";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation()
 
   return (
     <nav className="bg-slate-50 w-full p-3 fixed top-0 left-0 flex  items-center px-6 shadow-md z-50">
@@ -28,34 +29,31 @@ function Navbar() {
             : "opacity-0 -translate-y-4 pointer-events-none md:opacity-100 md:translate-y-0 md:pointer-events-auto"
         }`}
       >
-        <h3 className="!bg-slate-50 text-slate-500 text-md font-bold ml-10 my-2 md:hidden">
-          <a href="/" className="!text-slate-500 !font-bold">
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 my-2 md:hidden">
+          <a href="/" className={"!font-bold" + (location.pathname === "/" && location.hash === "" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
             Home
           </a>
         </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <Link to="/resources" className="!text-slate-500 !font-bold">
+        <h3 className="!bg-slate-50 bg-blue-500 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+          <a href="/resources" className={"!font-bold" + (location.pathname === "/resources" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
             Class Resources
+          </a>
+        </h3>
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+          <Link to="/#bulletinboard" className={"!font-bold" + (location.pathname === "/" && location.hash === "#bulletinboard" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
+            Bulletin
           </Link>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="/#bulletinboard" className="!text-slate-500 !font-bold">
-            Bulletin
-          </a>
-        </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <a href="/findTutors" className="!text-slate-500 !font-bold">
+          <a href="/findTutors" className={"!font-bold" + (location.pathname === "/findTutors" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
             Tutors
           </a>
         </h3>
-
-        <button
-          type="button"
-          className="bg-blue-500 text-slate-50 text-lg font-bold mt-1 mb-3 p-1 px-2 ml-10 rounded mb-1 md:mb-0 md:mt-0 md:ml-3"
-          onClick={() => (window.location.href = "/login")}
-        >
-          Login
-        </button>
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+          <a href="/login" className={"!font-bold" + (location.pathname === "/login" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
+            Login
+          </a>
+        </h3>
       </div>
     </nav>
   );

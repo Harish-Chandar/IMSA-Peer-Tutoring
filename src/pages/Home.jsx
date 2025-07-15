@@ -5,6 +5,7 @@ import '../App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGroup, faBuilding, faThumbTack , faArrowRight} from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from "react-router-dom";
+import Footer from '../components/Footer.jsx';
 
 export default function Home() {
   const location = useLocation()
@@ -53,6 +54,7 @@ export default function Home() {
         <div className="m-4 md:m-10"></div>
         <TutorBoard/>
       </div>
+      <Footer />
     </>
   );
 }
