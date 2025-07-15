@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ResourceEditCard from "../components/ResourceEditCard";
+import Footer from "../components/Footer.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -164,6 +165,7 @@ function ModifyResources() {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

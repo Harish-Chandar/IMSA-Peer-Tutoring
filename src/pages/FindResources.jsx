@@ -3,6 +3,7 @@ import ResourceCard from "../components/ResourceCard.jsx";
 import ResourceHero from "../components/ResourceHero.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -173,6 +174,7 @@ function FindResources() {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

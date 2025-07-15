@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Footer from "./Footer";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -185,6 +186,7 @@ function EditResourceInfo() {
           </div>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Footer from "../components/Footer";
 
 // Base URL for API calls
 const API_BASE_URL = "http://localhost:5000";
@@ -381,6 +382,7 @@ function Tutor() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

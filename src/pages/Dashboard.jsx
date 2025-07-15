@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Footer from "../components/Footer";
 
 function Dashboard() {
   // we actually don't have a field in the database for all the classes so i hardcoded it
@@ -529,6 +530,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

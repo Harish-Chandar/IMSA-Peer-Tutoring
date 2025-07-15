@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TutorCard from "../components/TutorCard";
+import Footer from "../components/Footer";
 
 function FindTutors() {
   const [tutors, setTutors] = useState([]);
@@ -151,6 +152,7 @@ function FindTutors() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

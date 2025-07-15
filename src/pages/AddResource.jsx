@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Footer from "../components/Footer.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -243,6 +244,7 @@ function ResourceForm() {
           </button>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }
