@@ -9,8 +9,7 @@ const db = new (verbose().Database)('peertutoringdb.sqlite', (err: Error | null)
     console.log('Connected to SQLite database.');
 });
 
-
-const sampleData = [
+export const sampleData = [
     {
         title: "Study Session #1",
         content: "MI III",
@@ -42,47 +41,3 @@ const sampleData = [
         highpriority: 3
     }
 ];
-
-db.run('DELETE FROM bulletin', (err) => {
-    if (err) {
-        console.error('Error clearing table:', err.message);
-        db.close();
-        return;
-    }
-
-    const stmt = db.prepare(`
-        INSERT INTO bulletin (
-            title, content, creation_date, event_date, expiration_date, author, contact_info, highpriority
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    let completed = 0;
-    sampleData.forEach(data => {
-        stmt.run(
-            data.title,
-            data.content,
-            data.creation_date,
-            data.event_date,
-            data.expiration_date,
-            data.author,
-            data.contact_info,
-            data.highpriority,
-            (err: Error | null) => {
-                if (err) {
-                    console.error('Error inserting data:', err.message);
-                }
-                completed++;
-                if (completed === sampleData.length) {
-                    stmt.finalize(() => {
-                        db.close((err) => {
-                            if (err) {
-                                console.error('Error closing database:', err.message);
-                            }
-                            console.log('Sample data inserted successfully!');
-                        });
-                    });
-                }
-            }
-        );
-    });
-});
