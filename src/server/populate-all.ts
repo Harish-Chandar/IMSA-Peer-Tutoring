@@ -1,5 +1,6 @@
 import sqlite3 from "sqlite3";
-import { tutors, classCategories } from "./populate-tutors";
+import { tutors } from "./populate-tutors";
+import { classCategories } from "./populate-classes";
 import { sampleData } from "./populate-bulletin";
 import { sampleResources, sampleLinks } from "./populate-resource";
 
@@ -30,24 +31,28 @@ function populateTutorsAndClasses(db: sqlite3.Database, callback: () => void) {
       }
       for (const [department, classes] of Object.entries(classCategories)) {
         for (const className of classes) {
-          insertClassStmt.run(className, department, function (err: SQLiteError) {
-            if (err) {
-              console.error(
-                `Error inserting class "${className}":`,
-                err?.message
-              );
-            } else {
-              insertedCount++;
-              console.log(
-                `Successfully inserted class: ${className} (Department: ${department})`
-              );
+          insertClassStmt.run(
+            className,
+            department,
+            function (err: SQLiteError) {
+              if (err) {
+                console.error(
+                  `Error inserting class "${className}":`,
+                  err?.message
+                );
+              } else {
+                insertedCount++;
+                console.log(
+                  `Successfully inserted class: ${className} (Department: ${department})`
+                );
+              }
+              if (insertedCount === totalClasses) {
+                insertClassStmt.finalize();
+                console.log(`Total of ${insertedCount} classes inserted.`);
+                cb();
+              }
             }
-            if (insertedCount === totalClasses) {
-              insertClassStmt.finalize();
-              console.log(`Total of ${insertedCount} classes inserted.`);
-              cb();
-            }
-          });
+          );
         }
       }
     });
@@ -128,9 +133,9 @@ function populateTutorsAndClasses(db: sqlite3.Database, callback: () => void) {
 }
 
 function populateBulletin(db: sqlite3.Database, callback: () => void) {
-  db.run('DELETE FROM bulletin', (err) => {
+  db.run("DELETE FROM bulletin", (err) => {
     if (err) {
-      console.error('Error clearing table:', err.message);
+      console.error("Error clearing table:", err.message);
       callback();
       return;
     }
@@ -140,7 +145,7 @@ function populateBulletin(db: sqlite3.Database, callback: () => void) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
     let completed = 0;
-    sampleData.forEach(data => {
+    sampleData.forEach((data) => {
       stmt.run(
         data.title,
         data.content,
@@ -152,16 +157,16 @@ function populateBulletin(db: sqlite3.Database, callback: () => void) {
         data.highpriority,
         (err: Error | null) => {
           if (err) {
-            console.error('Error inserting data:', err.message);
+            console.error("Error inserting data:", err.message);
           }
           completed++;
           if (completed === sampleData.length) {
             stmt.finalize(() => {
-              db.all('SELECT * FROM bulletin', [], (err, rows) => {
+              db.all("SELECT * FROM bulletin", [], (err, rows) => {
                 if (err) {
-                  console.error('Error verifying bulletin data:', err.message);
+                  console.error("Error verifying bulletin data:", err.message);
                 } else {
-                  console.log('Inserted bulletin posts:');
+                  console.log("Inserted bulletin posts:");
                   console.table(rows);
                 }
                 callback();
@@ -195,53 +200,74 @@ function populateResources(db: sqlite3.Database, callback: () => void) {
       }
       sampleResources.forEach((resource, index) => {
         const searchField = `${resource.teacher.toLowerCase()} ${resource.course.toLowerCase()}`;
-        db.run(insertResource, [
-          resource.teacher,
-          resource.email,
-          resource.course,
-          resource.department,
-          resource.url,
-          resource.type,
-          searchField
-        ], function (err) {
-          if (err) {
-            console.error(`Error inserting resource ${index + 1}:`, err?.message);
-          } else {
-            console.log(`Successfully inserted resource: ${resource.teacher} - ${resource.type}`);
-            const resourceId = this.lastID;
-            const insertLink = `INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)`;
-            const linksForThisResource = sampleLinks.filter(link => link.resource_id === index + 1);
-            linksForThisResource.forEach(link => {
-              db.run(insertLink, [resourceId, link.label, link.url], (err) => {
-                if (err) {
-                  console.error(`Error inserting link for resource ${resourceId}:`, err.message);
-                } else {
-                  console.log(`Successfully inserted link: ${link.label}`);
-                }
+        db.run(
+          insertResource,
+          [
+            resource.teacher,
+            resource.email,
+            resource.course,
+            resource.department,
+            resource.url,
+            resource.type,
+            searchField,
+          ],
+          function (err) {
+            if (err) {
+              console.error(
+                `Error inserting resource ${index + 1}:`,
+                err?.message
+              );
+            } else {
+              console.log(
+                `Successfully inserted resource: ${resource.teacher} - ${resource.type}`
+              );
+              const resourceId = this.lastID;
+              const insertLink = `INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)`;
+              const linksForThisResource = sampleLinks.filter(
+                (link) => link.resource_id === index + 1
+              );
+              linksForThisResource.forEach((link) => {
+                db.run(
+                  insertLink,
+                  [resourceId, link.label, link.url],
+                  (err) => {
+                    if (err) {
+                      console.error(
+                        `Error inserting link for resource ${resourceId}:`,
+                        err.message
+                      );
+                    } else {
+                      console.log(`Successfully inserted link: ${link.label}`);
+                    }
+                  }
+                );
               });
-            });
-          }
-          completed++;
-          if (completed === sampleResources.length) {
-            db.all('SELECT * FROM resources', [], (err, rows) => {
-              if (err) {
-                console.error('Error verifying resources data:', err.message);
-              } else {
-                console.log('Inserted resources:');
-                console.table(rows);
-              }
-              db.all('SELECT * FROM resource_links', [], (err, rows) => {
+            }
+            completed++;
+            if (completed === sampleResources.length) {
+              db.all("SELECT * FROM resources", [], (err, rows) => {
                 if (err) {
-                  console.error('Error verifying resource_links data:', err.message);
+                  console.error("Error verifying resources data:", err.message);
                 } else {
-                  console.log('Inserted resource links:');
+                  console.log("Inserted resources:");
                   console.table(rows);
                 }
-                callback();
+                db.all("SELECT * FROM resource_links", [], (err, rows) => {
+                  if (err) {
+                    console.error(
+                      "Error verifying resource_links data:",
+                      err.message
+                    );
+                  } else {
+                    console.log("Inserted resource links:");
+                    console.table(rows);
+                  }
+                  callback();
+                });
               });
-            });
+            }
           }
-        });
+        );
       });
     });
   });
@@ -289,4 +315,4 @@ populateTutorsAndClasses(db, () => {
       });
     });
   });
-}); 
+});
