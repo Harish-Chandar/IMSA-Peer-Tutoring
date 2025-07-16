@@ -3,88 +3,13 @@ import Footer from "../components/Footer";
 
 function Dashboard() {
   // environment variables for API configuration
-  const DBPORT = process.env.REACT_APP_DBPORT;
-  const HOST = process.env.REACT_APP_HOST;
+  const DBPORT = process.env.REACT_APP_DBPORT || "5000";
+  const HOST = process.env.REACT_APP_HOST || "localhost";
   const baseUrl = `http://${HOST}:${DBPORT}`;
 
-  // we actually don't have a field in the database for all the classes so i hardcoded it
-  const classes = [
-    "SI Physics",
-    "Physics: Sound and Light",
-    "Physics C: Mechanics",
-    "Physics C: Electricity/Magnetism",
-    "Planetary Science",
-    "Modern Physics",
-    "Computational Science",
-    "SI Chemistry",
-    "Advanced Chemistry - Structure and Properties",
-    "Advanced Chemistry - Chemical Reactions",
-    "The Physical Chemistry of Materials",
-    "Organic Chemistry I",
-    "Organic Chemistry II",
-    "Biochemistry",
-    "Environmental Chemistry",
-    "Medicinal Chemistry",
-    "Biology: Evolution & Environment",
-    "Biology: Molecular & Cellular",
-    "Evolution, Biodiversity, and Ecology",
-    "Cancer Biology",
-    "Environmental Microbiology",
-    "Pathophysiology",
-    "Biology of Behavior",
-    "Methods of Scientific Inquiries",
-    "Electronics",
-    "Engineering",
-    "Engineering: Statics & Dynamics",
-    "Introduction to Proofs",
-    "Modern Geometries",
-    "Statistical Exploration and Description",
-    "Statistical Experimentation and Inference",
-    "Number Theory",
-    "Discrete Mathematics",
-    "Multi-Variable Calculus",
-    "Theory of Analysis",
-    "Differential Equations",
-    "Linear Algebra",
-    "Abstract Algebra",
-    "Geometry",
-    "MI I/II",
-    "MI II",
-    "MI III",
-    "MI IV",
-    "AB Calculus I",
-    "AB Calculus II",
-    "BC I",
-    "BC II",
-    "BC III",
-    "BC I/II",
-    "BC II/III",
-    "CSI",
-    "OOP",
-    "Web Technologies",
-    "Advanced Programming",
-    "Microcontroller Applications (CS)",
-    "CS Seminar: Android Apps Development",
-    "CS Seminar: Linux and Cybersecurity",
-    "CS Seminar: Machine Learning",
-    "French I",
-    "French II",
-    "French III",
-    "French IV",
-    "French V",
-    "Spanish II",
-    "Spanish III",
-    "Spanish IV",
-    "Spanish V",
-    "German I",
-    "German II",
-    "German III",
-    "Mandarin Chinese I",
-    "Mandarin Chinese II",
-    "Mandarin Chinese III",
-  ];
-
   // state variables for class search
+  const [classes, setClasses] = useState([]);
+  const [isLoadingClasses, setIsLoadingClasses] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState(null);
 
@@ -112,7 +37,7 @@ function Dashboard() {
 
   // resources states for class management
   const [resources, setResources] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [resourceLink, setResourceLink] = useState("");
   const [resourceSearchQuery, setResourceSearchQuery] = useState("");
   const [filteredResources, setFilteredResources] = useState([]);
 
@@ -120,6 +45,7 @@ function Dashboard() {
   useEffect(() => {
     fetchPosts();
     fetchResources();
+    fetchClasses();
   }, []);
 
   // filter resources when search query updates WITH UPDATED RESOURCES TABLE STUFF
@@ -165,6 +91,32 @@ function Dashboard() {
       setFilteredResources(data);
     } catch (error) {
       console.error("error fetching resources:", error);
+    }
+  };
+
+  // fetch classes from database
+  const fetchClasses = async () => {
+    try {
+      setIsLoadingClasses(true);
+      const response = await fetch(`${baseUrl}/api/classes`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const classData = await response.json();
+
+      // extract just the class names from the response
+      const classNames = classData.map((classItem) => classItem.class_name);
+      setClasses(classNames);
+
+      console.log("Fetched classes from database:", classNames);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      // fallback to empty array if API fails
+      setClasses([]);
+    } finally {
+      setIsLoadingClasses(false);
     }
   };
 
@@ -246,10 +198,10 @@ function Dashboard() {
     }
   };
 
-  // handle resource upload
+  // handle resource creation
   const handleResourceUpload = async () => {
-    if (!selectedFile || !selectedClass) {
-      alert("please select a file and a class.");
+    if (!resourceLink || !selectedClass) {
+      alert("please enter a resource link and select a class.");
       return;
     }
 
@@ -264,8 +216,8 @@ function Dashboard() {
           email: "admin@imsa.edu",
           course: selectedClass,
           department: "General",
-          url: `/uploads/${selectedFile.name}`,
-          type: selectedFile.type || "file",
+          url: resourceLink,
+          type: "link",
         }),
       });
 
@@ -274,17 +226,17 @@ function Dashboard() {
         fetchResources();
 
         // clear form
-        setSelectedFile(null);
+        setResourceLink("");
         setSelectedClass(null);
         setSearchTerm("");
 
-        alert("resource uploaded successfully!");
+        alert("resource created successfully!");
       } else {
-        alert("error uploading resource. please try again.");
+        alert("error creating resource. please try again.");
       }
     } catch (error) {
-      console.error("error uploading resource:", error);
-      alert("error uploading resource. please try again.");
+      console.error("error creating resource:", error);
+      alert("error creating resource. please try again.");
     }
   };
 
@@ -417,9 +369,17 @@ function Dashboard() {
           <textarea
             placeholder="Enter event description..."
             value={newPost.content}
-            onChange={(e) => handlePostInputChange("content", e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length <= 110) {
+                handlePostInputChange("content", e.target.value);
+              }
+            }}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
+            maxLength={110}
           />
+          <div className="text-right text-sm text-gray-500 mb-2">
+            {newPost.content.length}/110 characters
+          </div>
 
           <label className="flex items-center mb-2">
             <input
@@ -454,11 +414,13 @@ function Dashboard() {
           </p>
           <input
             type="text"
-            placeholder="Search for a class..."
+            placeholder={
+              isLoadingClasses ? "Loading classes..." : "Search for a class..."
+            }
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            disabled={selectedClass !== null}
+            disabled={selectedClass !== null || isLoadingClasses}
           />
 
           {searchTerm && !selectedClass && (
@@ -495,16 +457,18 @@ function Dashboard() {
             Link(s) of resources:
           </p>
           <input
-            type="file" // ATHARV PLEASE CHANGE THIS TO TEXT AND CHANGE THAT METHOD TO BE LINKS INSTEAD
-            onChange={(e) => setSelectedFile(e.target.files[0])}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            type="text"
+            placeholder="Enter resource link (URL)..."
+            value={resourceLink}
+            onChange={(e) => setResourceLink(e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
           <div className="py-2"></div>
           <button
             onClick={handleResourceUpload}
             className="w-1/3 text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"
           >
-            Upload
+            Create Resource
           </button>
 
           <p className="font-sans mt-4 text-left text-gray-700 font-bold py-2">
