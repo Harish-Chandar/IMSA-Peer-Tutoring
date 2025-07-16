@@ -321,7 +321,7 @@ function AddTutor() {
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
             />
 
-            <UploadWidget setImageUrl={(url) => handleInputChange("image", url)}/>
+            <UploadWidget  setImageUrl={(url) => handleInputChange("image", url)} />
 
             {/* class selection sections */}
             {isLoadingClasses ? (
