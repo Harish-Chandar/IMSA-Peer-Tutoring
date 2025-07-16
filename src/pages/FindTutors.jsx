@@ -77,7 +77,7 @@ function FindTutors() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-20">
+    <div className="bg-gray-100 min-h-screen pt-20">
       <div className="p-4 max-w-6xl mx-auto py-10">
         <h1 className="text-5xl mb-6 text-center font-sans font-bold tracking-wide text-gray-700">
           Find Tutors Below!
