@@ -374,7 +374,7 @@ function Tutor() {
                     if (schedule[dayName] && schedule[dayName].length > 0) {
                       return schedule[dayName].map((timeSlot, index) => (
                         <div key={index} className="mb-1">
-                          {timeSlot}
+                          {timeSlot} PM
                         </div>
                       ));
                     } else {
