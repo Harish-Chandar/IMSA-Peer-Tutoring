@@ -4,6 +4,22 @@ import { useNavigate } from 'react-router-dom';
 
 import { isTokenExpired } from "../util.ts"
 
+function Dashboard() {
+  // environment variables for API configuration
+  const DBPORT = process.env.REACT_APP_DBPORT || "5000";
+  const HOST = process.env.REACT_APP_HOST || "localhost";
+  const baseUrl = `http://${HOST}:${DBPORT}`;
+
+  // state variables for class search
+  const [classes, setClasses] = useState([]);
+  const [isLoadingClasses, setIsLoadingClasses] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedClass, setSelectedClass] = useState(null);
+
+  const filteredClasses = classes.filter((c) =>
+    c.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
 const token = localStorage.getItem("token");
 
 
@@ -119,7 +135,7 @@ function Dashboard() {
 
   // resources states for class management
   const [resources, setResources] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [resourceLink, setResourceLink] = useState("");
   const [resourceSearchQuery, setResourceSearchQuery] = useState("");
   const [filteredResources, setFilteredResources] = useState([]);
 
@@ -127,6 +143,7 @@ function Dashboard() {
   useEffect(() => {
     fetchPosts();
     fetchResources();
+    fetchClasses();
   }, []);
 
   // filter resources when search query updates WITH UPDATED RESOURCES TABLE STUFF
@@ -155,7 +172,7 @@ function Dashboard() {
   // fetch posts from database
   const fetchPosts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/bulletin");
+      const response = await fetch(`${baseUrl}/api/bulletin`);
       const data = await response.json();
       setPosts(data);
     } catch (error) {
@@ -166,12 +183,38 @@ function Dashboard() {
   // updated fetchResources to have the new structure of the resources table
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/resources");
+      const response = await fetch(`${baseUrl}/api/resources`);
       const data = await response.json();
       setResources(data);
       setFilteredResources(data);
     } catch (error) {
       console.error("error fetching resources:", error);
+    }
+  };
+
+  // fetch classes from database
+  const fetchClasses = async () => {
+    try {
+      setIsLoadingClasses(true);
+      const response = await fetch(`${baseUrl}/api/classes`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const classData = await response.json();
+
+      // extract just the class names from the response
+      const classNames = classData.map((classItem) => classItem.class_name);
+      setClasses(classNames);
+
+      console.log("Fetched classes from database:", classNames);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      // fallback to empty array if API fails
+      setClasses([]);
+    } finally {
+      setIsLoadingClasses(false);
     }
   };
 
@@ -187,7 +230,7 @@ function Dashboard() {
   const handleCreatePost = async () => {
     if (newPost.title && newPost.event_date) {
       try {
-        const response = await fetch("http://localhost:5000/api/bulletin", {
+        const response = await fetch(`${baseUrl}/api/bulletin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -237,12 +280,9 @@ function Dashboard() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/bulletin/${postId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${baseUrl}/api/bulletin/${postId}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           // refresh posts from database
@@ -257,15 +297,15 @@ function Dashboard() {
     }
   };
 
-  // handle resource upload
+  // handle resource creation
   const handleResourceUpload = async () => {
-    if (!selectedFile || !selectedClass) {
-      alert("please select a file and a class.");
+    if (!resourceLink || !selectedClass) {
+      alert("please enter a resource link and select a class.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/resources", {
+      const response = await fetch(`${baseUrl}/api/resources`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -276,8 +316,8 @@ function Dashboard() {
           email: "admin@imsa.edu",
           course: selectedClass,
           department: "General",
-          url: `/uploads/${selectedFile.name}`,
-          type: selectedFile.type || "file",
+          url: resourceLink,
+          type: "link",
         }),
       });
 
@@ -286,17 +326,17 @@ function Dashboard() {
         fetchResources();
 
         // clear form
-        setSelectedFile(null);
+        setResourceLink("");
         setSelectedClass(null);
         setSearchTerm("");
 
-        alert("resource uploaded successfully!");
+        alert("resource created successfully!");
       } else {
-        alert("error uploading resource. please try again.");
+        alert("error creating resource. please try again.");
       }
     } catch (error) {
-      console.error("error uploading resource:", error);
-      alert("error uploading resource. please try again.");
+      console.error("error creating resource:", error);
+      alert("error creating resource. please try again.");
     }
   };
 
@@ -311,12 +351,9 @@ function Dashboard() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/resources/${resourceId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${baseUrl}/api/resources/${resourceId}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           // refresh resources from database
@@ -342,7 +379,9 @@ function Dashboard() {
             Bulletin Board
           </h2>
 
-        <h3 className="font-sans text-xl font-bold text-gray-600 mb-3  mt-2">Manage Posts</h3>
+          <h3 className="font-sans text-xl font-bold text-gray-600 mb-3  mt-2">
+            Manage Posts
+          </h3>
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
             {posts.length === 0 ? (
               <p className="text-gray-500">No posts yet.</p>
@@ -376,7 +415,9 @@ function Dashboard() {
             Create Post
           </h3>
 
-          <p className="font-sans font-bold text-gray-700 text-left">Title of event:</p>
+          <p className="font-sans font-bold text-gray-700 text-left">
+            Title of event:
+          </p>
           <input
             type="text"
             placeholder="Enter event title..."
@@ -385,7 +426,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans font-bold text-gray-700 text-left py-2">Date of event:</p>
+          <p className="font-sans font-bold text-gray-700 text-left py-2">
+            Date of event:
+          </p>
           {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
           <input
             type="date"
@@ -396,7 +439,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
           />
 
-          <p className="font-bold py-2 font-sans text-gray-700 text-left">Author:</p>
+          <p className="font-bold py-2 font-sans text-gray-700 text-left">
+            Author:
+          </p>
           <input
             type="text"
             placeholder="Enter author name..."
@@ -405,7 +450,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className=" font-bold py-2 font-sans text-gray-700 text-left">Contact Info:</p>
+          <p className=" font-bold py-2 font-sans text-gray-700 text-left">
+            Contact Info:
+          </p>
           <input
             type="text"
             placeholder="Enter contact information..."
@@ -416,13 +463,23 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-bold py-2 font-sans text-gray-700 text-left">Description:</p>
+          <p className="font-bold py-2 font-sans text-gray-700 text-left">
+            Description:
+          </p>
           <textarea
             placeholder="Enter event description..."
             value={newPost.content}
-            onChange={(e) => handlePostInputChange("content", e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length <= 110) {
+                handlePostInputChange("content", e.target.value);
+              }
+            }}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
+            maxLength={110}
           />
+          <div className="text-right text-sm text-gray-500 mb-2">
+            {newPost.content.length}/110 characters
+          </div>
 
           <label className="flex items-center mb-2">
             <input
@@ -442,8 +499,6 @@ function Dashboard() {
           >
             Post
           </button>
-
-          
         </div>
 
         <div className="rounded-2xl shadow-md p-4 bg-white border">
@@ -454,14 +509,18 @@ function Dashboard() {
             Add Resource
           </h3>
 
-          <p className="font-sans mb-2 text-left text-gray-700 font-bold">Select a class:</p>
+          <p className="font-sans mb-2 text-left text-gray-700 font-bold">
+            Select a class:
+          </p>
           <input
             type="text"
-            placeholder="Search for a class..."
+            placeholder={
+              isLoadingClasses ? "Loading classes..." : "Search for a class..."
+            }
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            disabled={selectedClass !== null}
+            disabled={selectedClass !== null || isLoadingClasses}
           />
 
           {searchTerm && !selectedClass && (
@@ -494,18 +553,22 @@ function Dashboard() {
             </div>
           )}
 
-          <p className="font-sans text-left text-gray-700 py-2  font-bold">Link(s) of resources:</p>
+          <p className="font-sans text-left text-gray-700 py-2  font-bold">
+            Link(s) of resources:
+          </p>
           <input
-            type="file" // ATHARV PLEASE CHANGE THIS TO TEXT AND CHANGE THAT METHOD TO BE LINKS INSTEAD
-            onChange={(e) => setSelectedFile(e.target.files[0])}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            type="text"
+            placeholder="Enter resource link (URL)..."
+            value={resourceLink}
+            onChange={(e) => setResourceLink(e.target.value)}
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
           <div className="py-2"></div>
           <button
             onClick={handleResourceUpload}
             className="w-1/3 text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"
           >
-            Upload
+            Create Resource
           </button>
 
           <p className="font-sans mt-4 text-left text-gray-700 font-bold py-2">

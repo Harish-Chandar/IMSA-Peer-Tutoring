@@ -13,6 +13,11 @@ function AddTutor() {
       navigate('/login', { replace: true });
     }
   }, []);
+  // environment variables for API configuration
+  const DBPORT = process.env.REACT_APP_DBPORT;
+  const HOST = process.env.REACT_APP_HOST;
+  const baseUrl = `http://${HOST}:${DBPORT}`;
+
   // state for class categories from database
   const [classCategories, setClassCategories] = useState({});
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
@@ -28,7 +33,17 @@ function AddTutor() {
     hall: "",
     wing: "",
     image: "",
-    availability: "",
+  });
+
+  // separate state for availability by day
+  const [availability, setAvailability] = useState({
+    sunday: "",
+    monday: "",
+    tuesday: "",
+    wednesday: "",
+    thursday: "",
+    friday: "",
+    saturday: "",
   });
 
   // selected classes for each category
@@ -71,7 +86,7 @@ function AddTutor() {
   const fetchClasses = async () => {
     try {
       setIsLoadingClasses(true);
-      const response = await fetch("http://localhost:5000/api/classes");
+      const response = await fetch(`${baseUrl}/api/classes`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -103,12 +118,41 @@ function AddTutor() {
   // fetch all tutors from api
   const fetchTutors = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/tutors/search");
+      const response = await fetch(`${baseUrl}/api/tutors/search`);
       const data = await response.json();
       setTutors(data);
     } catch (error) {
       console.error("error fetching tutors:", error);
     }
+  };
+
+  // handle availability input changes
+  const handleAvailabilityChange = (day, value) => {
+    setAvailability((prev) => ({
+      ...prev,
+      [day]: value.trim(),
+    }));
+  };
+
+  // construct availability string for database
+  const constructAvailabilityString = () => {
+    const dayEntries = [];
+
+    Object.entries(availability).forEach(([day, timeSlots]) => {
+      if (timeSlots && timeSlots.trim()) {
+        // split by commas and filter out empty entries
+        const slots = timeSlots
+          .split(",")
+          .map((slot) => slot.trim())
+          .filter((slot) => slot.length > 0);
+
+        if (slots.length > 0) {
+          dayEntries.push(`${day},${slots.join(",")}`);
+        }
+      }
+    });
+
+    return dayEntries.join(";");
   };
 
   // handle form input changes
@@ -159,10 +203,11 @@ function AddTutor() {
         imsaid: newTutor.imsaid ? parseInt(newTutor.imsaid) : null,
         hall: newTutor.hall ? parseInt(newTutor.hall) : null,
         wing: newTutor.wing ? parseInt(newTutor.wing) : null,
+        availability: constructAvailabilityString(),
         ...formattedClasses,
       };
 
-      const response = await fetch("http://localhost:5000/api/tutors", {
+      const response = await fetch(`${baseUrl}/api/tutors`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -185,7 +230,17 @@ function AddTutor() {
           hall: "",
           wing: "",
           image: "",
-          availability: "",
+        });
+
+        // reset availability
+        setAvailability({
+          sunday: "",
+          monday: "",
+          tuesday: "",
+          wednesday: "",
+          thursday: "",
+          friday: "",
+          saturday: "",
         });
 
         // reset selected classes
@@ -215,12 +270,9 @@ function AddTutor() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/tutors/${tutorId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${baseUrl}/api/tutors/${tutorId}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           // refresh tutors from database after successful deletion
@@ -239,7 +291,7 @@ function AddTutor() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="min-h-screen overflow-x-hidden overflow-y-auto py-[6rem] px-4 custom-container">
-        <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">
+        <h1 className="text-blue-500 text-4xl mb-6 text-left font-sans font-bold">
           Manage Tutors
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -319,16 +371,36 @@ function AddTutor() {
               placeholder="Enter tutor description..."
               value={newTutor.blurb}
               onChange={(e) => handleInputChange("blurb", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">Availability:</p>
-            <textarea
-              placeholder="Format: sunday,5:30-6:00,6:00-6:30;tuesday,9:00-9:30"
-              value={newTutor.availability}
-              onChange={(e) => handleInputChange("availability", e.target.value)}
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
             />
+
+            {/* availability fields for each day */}
+            <div className="mb-4">
+              <p className="font-sans font-bold text-gray-700 text-left mb-2">
+                Availability (enter time slots separated by commas):
+              </p>
+              <p className="font-sans text-xs text-gray-500 mb-3 text-left">
+                Example: "5:30-6:00, 6:00-6:30, 7:00-7:30", please do not
+                include AM or PM!
+              </p>
+
+              {Object.entries(availability).map(([day, timeSlots]) => (
+                <div key={day} className="mb-2">
+                  <label className="font-sans text-gray-600 text-sm capitalize mb-1 block text-left">
+                    {day}:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 5:30-6:00, 6:00-6:30"
+                    value={timeSlots}
+                    onChange={(e) =>
+                      handleAvailabilityChange(day, e.target.value)
+                    }
+                    className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black text-sm"
+                  />
+                </div>
+              ))}
+            </div>
 
             {/* class selection sections */}
             {isLoadingClasses ? (
@@ -356,7 +428,9 @@ function AddTutor() {
                             selectedClasses[category]?.includes(className) ||
                             false
                           }
-                          onChange={() => handleClassToggle(category, className)}
+                          onChange={() =>
+                            handleClassToggle(category, className)
+                          }
                           className="mr-2"
                         />
                         <span className="text-sm">{className}</span>
