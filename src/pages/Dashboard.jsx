@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 
 function Dashboard() {
+  // environment variables for API configuration
+  const DBPORT = process.env.REACT_APP_DBPORT;
+  const HOST = process.env.REACT_APP_HOST;
+  const baseUrl = `http://${HOST}:${DBPORT}`;
+
   // we actually don't have a field in the database for all the classes so i hardcoded it
   const classes = [
     "SI Physics",
@@ -143,7 +148,7 @@ function Dashboard() {
   // fetch posts from database
   const fetchPosts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/bulletin");
+      const response = await fetch(`${baseUrl}/api/bulletin`);
       const data = await response.json();
       setPosts(data);
     } catch (error) {
@@ -154,7 +159,7 @@ function Dashboard() {
   // updated fetchResources to have the new structure of the resources table
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/resources");
+      const response = await fetch(`${baseUrl}/api/resources`);
       const data = await response.json();
       setResources(data);
       setFilteredResources(data);
@@ -175,7 +180,7 @@ function Dashboard() {
   const handleCreatePost = async () => {
     if (newPost.title && newPost.event_date) {
       try {
-        const response = await fetch("http://localhost:5000/api/bulletin", {
+        const response = await fetch(`${baseUrl}/api/bulletin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -224,12 +229,9 @@ function Dashboard() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/bulletin/${postId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${baseUrl}/api/bulletin/${postId}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           // refresh posts from database
@@ -252,7 +254,7 @@ function Dashboard() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/resources", {
+      const response = await fetch(`${baseUrl}/api/resources`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -297,12 +299,9 @@ function Dashboard() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/resources/${resourceId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${baseUrl}/api/resources/${resourceId}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           // refresh resources from database
@@ -328,7 +327,9 @@ function Dashboard() {
             Bulletin Board
           </h2>
 
-        <h3 className="font-sans text-xl font-bold text-gray-600 mb-3  mt-2">Manage Posts</h3>
+          <h3 className="font-sans text-xl font-bold text-gray-600 mb-3  mt-2">
+            Manage Posts
+          </h3>
           <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
             {posts.length === 0 ? (
               <p className="text-gray-500">No posts yet.</p>
@@ -362,7 +363,9 @@ function Dashboard() {
             Create Post
           </h3>
 
-          <p className="font-sans font-bold text-gray-700 text-left">Title of event:</p>
+          <p className="font-sans font-bold text-gray-700 text-left">
+            Title of event:
+          </p>
           <input
             type="text"
             placeholder="Enter event title..."
@@ -371,7 +374,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-sans font-bold text-gray-700 text-left py-2">Date of event:</p>
+          <p className="font-sans font-bold text-gray-700 text-left py-2">
+            Date of event:
+          </p>
           {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
           <input
             type="date"
@@ -382,7 +387,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
           />
 
-          <p className="font-bold py-2 font-sans text-gray-700 text-left">Author:</p>
+          <p className="font-bold py-2 font-sans text-gray-700 text-left">
+            Author:
+          </p>
           <input
             type="text"
             placeholder="Enter author name..."
@@ -391,7 +398,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className=" font-bold py-2 font-sans text-gray-700 text-left">Contact Info:</p>
+          <p className=" font-bold py-2 font-sans text-gray-700 text-left">
+            Contact Info:
+          </p>
           <input
             type="text"
             placeholder="Enter contact information..."
@@ -402,7 +411,9 @@ function Dashboard() {
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
           />
 
-          <p className="font-bold py-2 font-sans text-gray-700 text-left">Description:</p>
+          <p className="font-bold py-2 font-sans text-gray-700 text-left">
+            Description:
+          </p>
           <textarea
             placeholder="Enter event description..."
             value={newPost.content}
@@ -428,8 +439,6 @@ function Dashboard() {
           >
             Post
           </button>
-
-          
         </div>
 
         <div className="rounded-2xl shadow-md p-4 bg-white border">
@@ -440,7 +449,9 @@ function Dashboard() {
             Add Resource
           </h3>
 
-          <p className="font-sans mb-2 text-left text-gray-700 font-bold">Select a class:</p>
+          <p className="font-sans mb-2 text-left text-gray-700 font-bold">
+            Select a class:
+          </p>
           <input
             type="text"
             placeholder="Search for a class..."
@@ -480,7 +491,9 @@ function Dashboard() {
             </div>
           )}
 
-          <p className="font-sans text-left text-gray-700 py-2  font-bold">Link(s) of resources:</p>
+          <p className="font-sans text-left text-gray-700 py-2  font-bold">
+            Link(s) of resources:
+          </p>
           <input
             type="file" // ATHARV PLEASE CHANGE THIS TO TEXT AND CHANGE THAT METHOD TO BE LINKS INSTEAD
             onChange={(e) => setSelectedFile(e.target.files[0])}

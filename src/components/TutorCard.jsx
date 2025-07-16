@@ -1,5 +1,9 @@
 import React from "react";
 
+// default placeholder image URL from environment variable
+const DEFAULT_AVATAR_URL =
+  process.env.REACT_APP_DEFAULT_AVATAR_URL || "https://placehold.co/600x600";
+
 // parse one subject's string into an array of all classes tutor teaches in that subject
 // in original strings, _ are spaces in classes and ; are used to separate classes
 function parseClass(subject) {
@@ -76,15 +80,15 @@ function TutorCard({
   // Build display text by adding classes one by one until overflow
   const maxCharsPerLine = 20; // Approximate characters per line for small text
   const maxChars = maxCharsPerLine * 3; // 3 lines worth
-  
+
   let displayText = "";
   let currentLength = "Classes: ".length; // Start with the label length
-  
+
   for (let i = 0; i < taughtClasses.length; i++) {
     const classToAdd = taughtClasses[i];
     const separator = i === 0 ? "" : ", ";
     const additionalLength = separator.length + classToAdd.length;
-    
+
     // Check if adding this class would exceed the limit
     if (currentLength + additionalLength > maxChars) {
       // If this isn't the first class and adding would overflow, add ellipsis
@@ -97,11 +101,11 @@ function TutorCard({
       }
       break;
     }
-    
+
     displayText += separator + classToAdd;
     currentLength += additionalLength;
   }
-  
+
   // Fallback if no classes
   if (!displayText && taughtClasses.length === 0) {
     displayText = "No classes listed";
@@ -112,7 +116,7 @@ function TutorCard({
       {/* Image container */}
       <div className="w-full h-64 overflow-hidden border-4 border-blue-300 shadow-lg rounded-b-none rounded-t-3xl z-0">
         <img
-          src={image || "https://placehold.co/600x600"}
+          src={image || DEFAULT_AVATAR_URL}
           alt={`${name}`}
           className="w-full h-full object-cover object-top"
           style={{ aspectRatio: "600/600" }}

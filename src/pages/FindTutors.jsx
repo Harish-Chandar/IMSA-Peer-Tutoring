@@ -3,6 +3,15 @@ import TutorCard from "../components/TutorCard";
 import Footer from "../components/Footer";
 
 function FindTutors() {
+  // environment variables for API configuration
+  const DBPORT = process.env.REACT_APP_DBPORT;
+  const HOST = process.env.REACT_APP_HOST;
+  const baseUrl = `http://${HOST}:${DBPORT}`;
+
+  // default placeholder image URL from environment variable
+  const DEFAULT_AVATAR_URL =
+    process.env.REACT_APP_DEFAULT_AVATAR_URL || "https://placehold.co/600x600";
+
   const [tutors, setTutors] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
@@ -29,7 +38,7 @@ function FindTutors() {
 
   const fetchTutors = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/tutors/search");
+      const response = await fetch(`${baseUrl}/api/tutors/search`);
       const data = await response.json();
       setTutors(data);
     } catch (error) {
@@ -45,7 +54,7 @@ function FindTutors() {
         queryParams.append("hall", selectedFilters.join(","));
 
       const response = await fetch(
-        `http://localhost:5000/api/tutors/search?${queryParams.toString()}`
+        `${baseUrl}/api/tutors/search?${queryParams.toString()}`
       );
       const data = await response.json();
       setTutors(data);
@@ -69,7 +78,6 @@ function FindTutors() {
 
   return (
     <div className="bg-gray-100 min-h-screen py-20">
-      
       <div className="p-4 max-w-6xl mx-auto py-10">
         <h1 className="text-5xl mb-6 text-center font-sans font-bold tracking-wide text-gray-700">
           Find Tutors Below!
@@ -139,7 +147,7 @@ function FindTutors() {
               wing={tutor.wing}
               hall={tutor.hall}
               routing_link={`/tutor/${tutor.id}`}
-              image={tutor.image || "https://placehold.co/600x600"}
+              image={tutor.image || DEFAULT_AVATAR_URL}
               physics={tutor.physics}
               chem={tutor.chem}
               biology={tutor.biology}

@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 
+// environment variables for API configuration
+const DBPORT = process.env.REACT_APP_DBPORT || "5000";
+const HOST = process.env.REACT_APP_HOST || "localhost";
+
 // Base URL for API calls
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = `http://${HOST}:${DBPORT}`;
+
+// default placeholder image URL from environment variable
+const DEFAULT_AVATAR_URL =
+  process.env.REACT_APP_DEFAULT_AVATAR_URL || "https://placehold.co/600x600";
 
 // helper function to parse class strings
 function parseClasses(classesString) {
@@ -281,7 +289,7 @@ function Tutor() {
       : "location unknown";
 
   // handle image with fallback - match FindTutors logic
-  const profileImage = tutor.image || "https://placehold.co/600x600";
+  const profileImage = tutor.image || DEFAULT_AVATAR_URL;
 
   // render main component
   return (
@@ -382,7 +390,6 @@ function Tutor() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

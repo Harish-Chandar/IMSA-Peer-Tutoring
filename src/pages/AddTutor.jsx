@@ -3,6 +3,11 @@ import "./custom.css";
 import Footer from "../components/Footer.jsx";
 
 function AddTutor() {
+  // environment variables for API configuration
+  const DBPORT = process.env.REACT_APP_DBPORT;
+  const HOST = process.env.REACT_APP_HOST;
+  const baseUrl = `http://${HOST}:${DBPORT}`;
+
   // state for class categories from database
   const [classCategories, setClassCategories] = useState({});
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
@@ -61,7 +66,7 @@ function AddTutor() {
   const fetchClasses = async () => {
     try {
       setIsLoadingClasses(true);
-      const response = await fetch("http://localhost:5000/api/classes");
+      const response = await fetch(`${baseUrl}/api/classes`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -93,7 +98,7 @@ function AddTutor() {
   // fetch all tutors from api
   const fetchTutors = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/tutors/search");
+      const response = await fetch(`${baseUrl}/api/tutors/search`);
       const data = await response.json();
       setTutors(data);
     } catch (error) {
@@ -152,7 +157,7 @@ function AddTutor() {
         ...formattedClasses,
       };
 
-      const response = await fetch("http://localhost:5000/api/tutors", {
+      const response = await fetch(`${baseUrl}/api/tutors`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -205,12 +210,9 @@ function AddTutor() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/tutors/${tutorId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${baseUrl}/api/tutors/${tutorId}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           // refresh tutors from database after successful deletion
@@ -316,7 +318,9 @@ function AddTutor() {
             <textarea
               placeholder="Format: sunday,5:30-6:00,6:00-6:30;tuesday,9:00-9:30"
               value={newTutor.availability}
-              onChange={(e) => handleInputChange("availability", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("availability", e.target.value)
+              }
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
             />
 
@@ -346,7 +350,9 @@ function AddTutor() {
                             selectedClasses[category]?.includes(className) ||
                             false
                           }
-                          onChange={() => handleClassToggle(category, className)}
+                          onChange={() =>
+                            handleClassToggle(category, className)
+                          }
                           className="mr-2"
                         />
                         <span className="text-sm">{className}</span>
