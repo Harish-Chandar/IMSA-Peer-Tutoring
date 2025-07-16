@@ -19,6 +19,10 @@ import FindTutors from "./pages/FindTutors.jsx";
 import Tutor from "./pages/Tutor.jsx";
 
 
+function NotFound() {
+  return <div><p>Error 404 - Page Not Found</p></div>;
+}
+
 export default function App() {
   return (
     <Router>
@@ -38,6 +42,7 @@ export default function App() {
         <Route path="/adminDashboard" element={<Dashboard />} />
         <Route path="/findTutors" element={<FindTutors />} />
         <Route path="/tutor/:id" element={<Tutor />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

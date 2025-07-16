@@ -3,6 +3,7 @@ import {useNavigate } from 'react-router-dom';
 import AlertModal from '../components/AlertModal';
 import Footer from '../components/Footer';
 
+
 export function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -24,11 +25,10 @@ export function Login() {
 
 			const data = await res.json();
 			if (res.ok) {
+				localStorage.setItem("token", data.token);
 				navigate("/adminDashboard", { replace: true });
 				console.log("User access level:", data.access);
-
 			} else {
-				
 				setError("Login failed.");
 			}
 		} catch (err) {

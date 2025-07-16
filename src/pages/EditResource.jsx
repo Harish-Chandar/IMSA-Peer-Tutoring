@@ -3,9 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer.jsx";
 
+import { isTokenExpired } from "../util.ts"
+
 function EditResource() {
-  const { id } = useParams();
   const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      navigate('/login', { replace: true });
+    }
+  }, []);
+  const { id } = useParams();
+  // const navigate = useNavigate();
 
   const [resource, setResource] = useState(null);
   const [links, setLinks] = useState([]);

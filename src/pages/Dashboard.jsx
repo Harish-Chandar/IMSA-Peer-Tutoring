@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
+import { useNavigate } from 'react-router-dom';
+
+import { isTokenExpired } from "../util.ts"
+
+const token = localStorage.getItem("token");
+
 
 function Dashboard() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token || isTokenExpired(token)) {
+      navigate('/login', { replace: true });
+    }
+  }, []);
   // we actually don't have a field in the database for all the classes so i hardcoded it
   const classes = [
     "SI Physics",
@@ -179,6 +191,7 @@ function Dashboard() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify({
             title: newPost.title,
@@ -256,6 +269,7 @@ function Dashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           teacher: "Admin",

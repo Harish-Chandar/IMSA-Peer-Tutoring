@@ -4,6 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 
+import jwt from "jsonwebtoken";
+
 dotenv.config();
 
 const app = express();
@@ -219,7 +221,7 @@ app.post("/api/tutors", (req: Request, res: Response) => {
 });
 
 // delete tutor endpoint
-app.delete("/api/tutors/:id", (req: Request, res: Response) => {
+app.delete("/api/tutors/:id", authenticateAdmin, (req: Request, res: Response) => {
   const tutorId = parseInt(req.params.id);
 
   // validate tutorId
@@ -267,6 +269,31 @@ type Admin = {
   access: number;
 };
 
+function authenticateAdmin(req: Request, res: Response, next: Function) {
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		return res.status(401).json({ error: "Missing token" });
+	}
+	
+	const token = authHeader.split(" ")[1];
+	
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+			email: string;
+			access: number;
+		};
+		
+		if (decoded.access < 1) {
+			return res.status(403).json({ error: "Insufficient privileges" });
+		}
+		
+		req.user = decoded;
+		next();
+	} catch (err) {
+		return res.status(403).json({ error: "Invalid or expired token" });
+	}
+}
+
 app.post("/api/login", (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
 
@@ -281,8 +308,14 @@ app.post("/api/login", (req: Request, res: Response) => {
       if (!result)
         return res.status(401).json({ error: "Invalid email or password" });
 
-      res.json({ success: true, access: row.access, email: row.email });
-    });
+	const token = jwt.sign(
+						   { email: row.email, access: row.access },
+						   process.env.JWT_SECRET!,
+						   { expiresIn: "1h" }
+	);
+
+	res.json({ success: true, token, access: row.access, email: row.email });
+	});
   });
 });
 
@@ -324,7 +357,7 @@ app.get("/api/test", (req: Request, res: Response) => {
 });
 
 // bulletin board api routes
-app.post("/api/bulletin", (req: Request, res: Response) => {
+app.post("/api/bulletin", authenticateAdmin, (req: Request, res: Response) => {
   const { title, content, event_date, author, contact_info, highpriority } =
     req.body;
   const creation_date = new Date().toISOString();
@@ -367,7 +400,7 @@ app.get("/api/bulletin", (req: Request, res: Response) => {
   });
 });
 
-app.delete("/api/bulletin/:id", (req: Request, res: Response) => {
+app.delete("/api/bulletin/:id", authenticateAdmin,(req: Request, res: Response) => {
   const sql = "DELETE FROM bulletin WHERE id = ?";
 
   db.run(sql, req.params.id, function (err) {
@@ -383,7 +416,7 @@ app.delete("/api/bulletin/:id", (req: Request, res: Response) => {
 // resources routes
 
 // api route for inserting new data into the resources table
-app.post("/api/resources", (req: Request, res: Response) => {
+app.post("/api/resources", authenticateAdmin, (req: Request, res: Response) => {
   const { teacher, email, course, department, url, type, links } = req.body;
 
   console.log("Request body:", req.body); // Log the entire request body
@@ -582,7 +615,7 @@ app.get("/api/resources/:id", (req: Request, res: Response) => {
 });
 
 // Add a new link to a resource
-app.post("/api/resources/:id/links", (req: Request, res: Response) => {
+app.post("/api/resources/:id/links", authenticateAdmin, (req: Request, res: Response) => {
   const resourceId = parseInt(req.params.id);
   const { label, url } = req.body;
 
@@ -609,7 +642,7 @@ app.post("/api/resources/:id/links", (req: Request, res: Response) => {
 
 // Delete a link
 app.delete(
-  "/api/resources/:id/links/:linkId",
+  "/api/resources/:id/links/:linkId", authenticateAdmin,
   (req: Request, res: Response) => {
     const linkId = parseInt(req.params.linkId);
 
@@ -629,7 +662,7 @@ app.delete(
 );
 
 // Update the main resource URL (for legacy resources)
-app.patch("/api/resources/:id", (req: Request, res: Response) => {
+app.patch("/api/resources/:id", authenticateAdmin, (req: Request, res: Response) => {
   const resourceId = parseInt(req.params.id);
   const { url } = req.body;
 
@@ -648,7 +681,7 @@ app.patch("/api/resources/:id", (req: Request, res: Response) => {
 });
 
 // Update resource information
-app.patch("/api/resources/:id/info", (req: Request, res: Response) => {
+app.patch("/api/resources/:id/info", authenticateAdmin, (req: Request, res: Response) => {
   const resourceId = parseInt(req.params.id);
   const { teacher, email, course, department, type } = req.body;
 
