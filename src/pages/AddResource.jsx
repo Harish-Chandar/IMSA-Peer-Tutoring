@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer.jsx";
+import { useNavigate } from 'react-router-dom';
+
+import { isTokenExpired } from "../util.ts"
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 
 function ResourceForm() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      navigate('/login', { replace: true });
+    }
+  }, []);
   // Define preset departments
   const departments = [
     "English",

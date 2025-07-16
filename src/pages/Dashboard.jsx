@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
+import { useNavigate } from 'react-router-dom';
+
+import { isTokenExpired } from "../util.ts"
 
 function Dashboard() {
   // environment variables for API configuration
@@ -17,19 +20,114 @@ function Dashboard() {
     c.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSelectClass = (className) => {
-    setSelectedClass(className);
-    setSearchTerm("");
-  };
+const token = localStorage.getItem("token");
 
-  // bulletin board states - updated for backend integration
-  const [posts, setPosts] = useState([]);
 
-  // updated form state to match database schema
-  const [newPost, setNewPost] = useState({
-    title: "",
-    content: "",
-    event_date: "",
+function Dashboard() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token || isTokenExpired(token)) {
+      navigate('/login', { replace: true });
+	}
+  }, []);
+	// we actually don't have a field in the database for all the classes so i hardcoded it
+	const classes = [
+		"SI Physics",
+		"Physics: Sound and Light",
+		"Physics C: Mechanics",
+		"Physics C: Electricity/Magnetism",
+		"Planetary Science",
+		"Modern Physics",
+		"Computational Science",
+		"SI Chemistry",
+		"Advanced Chemistry - Structure and Properties",
+		"Advanced Chemistry - Chemical Reactions",
+		"The Physical Chemistry of Materials",
+		"Organic Chemistry I",
+		"Organic Chemistry II",
+		"Biochemistry",
+		"Environmental Chemistry",
+		"Medicinal Chemistry",
+		"Biology: Evolution & Environment",
+		"Biology: Molecular & Cellular",
+		"Evolution, Biodiversity, and Ecology",
+		"Cancer Biology",
+		"Environmental Microbiology",
+		"Pathophysiology",
+		"Biology of Behavior",
+		"Methods of Scientific Inquiries",
+		"Electronics",
+		"Engineering",
+		"Engineering: Statics & Dynamics",
+		"Introduction to Proofs",
+		"Modern Geometries",
+		"Statistical Exploration and Description",
+		"Statistical Experimentation and Inference",
+		"Number Theory",
+		"Discrete Mathematics",
+		"Multi-Variable Calculus",
+		"Theory of Analysis",
+		"Differential Equations",
+		"Linear Algebra",
+		"Abstract Algebra",
+		"Geometry",
+		"MI I/II",
+		"MI II",
+		"MI III",
+		"MI IV",
+		"AB Calculus I",
+		"AB Calculus II",
+		"BC I",
+		"BC II",
+		"BC III",
+		"BC I/II",
+		"BC II/III",
+		"CSI",
+		"OOP",
+		"Web Technologies",
+		"Advanced Programming",
+		"Microcontroller Applications (CS)",
+		"CS Seminar: Android Apps Development",
+		"CS Seminar: Linux and Cybersecurity",
+		"CS Seminar: Machine Learning",
+		"French I",
+		"French II",
+		"French III",
+		"French IV",
+		"French V",
+		"Spanish II",
+		"Spanish III",
+		"Spanish IV",
+		"Spanish V",
+		"German I",
+		"German II",
+		"German III",
+		"Mandarin Chinese I",
+		"Mandarin Chinese II",
+		"Mandarin Chinese III",
+	];
+
+	// state variables for class search
+	const [searchTerm, setSearchTerm] = useState("");
+	const [selectedClass, setSelectedClass] = useState(null);
+
+	const filteredClasses = classes.filter((c) =>
+		c.toLowerCase().includes(searchTerm.toLowerCase())
+	);
+
+	const handleSelectClass = (className) => {
+		setSelectedClass(className);
+		setSearchTerm("");
+	};
+
+	// bulletin board states - updated for backend integration
+	const [posts, setPosts] = useState([]);
+
+	// updated form state to match database schema
+	const [newPost, setNewPost] = useState({
+		title: "",
+		content: "",
+		event_date: "",
     author: "",
     contact_info: "",
     highpriority: false,
@@ -136,6 +234,7 @@ function Dashboard() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify({
             title: newPost.title,
@@ -210,6 +309,7 @@ function Dashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           teacher: "Admin",

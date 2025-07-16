@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
+import { useNavigate } from 'react-router-dom';
+
+import { isTokenExpired } from "../util.ts"
 
 function AddTutor() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      navigate('/login', { replace: true });
+    }
+  }, []);
   // environment variables for API configuration
   const DBPORT = process.env.REACT_APP_DBPORT;
   const HOST = process.env.REACT_APP_HOST;

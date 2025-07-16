@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import ResourceEditCard from "../components/ResourceEditCard";
 import Footer from "../components/Footer.jsx";
+import { useNavigate } from 'react-router-dom';
+
+import { isTokenExpired } from "../util.ts"
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 
 function ModifyResources() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      navigate('/login', { replace: true });
+    }
+  }, []);
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
