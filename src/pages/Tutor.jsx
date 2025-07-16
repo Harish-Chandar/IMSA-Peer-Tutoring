@@ -293,103 +293,106 @@ function Tutor() {
 
   // render main component
   return (
-    <div className="flex flex-col md:flex-row px-4 md:px-[6rem] py-4 gap-8 items-start w-full pt-20 min-h-screen">
-      {/* tutor profile image section */}
-      <div className="w-full md:w-2/5 flex justify-center items-center md:min-h-[600px]">
-        <img
-          src={profileImage}
-          alt={fullName}
-          className="rounded-2xl shadow-md w-[500px] h-[500px] object-cover"
-        />
-      </div>
-
-      {/* tutor information section */}
-      <div className="bg-white shadow-xl p-6 w-full md:w-3/5 rounded-2xl">
-        {/* tutor name, location and classes */}
-        <div className="mb-6">
-          <h2 className="text-3xl md:text-5xl font-semibold text-gray-800 font-sans py-5">
-            {fullName}
-          </h2>
-          <p className="text-xl text-gray-500 font-sans mb-3">{location}</p>
-          <p className="text-lg text-gray-600 font-sans">
-            <span className="font-bold">Classes taught:</span>{" "}
-            {classes.length > 0 ? classes.join(", ") : "no classes listed"}
-          </p>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex flex-col md:flex-row px-4 md:px-[6rem] py-4 gap-8 items-start w-full pt-20 flex-grow">
+        {/* tutor profile image section */}
+        <div className="w-full md:w-2/5 flex justify-center items-center md:min-h-[600px]">
+          <img
+            src={profileImage}
+            alt={fullName}
+            className="rounded-2xl shadow-md w-[500px] h-[500px] object-cover"
+          />
         </div>
 
-        {/* calendar and schedule section */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* interactive calendar view */}
-          <div className="flex-1">
-            <h3 className="font-semibold mb-4 text-2xl text-gray-500 text-center">
-              {getCurrentMonthName()}
-            </h3>
-            <div className="grid grid-cols-7 gap-2 text-center mb-4">
-              {daysOfWeek.map((day) => (
-                <div
-                  key={day}
-                  className="text-sm font-medium text-gray-600 pb-2"
-                >
-                  {day}
-                </div>
-              ))}
-              {calendar.flat().map((dateInfo, index) =>
-                dateInfo ? (
+        {/* tutor information section */}
+        <div className="bg-white shadow-xl p-6 w-full md:w-3/5 rounded-2xl">
+          {/* tutor name, location and classes */}
+          <div className="mb-6">
+            <h2 className="text-3xl md:text-5xl font-semibold text-gray-800 font-sans py-5">
+              {fullName}
+            </h2>
+            <p className="text-xl text-gray-500 font-sans mb-3">{location}</p>
+            <p className="text-lg text-gray-600 font-sans">
+              <span className="font-bold">Classes taught:</span>{" "}
+              {classes.length > 0 ? classes.join(", ") : "no classes listed"}
+            </p>
+          </div>
+
+          {/* calendar and schedule section */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* interactive calendar view */}
+            <div className="flex-1">
+              <h3 className="font-semibold mb-4 text-2xl text-gray-500 text-center">
+                {getCurrentMonthName()}
+              </h3>
+              <div className="grid grid-cols-7 gap-2 text-center mb-4">
+                {daysOfWeek.map((day) => (
                   <div
-                    key={index}
-                    className={`p-2 rounded-md cursor-pointer hover:bg-blue-100 transition ${
-                      selectedDate &&
-                      selectedDate.getTime() === dateInfo.dateObj.getTime()
-                        ? "bg-blue-500 text-white"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedDate(dateInfo.dateObj)}
+                    key={day}
+                    className="text-sm font-medium text-gray-600 pb-2"
                   >
-                    {dateInfo.day}
+                    {day}
                   </div>
-                ) : (
-                  <div key={index} className="p-2"></div>
-                )
+                ))}
+                {calendar.flat().map((dateInfo, index) =>
+                  dateInfo ? (
+                    <div
+                      key={index}
+                      className={`p-2 rounded-md cursor-pointer hover:bg-blue-100 transition ${
+                        selectedDate &&
+                        selectedDate.getTime() === dateInfo.dateObj.getTime()
+                          ? "bg-blue-500 text-white"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedDate(dateInfo.dateObj)}
+                    >
+                      {dateInfo.day}
+                    </div>
+                  ) : (
+                    <div key={index} className="p-2"></div>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* selected day schedule display */}
+            <div className="flex-1 text-sm text-gray-700">
+              <h3 className="font-semibold mb-4 text-2xl text-gray-500">
+                {selectedDate
+                  ? `Schedule for ${selectedDate.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}`
+                  : "Select a date to view schedule"}
+              </h3>
+              {selectedDate ? (
+                <div className="text-xl">
+                  {(() => {
+                    const dayName = fullDayNames[selectedDate.getDay()];
+
+                    if (schedule[dayName] && schedule[dayName].length > 0) {
+                      return schedule[dayName].map((timeSlot, index) => (
+                        <div key={index} className="mb-1">
+                          {timeSlot}
+                        </div>
+                      ));
+                    } else {
+                      return "No schedule available for this day";
+                    }
+                  })()}
+                </div>
+              ) : (
+                <div className="text-xl text-gray-400">
+                  Click on a date above to see the tutor's availability for that
+                  day.
+                </div>
               )}
             </div>
           </div>
-
-          {/* selected day schedule display */}
-          <div className="flex-1 text-sm text-gray-700">
-            <h3 className="font-semibold mb-4 text-2xl text-gray-500">
-              {selectedDate
-                ? `Schedule for ${selectedDate.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })}`
-                : "Select a date to view schedule"}
-            </h3>
-            {selectedDate ? (
-              <div className="text-xl">
-                {(() => {
-                  const dayName = fullDayNames[selectedDate.getDay()];
-
-                  if (schedule[dayName] && schedule[dayName].length > 0) {
-                    return schedule[dayName].map((timeSlot, index) => (
-                      <div key={index} className="mb-1">
-                        {timeSlot}
-                      </div>
-                    ));
-                  } else {
-                    return "No schedule available for this day";
-                  }
-                })()}
-              </div>
-            ) : (
-              <div className="text-xl text-gray-400">
-                Click on a date above to see the tutor's availability for that
-                day.
-              </div>
-            )}
-          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

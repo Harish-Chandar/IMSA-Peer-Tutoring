@@ -109,7 +109,7 @@ function FindTutors() {
               + Add Filter
             </button>
             {filterDropdown && (
-              <div className="absolute mt-2 w-40 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
+              <div className="absolute mt-2 w-40 bg-white border border-gray-300 shadow-lg rounded-lg z-50">
                 {filterOptions.map((filter, index) => (
                   <button
                     key={index}
