@@ -19,6 +19,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 import FindTutors from "./pages/FindTutors.jsx";
 import Tutor from "./pages/Tutor.jsx";
 
+import AboutUs from "./pages/AboutUs.jsx";
+
 export default function App() {
   return (
     <Router>
@@ -38,6 +40,7 @@ export default function App() {
         <Route path="/adminDashboard" element={<Dashboard />} />
         <Route path="/findTutors" element={<FindTutors />} />
         <Route path="/tutor/:id" element={<Tutor />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

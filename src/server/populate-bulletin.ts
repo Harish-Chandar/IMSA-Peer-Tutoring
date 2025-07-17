@@ -14,7 +14,7 @@ export const sampleData = [
         title: "Study Session #1",
         content: "MI III",
         creation_date: new Date().toISOString(),
-        event_date: "2025-04-25 18:00",
+        event_date: "2025-04-25",
         expiration_date: "2025-04-30",
         author: "Dr. Trimm",
         contact_info: "trimm@imsa.edu",
@@ -28,16 +28,16 @@ export const sampleData = [
         expiration_date: "2025-04-30",
         author: "Dr. Krouse",
         contact_info: "krouse@imsa.edu",
-        highpriority: 2
+        highpriority: 0
     },
     {
         title: "Study Session #3",
         content: "MI IV",
         creation_date: new Date().toISOString(),
-        event_date: "2025-04-27 17:00",
+        event_date: "2025-04-27",
         expiration_date: "2025-04-30",
         author: "Dr. Fogel",
         contact_info: "fogel@imsa.edu",
-        highpriority: 3
+        highpriority: 1
     }
 ];

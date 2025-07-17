@@ -33,7 +33,7 @@ function Bulletin() {
   }, []);
 
   return (
-    <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center font-sans shadow-2xl">
+    <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center shadow-2xl">
       <h1 className="text-4xl text-gray-700 font-bold mb-8">Bulletin</h1>
 
       {bulletinNotes.length > 0 && 

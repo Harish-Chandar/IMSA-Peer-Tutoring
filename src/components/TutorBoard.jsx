@@ -72,7 +72,7 @@ function TutorBoard() {
   }, []);
 
   return (
-    <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center font-sans shadow-2xl">
+    <div className="p-10 bg-slate-50 rounded-lg w-full max-w-6xl mx-auto h-auto min-h-[500px] flex flex-col items-center shadow-2xl">
       <h1 className="text-4xl text-grey-700 font-bold mb-8">Available Tutors</h1>
       <button className="bg-blue-500 text-white py-2 px-4 rounded"><a href="/findTutors">Find All Tutors</a></button>
       {tutorNotes.length > 0 && (

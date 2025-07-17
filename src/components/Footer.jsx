@@ -15,6 +15,11 @@ function Footer() {
             <p className="text-gray-600 text-sm mb-4">
               Connecting IMSA students with peer tutors and academic resources to further collaborative learning and academic success.
             </p>
+            <button className="bg-blue-500 text-white py-2 px-4 rounded text-sm font-semibold hover:bg-blue-600 transition-colors mb-3">
+              <a href="/about" className="text-white">
+                Meet The Developers
+              </a>
+            </button>
           </div>
 
           {/* Quick Links */}
