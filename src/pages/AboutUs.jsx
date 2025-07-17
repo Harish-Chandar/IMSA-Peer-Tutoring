@@ -5,14 +5,14 @@ function AboutUs() {
  
 
   return (
-    <div className="w-full mt-16">
+    <div className="w-full mt-16 bg-slate-100">
       <div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-40 bg-slate-100 px-4">
-        <div className="flex flex-col md:text-left h-full justify-center py-8">
-          <h2 className="text-gray-700 text-3xl md:text-5xl font-bold">Meet The <span className="text-blue-500">Developers</span></h2>
-          <h2 className="text-gray-400 text-md font-bold m-2 mb-3 self-center">Built by IMSA students for IMSA students.</h2>
+        <div className="flex flex-col md:text-left h-full justify-center py-8 md:pt-14">
+          <h2 className="text-gray-700 text-3xl md:text-6xl font-bold">Meet The <span className="text-blue-500">Developers</span></h2>
+          <h2 className="text-gray-400 text-md md:text-lg font-bold m-2 mb-3 self-center">Built by IMSA students for IMSA students</h2>
         </div>
       </div>
-      <div className="flex flex-row flex-wrap justify-center gap-3 gap-y-20 w-5/6 mt-8 pb-5 self-center mx-auto">
+      <div className="flex flex-row flex-wrap justify-center gap-3 gap-y-20 w-5/6 mt-8 pb-5 self-center mx-auto bg-slate-100">
             {/*All the individual dev cards */}
             <div className={`w-60 h-60 shadow-2xl rounded-lg m-5 mb-20 relative hover:scale-105 duration-300`}>
                 <img className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500" src="/aarav.png" alt="placeholder" />
