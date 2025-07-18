@@ -181,7 +181,7 @@ function AddTutor() {
   // handle creating a new tutor
   const handleCreateTutor = async () => {
     if (!newTutor.fname || !newTutor.lname || !newTutor.email) {
-      console.log("please fill in at least first name, last name, and email.");
+      alert("Please fill in at least first name, last name, and email.");
       return;
     }
 
@@ -250,14 +250,14 @@ function AddTutor() {
         });
         setSelectedClasses(resetSelectedClasses);
 
-        console.log("tutor added successfully!");
+        alert("Tutor added successfully!");
       } else {
         const errorData = await response.json();
-        console.log(`error creating tutor: ${errorData.error}`);
+        alert(`Error creating tutor: ${errorData.error}`);
       }
     } catch (error) {
       console.error("error creating tutor:", error);
-      console.log("error creating tutor. please try again.");
+      alert("Error creating tutor. Please try again.");
     }
   };
 
@@ -277,221 +277,254 @@ function AddTutor() {
         if (response.ok) {
           // refresh tutors from database after successful deletion
           fetchTutors();
+          alert("Tutor deleted successfully!");
         } else {
           const errorData = await response.json();
-          console.log(`error deleting tutor: ${errorData.error}`);
+          alert(`Error deleting tutor: ${errorData.error}`);
         }
       } catch (error) {
         console.error("error deleting tutor:", error);
-        console.log("error deleting tutor. please try again.");
+        alert("Error deleting tutor. Please try again.");
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="min-h-screen overflow-x-hidden overflow-y-auto py-[6rem] px-4 custom-container">
-        <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-between items-center mb-6 py-10">
+        <button
+          onClick={() => navigate('/adminDashboard')}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+        >
+          Back to Dashboard
+        </button>
+        
+        <h1 className="text-4xl font-bold text-gray-700">
           Manage Tutors
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* left side - add tutor form */}
-          <div className="rounded-2xl shadow-md p-4 bg-white border overflow-y-auto w-full overflow-x-hidden">
-            <h3 className="text-lg font-bold mb-4 text-blue-500">
-              Add New Tutor
-            </h3>
+        
+        <div className="w-40"></div>
+      </div>
 
-            <p className="font-sans text-gray-700 text-left">First Name:</p>
-            <input
-              type="text"
-              placeholder="Enter first name..."
-              value={newTutor.fname}
-              onChange={(e) => handleInputChange("fname", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
+      <div className="flex justify-center">
+        <div className="max-w-2xl md:max-w-4xl lg:max-w-6xl w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left card - Add tutor form */}
+            <div className="rounded-2xl shadow-md p-8 bg-white border">
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-700 mb-6">
+                  Add New Tutor
+                </h3>
 
-            <p className="font-sans text-gray-700 text-left">Last Name:</p>
-            <input
-              type="text"
-              placeholder="Enter last name..."
-              value={newTutor.lname}
-              onChange={(e) => handleInputChange("lname", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">
-              Facebook Name (optional):
-            </p>
-            <input
-              type="text"
-              placeholder="Enter facebook name..."
-              value={newTutor.fbname}
-              onChange={(e) => handleInputChange("fbname", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">Email:</p>
-            <input
-              type="email"
-              placeholder="Enter email..."
-              value={newTutor.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">IMSA ID:</p>
-            <input
-              type="number"
-              placeholder="Enter IMSA ID..."
-              value={newTutor.imsaid}
-              onChange={(e) => handleInputChange("imsaid", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">Hall:</p>
-            <input
-              type="number"
-              placeholder="Enter hall number..."
-              value={newTutor.hall}
-              onChange={(e) => handleInputChange("hall", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">Wing:</p>
-            <input
-              type="number"
-              placeholder="Enter wing number..."
-              value={newTutor.wing}
-              onChange={(e) => handleInputChange("wing", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            />
-
-            <p className="font-sans text-gray-700 text-left">Blurb:</p>
-            <textarea
-              placeholder="Enter tutor description..."
-              value={newTutor.blurb}
-              onChange={(e) => handleInputChange("blurb", e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
-            />
-
-            {/* availability fields for each day */}
-            <div className="mb-4">
-              <p className="font-sans font-bold text-gray-700 text-left mb-2">
-                Availability (enter time slots separated by commas):
-              </p>
-              <p className="font-sans text-xs text-gray-500 mb-3 text-left">
-                Example: "5:30-6:00, 6:00-6:30, 7:00-7:30", please do not
-                include AM or PM!
-              </p>
-
-              {Object.entries(availability).map(([day, timeSlots]) => (
-                <div key={day} className="mb-2">
-                  <label className="font-sans text-gray-600 text-sm capitalize mb-1 block text-left">
-                    {day}:
-                  </label>
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">First Name</label>
                   <input
                     type="text"
-                    placeholder="e.g., 5:30-6:00, 6:00-6:30"
-                    value={timeSlots}
-                    onChange={(e) =>
-                      handleAvailabilityChange(day, e.target.value)
-                    }
-                    className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black text-sm"
+                    placeholder="Enter first name..."
+                    value={newTutor.fname}
+                    onChange={(e) => handleInputChange("fname", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    required
                   />
                 </div>
-              ))}
-            </div>
 
-            {/* class selection sections */}
-            {isLoadingClasses ? (
-              <div className="mb-4">
-                <p className="font-sans text-gray-500">Loading classes...</p>
-              </div>
-            ) : Object.keys(classCategories).length === 0 ? (
-              <div className="mb-4">
-                <p className="font-sans text-red-500">
-                  Error loading classes. Please refresh the page.
-                </p>
-              </div>
-            ) : (
-              Object.entries(classCategories).map(([category, classes]) => (
-                <div key={category} className="mb-4">
-                  <p className="font-sans font-bold capitalize text-gray-700 text-left">
-                    {category} Classes:
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Last Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter last name..."
+                    value={newTutor.lname}
+                    onChange={(e) => handleInputChange("lname", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Facebook Name (optional)</label>
+                  <input
+                    type="text"
+                    placeholder="Enter facebook name..."
+                    value={newTutor.fbname}
+                    onChange={(e) => handleInputChange("fbname", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Email</label>
+                  <input
+                    type="email"
+                    placeholder="Enter email..."
+                    value={newTutor.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">IMSA ID</label>
+                  <input
+                    type="number"
+                    placeholder="Enter IMSA ID..."
+                    value={newTutor.imsaid}
+                    onChange={(e) => handleInputChange("imsaid", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Hall</label>
+                  <input
+                    type="number"
+                    placeholder="Enter hall number..."
+                    value={newTutor.hall}
+                    onChange={(e) => handleInputChange("hall", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Wing</label>
+                  <input
+                    type="number"
+                    placeholder="Enter wing number..."
+                    value={newTutor.wing}
+                    onChange={(e) => handleInputChange("wing", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Blurb</label>
+                  <textarea
+                    placeholder="Enter tutor description..."
+                    value={newTutor.blurb}
+                    onChange={(e) => handleInputChange("blurb", e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    rows="4"
+                  />
+                </div>
+
+                {/* Availability Section */}
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-xl font-bold mb-4 text-gray-700">Availability</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Enter time slots separated by commas (e.g., "5:30-6:00, 6:00-6:30, 7:00-7:30"). Do not include AM or PM.
                   </p>
-                  <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
-                    {classes.map((className) => (
-                      <label key={className} className="flex items-center mb-1">
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedClasses[category]?.includes(className) ||
-                            false
-                          }
-                          onChange={() =>
-                            handleClassToggle(category, className)
-                          }
-                          className="mr-2"
-                        />
-                        <span className="text-sm">{className}</span>
-                      </label>
-                    ))}
-                  </div>
-                  {selectedClasses[category]?.length > 0 && (
-                    <p className="text-xs text-blue-600 mt-1">
-                      Selected: {selectedClasses[category].join(", ")}
-                    </p>
+
+                  {Object.entries(availability).map(([day, timeSlots]) => (
+                    <div key={day} className="flex flex-col mb-4">
+                      <label className="text-gray-700 font-bold mb-2 capitalize">{day}</label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 5:30-6:00, 6:00-6:30"
+                        value={timeSlots}
+                        onChange={(e) => handleAvailabilityChange(day, e.target.value)}
+                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Class Selection Section */}
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-xl font-bold mb-4 text-gray-700">Class Selection</h3>
+                  
+                  {isLoadingClasses ? (
+                    <div className="text-gray-500">Loading classes...</div>
+                  ) : Object.keys(classCategories).length === 0 ? (
+                    <div className="text-red-500">Error loading classes. Please refresh the page.</div>
+                  ) : (
+                    Object.entries(classCategories).map(([category, classes]) => (
+                      <div key={category} className="mb-6 p-4 border rounded-lg bg-gray-50">
+                        <h4 className="font-bold text-gray-700 mb-3 capitalize">{category} Classes</h4>
+                        <div className="max-h-32 overflow-y-auto">
+                          {classes.map((className) => (
+                            <label key={className} className="flex items-center mb-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={selectedClasses[category]?.includes(className) || false}
+                                onChange={() => handleClassToggle(category, className)}
+                                className="mr-2"
+                              />
+                              <span className="text-sm text-gray-700">{className}</span>
+                            </label>
+                          ))}
+                        </div>
+                        {selectedClasses[category]?.length > 0 && (
+                          <p className="text-xs text-blue-600 mt-2">
+                            Selected: {selectedClasses[category].join(", ")}
+                          </p>
+                        )}
+                      </div>
+                    ))
                   )}
                 </div>
-              ))
-            )}
 
-            <button
-              onClick={handleCreateTutor}
-              disabled={
-                isLoadingClasses || Object.keys(classCategories).length === 0
-              }
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-sans mt-4 w-full"
-            >
-              {isLoadingClasses ? "Loading..." : "Add Tutor"}
-            </button>
-          </div>
+                <button
+                  onClick={handleCreateTutor}
+                  disabled={isLoadingClasses || Object.keys(classCategories).length === 0}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 px-4 rounded-md font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  {isLoadingClasses ? "Loading..." : "Add Tutor"}
+                </button>
+              </div>
+            </div>
 
-          {/* right side - delete tutor section */}
-          <div className="rounded-2xl shadow-md p-4 bg-white border">
-            <h3 className="font-sans text-lg font-bold mb-4 text-blue-500">
-              Delete Tutor
-            </h3>
-            <input
-              type="text"
-              placeholder="Search tutor name..."
-              value={deleteSearchQuery}
-              onChange={(e) => setDeleteSearchQuery(e.target.value)}
-              className="w-full border rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white"
-            />
+            {/* Right card - Delete tutor section */}
+            <div className="rounded-2xl shadow-md p-8 bg-white border">
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-700 mb-6">
+                  Delete Tutor
+                </h3>
 
-            <div className="w-full h-96 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2 text-black">
-              {filteredTutors.length === 0 && tutors.length > 0 ? (
-                <p>No tutors match your search.</p>
-              ) : (
-                filteredTutors.map((tutor) => (
-                  <div
-                    key={tutor.id}
-                    className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
-                  >
-                    <span>
-                      {tutor.fname} {tutor.lname} - {tutor.email}
-                    </span>
-                    <button
-                      onClick={() => handleDeleteTutor(tutor.id)}
-                      className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none hover:border-none"
-                    >
-                      ×
-                    </button>
+                <div className="flex flex-col">
+                  <label className="text-gray-700 font-bold mb-2">Search Tutor</label>
+                  <input
+                    type="text"
+                    placeholder="Search tutor name..."
+                    value={deleteSearchQuery}
+                    onChange={(e) => setDeleteSearchQuery(e.target.value)}
+                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  />
+                </div>
+
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h4 className="font-bold text-gray-700 mb-3">Tutors List</h4>
+                  <div className="max-h-[32rem] overflow-y-auto space-y-2">
+                    {filteredTutors.length === 0 && tutors.length > 0 ? (
+                      <p className="text-gray-500">No tutors match your search.</p>
+                    ) : (
+                      filteredTutors.map((tutor) => (
+                        <div
+                          key={tutor.id}
+                          className="flex justify-between items-center p-3 bg-white rounded-md border"
+                        >
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-800">
+                              {tutor.fname} {tutor.lname}
+                            </p>
+                            <p className="text-sm text-blue-400">
+                              <a href={`mailto:${tutor.email}`}>{tutor.email}</a>
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteTutor(tutor.id)}
+                            className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))
+                    )}
+                    {tutors.length === 0 && (
+                      <p className="text-gray-500">Loading tutors...</p>
+                    )}
                   </div>
-                ))
-              )}
-              {tutors.length === 0 && <p>Loading tutors...</p>}
+                </div>
+              </div>
             </div>
           </div>
         </div>
