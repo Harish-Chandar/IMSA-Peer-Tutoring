@@ -6,11 +6,12 @@ function Note({ title, course, teachers, date, color, contact, description, imag
     0: "bg-[#c1e6fd]",
     1: "bg-[#48a4ea]",
   };
+  const [finalColor, setFinalColor] = useState(colorClasses[color] || "bg-[#48a4ea]");
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
-      <div className={`w-60 h-80 shadow-2xl rounded-2xl m-5 relative hover:scale-105 duration-300 flex flex-col ${colorClasses[color]}`}>
+      <div className={`w-60 h-80 shadow-2xl rounded-2xl m-5 relative hover:scale-105 duration-300 flex flex-col ${finalColor}`}>
         <div className="p-4 pb-0 flex-1 flex flex-col justify-between">
           <h3 className="text-black font-bold text-lg mb-1">{title}</h3>
           <h3 className="text-black text-sm mb-1">{course}</h3>
