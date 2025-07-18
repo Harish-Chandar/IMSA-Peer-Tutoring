@@ -160,7 +160,7 @@ app.get("/api/tutors/:id", (req: Request, res: Response) => {
 });
 
 // create tutor endpoint
-app.post("/api/tutors", (req: Request, res: Response) => {
+app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 	const {
 		fname,
 		lname,
