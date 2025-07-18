@@ -18,20 +18,6 @@ export function Login() {
   const [modalTitle, setModalTitle] = useState("");
   const navigate = useNavigate();
 
-			const data = await res.json();
-			if (res.ok) {
-				localStorage.setItem("token", data.token);
-				navigate("/adminDashboard", { replace: true });
-				console.log("User access level:", data.access);
-			} else {
-				setError("Login failed.");
-			}
-		} catch (err) {
-			console.error("Error during login:", err);
-			setError("Login failed due to server error.");
-		}
-	};
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     // navigate("/adminDashboard", { replace: true }); TESTING PURPOSES ONLY
@@ -44,6 +30,7 @@ export function Login() {
 
       const data = await res.json();
       if (res.ok) {
+		  localStorage.setItem("token", data.token);
         navigate("/adminDashboard", { replace: true });
         console.log("User access level:", data.access);
       } else {
