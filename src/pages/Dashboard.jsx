@@ -13,25 +13,17 @@ function Dashboard() {
   // state variables for class search
   const [classes, setClasses] = useState([]);
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedClass, setSelectedClass] = useState(null);
 
-  const filteredClasses = classes.filter((c) =>
-    c.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+	const token = localStorage.getItem("token");
 
-const token = localStorage.getItem("token");
-
-
-function Dashboard() {
   const navigate = useNavigate();
   useEffect(() => {
     if (!token || isTokenExpired(token)) {
       navigate('/login', { replace: true });
 	}
-  }, []);
+  }, [token, navigate]);
 	// we actually don't have a field in the database for all the classes so i hardcoded it
-	const classes = [
+	const classesList = [
 		"SI Physics",
 		"Physics: Sound and Light",
 		"Physics C: Mechanics",
@@ -111,7 +103,7 @@ function Dashboard() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedClass, setSelectedClass] = useState(null);
 
-	const filteredClasses = classes.filter((c) =>
+	const filteredClasses = classesList.filter((c) =>
 		c.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
