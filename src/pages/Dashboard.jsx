@@ -28,7 +28,7 @@ function Dashboard() {
         <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl w-full">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-3">
-              Welcome to the Admin Dashboard
+              Welcome to Your Dashboard
             </h2>
             <p className="text-gray-600">
               Manage tutors, courses, resources, and bulletin posts from here!
@@ -38,7 +38,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={() => handleNavigation('/addTutor')}
-              className="bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+              className="bg-blue-500 hover:bg-blue-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
             >
               <div className="text-lg mb-1">Manage Tutors</div>
               <div className="text-sm opacity-90">Add or remove tutors</div>
@@ -46,7 +46,7 @@ function Dashboard() {
 
             <button
               onClick={() => handleNavigation('/resources/new')}
-              className="bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+              className="bg-green-500 hover:bg-green-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
             >
               <div className="text-lg mb-1">Add New Course</div>
               <div className="text-sm opacity-90">Create a page to list class resources</div>
@@ -54,7 +54,7 @@ function Dashboard() {
 
             <button
               onClick={() => handleNavigation('/resources/modify')}
-              className="bg-orange-600 hover:bg-orange-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+              className="bg-orange-500 hover:bg-orange-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
             >
               <div className="text-lg mb-1">Manage Existing Courses</div>
               <div className="text-sm opacity-90">Edit current course info and resources</div>
@@ -62,7 +62,7 @@ function Dashboard() {
 
             <button
               onClick={() => handleNavigation('/editBulletin')}
-              className="bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+              className="bg-purple-500 hover:bg-purple-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
             >
               <div className="text-lg mb-1">Manage Bulletin</div>
               <div className="text-sm opacity-90">Update announcements</div>
