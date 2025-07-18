@@ -291,7 +291,7 @@ function AddTutor() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="min-h-screen overflow-x-hidden overflow-y-auto py-[6rem] px-4 custom-container">
-        <h1 className="text-blue-500 text-4xl mb-6 text-left font-sans font-bold">
+        <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">
           Manage Tutors
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -18,6 +18,7 @@ import AddTutor from "./pages/AddTutor.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import FindTutors from "./pages/FindTutors.jsx";
 import Tutor from "./pages/Tutor.jsx";
+import EditBulletin from "./pages/EditBulletin.jsx";
 
 import AboutUs from "./pages/AboutUs.jsx";
 
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/addTutor" element={<AddTutor />} />
         <Route path="/adminDashboard" element={<Dashboard />} />
+        <Route path="/editBulletin" element={<EditBulletin />} />
         <Route path="/findTutors" element={<FindTutors />} />
         <Route path="/tutor/:id" element={<Tutor />} />
         <Route path="/about" element={<AboutUs />} />
