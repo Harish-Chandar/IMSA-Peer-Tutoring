@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { isTokenExpired } from "../util.ts"
 
+const token = localStorage.getItem("token");
+
 function AddTutor() {
   const navigate = useNavigate();
   useEffect(() => {
@@ -211,6 +213,7 @@ function AddTutor() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(tutorData),
       });
@@ -272,6 +275,10 @@ function AddTutor() {
       try {
         const response = await fetch(`${baseUrl}/api/tutors/${tutorId}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {
