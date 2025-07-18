@@ -114,11 +114,6 @@ function ResourceDetails() {
                   <strong>Email:</strong> {resource.email}
                 </p>
               )}
-              {resource.type && (
-                <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                  <strong>Type:</strong> {resource.type}
-                </p>
-              )}
             </div>
 
             {/* Links Section */}
