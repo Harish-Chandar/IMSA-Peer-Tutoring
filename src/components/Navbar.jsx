@@ -34,15 +34,15 @@ function Navbar() {
             Home
           </a>
         </h3>
-        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
-          <Link to="/#bulletinboard" className={"!font-bold" + (location.pathname === "/" && location.hash === "#bulletinboard" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
-            Bulletin
-          </Link>
-        </h3>
         <h3 className="!bg-slate-50 bg-blue-500 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
           <a href="/resources" className={"!font-bold" + (location.pathname === "/resources" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
             Class Resources
           </a>
+        </h3>
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+          <Link to="/#bulletinboard" className={"!font-bold" + (location.pathname === "/" && location.hash === "#bulletinboard" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
+            Bulletin
+          </Link>
         </h3>
         <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
           <a href="/findTutors" className={"!font-bold" + (location.pathname === "/findTutors" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
