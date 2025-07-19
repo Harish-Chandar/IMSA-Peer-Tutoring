@@ -141,7 +141,7 @@ function EditBulletin() {
         </button>
         
         <h1 className="text-4xl font-bold text-gray-700">
-          Manage Bulletin Board
+          Edit Bulletin Board
         </h1>
         
         <div className="w-40"></div>
@@ -159,15 +159,14 @@ function EditBulletin() {
                 posts.map((post) => (
                   <div
                     key={post.id}
-                    className="bg-blue-100 text-blue-800 px-3 py-2 rounded-md flex justify-between items-center border border-blue-200"
+                    className={`px-3 py-2 rounded-md flex justify-between items-center border ${
+                      post.highpriority
+                        ? "bg-blue-700 text-white border-blue-800"
+                        : "bg-blue-100 text-blue-800 border-blue-200"
+                    }`}
                   >
                     <span className="font-medium">
                       {post.title} - {post.event_date}
-                      {post.highpriority && (
-                        <span className="text-red-600 font-bold ml-2">
-                          (HIGH PRIORITY)
-                        </span>
-                      )}
                     </span>
                     <button
                       onClick={() => handleDeletePost(post.id)}
