@@ -16,3 +16,13 @@ export function isTokenExpired(token) {
 		return true;
 	}
 }
+
+export function getTokenAccess(token) {
+	if (!token) return 0;
+	try {
+		const payload = JSON.parse(base64UrlDecode(token.split('.')[1]));
+		return payload.access;
+	} catch (e) {
+		return 0;
+	}
+}

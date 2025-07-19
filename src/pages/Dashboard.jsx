@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 
-import { isTokenExpired } from "../util.ts"
+import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 function Dashboard() {
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    if (!token || isTokenExpired(token)) {
-      navigate('/login', { replace: true });
-    }
+	  if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+		  navigate('/login', { replace: true });
+	  }
   }, [token, navigate]);
 
   const handleNavigation = (path) => {
