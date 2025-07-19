@@ -7,8 +7,8 @@ import { isTokenExpired } from "../util.ts"
 
 function EditResource() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token || isTokenExpired(token)) {
       navigate('/login', { replace: true });
     }
@@ -93,6 +93,7 @@ function EditResource() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(newLink),
       });
@@ -138,6 +139,10 @@ function EditResource() {
             `${baseUrl}/api/resources/${id}/links/${linkId}`,
             {
               method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+              },
             }
           );
 
@@ -158,128 +163,169 @@ function EditResource() {
     }
   };
 
-  if (isLoading) return <div className="text-center p-10">Loading...</div>;
-  if (error)
-    return <div className="text-center p-10 text-red-600">Error: {error}</div>;
-  if (!resource)
-    return <div className="text-center p-10">Resource not found</div>;
+  if (isLoading) return (
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-center">
+        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
+          <div className="text-center py-8">
+            <p className="text-gray-500 text-lg">Loading...</p>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+
+  if (error) return (
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-center">
+        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
+          <div className="text-center py-8">
+            <p className="text-red-600 text-lg">Error: {error}</p>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+
+  if (!resource) return (
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-center">
+        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
+          <div className="text-center py-8">
+            <p className="text-gray-500 text-lg">Resource not found</p>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
 
   return (
-    <div className="min-h-screen w-screen">
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-20">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl text-gray-700 font-bold">
-            Edit Resource: {resource.course}
-          </h1>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => navigate("/resources/modify")}
-              className="bg-blue-200 text-blue-800 px-4 py-2 rounded hover:bg-blue-300"
-            >
-              Back to Search
-            </button>
-            <button
-              onClick={() => navigate(`/resources/${id}`)}
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
-            >
-              Back to Resource
-            </button>
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-between items-center mb-6 py-10">
+        <button
+          onClick={() => navigate("/resources/modify")}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+        >
+          Back to Search
+        </button>
+        
+        <h1 className="text-4xl font-bold text-gray-700">
+          Edit {resource.course}
+        </h1>
+        
+        <button
+          onClick={() => navigate(`/resources/${id}`)}
+          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+        >
+          Course Preview
+        </button>
+      </div>
+
+      <div className="flex justify-center">
+        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
+          
+          {/* Resource Information */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">
+              Course Information
+            </h2>
+            <div className="bg-gray-50 rounded-lg p-6 space-y-3">
+              <p className="text-gray-700">
+                <span className="font-semibold">Course:</span> {resource.course}
+              </p>
+              <p className="text-gray-700">
+                <span className="font-semibold">Department:</span> {resource.department}
+              </p>
+              <p className="text-gray-700">
+                <span className="font-semibold">Teacher:</span> {resource.teacher}
+              </p>
+              <p className="text-gray-700">
+                <span className="font-semibold">Email:</span> {resource.email}
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Resource Information */}
-        <div className="mb-6 p-4 bg-gray-50 rounded">
-          <h2 className="text-lg text-gray-700 font-semibold mb-2">
-            Resource Information
-          </h2>
-          <p className="text-gray-700">
-            <strong>Course:</strong> {resource.course}
-          </p>
-          <p className="text-gray-700">
-            <strong>Department:</strong> {resource.department}
-          </p>
-          <p className="text-gray-700">
-            <strong>Teacher:</strong> {resource.teacher}
-          </p>
-          <p className="text-gray-700">
-            {" "}
-            <strong>Email:</strong> {resource.email}
-          </p>
-        </div>
+          {/* Current Links */}
+          <div className="mb-8 border-t pt-6">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">
+              Current Links
+            </h2>
 
-        {/* Current Links */}
-        <div className="mb-8">
-          <h2 className="text-xl text-gray-700 font-semibold mb-4">
-            Current Links
-          </h2>
-
-          {links.length === 0 && (
-            <p className="text-gray-500 italic">
-              No links available for this resource.
-            </p>
-          )}
-
-          {links.map((link, index) => (
-            <div
-              key={link.link_id || index}
-              className="flex items-center mb-3 p-3 border rounded"
-            >
-              <div className="flex-grow">
-                <p className="text-gray-900 font-medium">{link.label}</p>
-                <p className="text-sm text-gray-500 truncate">{link.url}</p>
+            {links.length === 0 ? (
+              <div className="text-center py-8 bg-gray-50 rounded-lg border">
+                <p className="text-gray-500 text-lg">
+                  No links available for this resource.
+                </p>
               </div>
+            ) : (
+              <div className="space-y-4">
+                {links.map((link, index) => (
+                  <div
+                    key={link.link_id || index}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex-grow min-w-0">
+                      <p className="text-gray-900 font-semibold text-lg ml-24">{link.label}</p>
+                      <p className="text-gray-600 text-sm truncate ml-24">{link.url}</p>
+                    </div>
+                    <button
+                      onClick={() => removeLink(link.link_id, index)}
+                      disabled={isSubmitting}
+                      className="ml-4 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-md font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Add New Link */}
+          <div className="border-t pt-6">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">
+              Add New Link
+            </h2>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Link Label</label>
+                <input
+                  type="text"
+                  value={newLink.label}
+                  onChange={(e) => handleNewLinkChange("label", e.target.value)}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  placeholder="e.g., Lecture Notes, Practice Problems"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">URL</label>
+                <input
+                  type="text"
+                  value={newLink.url}
+                  onChange={(e) => handleNewLinkChange("url", e.target.value)}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  placeholder="https://..."
+                />
+              </div>
+
               <button
-                onClick={() => removeLink(link.link_id, index)}
-                disabled={isSubmitting}
-                className="ml-4 bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200"
+                onClick={addNewLink}
+                disabled={isSubmitting || !newLink.label || !newLink.url}
+                className={`px-6 py-3 rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg ${
+                  isSubmitting || !newLink.label || !newLink.url
+                    ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                }`}
               >
-                Remove
+                {isSubmitting ? "Adding..." : "Add Link"}
               </button>
             </div>
-          ))}
-        </div>
-
-        {/* Add New Link */}
-        <div className="border-t pt-6">
-          <h2 className="text-xl text-gray-700 font-semibold mb-4">
-            Add New Link
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-gray-700 mb-1">Link Label</label>
-              <input
-                type="text"
-                value={newLink.label}
-                onChange={(e) => handleNewLinkChange("label", e.target.value)}
-                className="w-full border p-2 rounded bg-white text-gray-700"
-                placeholder="e.g., Lecture Notes, Practice Problems"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 mb-1">URL</label>
-              <input
-                type="text"
-                value={newLink.url}
-                onChange={(e) => handleNewLinkChange("url", e.target.value)}
-                className="w-full border p-2 rounded bg-white text-gray-700"
-                placeholder="https://..."
-              />
-            </div>
           </div>
-
-          <button
-            onClick={addNewLink}
-            disabled={isSubmitting || !newLink.label || !newLink.url}
-            className={`px-4 py-2 rounded  ${
-              isSubmitting || !newLink.label || !newLink.url
-                ? "bg-blue-200 cursor-not-allowed text-blue-800"
-                : "bg-blue-600 hover:bg-blue-700 text-blue-800"
-            }`}
-          >
-            {isSubmitting ? "Adding..." : "Add Link"}
-          </button>
         </div>
       </div>
       <Footer />

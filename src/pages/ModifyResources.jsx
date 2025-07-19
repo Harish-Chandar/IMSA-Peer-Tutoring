@@ -112,28 +112,39 @@ function ModifyResources() {
   };
 
   return (
-    <div className="bg-[#F1F1F1] min-h-screen w-full">
-      <div className="w-full max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-16">
-        <h1 className="text-3xl text-gray-700 font-bold text-center mb-6">
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-between items-center mb-6 py-10">
+        <button
+          onClick={() => navigate('/adminDashboard')}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+        >
+          Back to Dashboard
+        </button>
+        
+        <h1 className="text-4xl font-bold text-gray-700">
           Modify Resources
         </h1>
+        
+        <div className="w-40"></div>
+      </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <div className="flex justify-center">
+        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
           {/* Search Input */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Search Resources</label>
+          <div className="flex flex-col mb-6">
+            <label className="text-gray-700 font-bold mb-2">Search Resources</label>
             <input
               type="text"
               value={input}
               onChange={(e) => handleInputChange(e.target.value)}
-              className="w-full p-3 border rounded bg-white"
+              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
               placeholder="Search by course, teacher, or department..."
             />
           </div>
 
           {/* Department Filter */}
-          <div>
-            <label className="block text-gray-700 mb-2">
+          <div className="flex flex-col mb-8">
+            <label className="text-gray-700 font-bold mb-2">
               Filter by Department
             </label>
             <div className="flex flex-wrap gap-2">
@@ -142,37 +153,39 @@ function ModifyResources() {
                   <button
                     key={dept}
                     onClick={() => handleDepartmentChange(dept)}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-2 rounded-md text-sm font-semibold transition-all duration-200 ${
                       selectedDepartments.includes(dept)
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-gray-800"
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-gray-200 hover:bg-gray-300 text-gray-800"
                     }`}
                   >
                     {dept}
                   </button>
                 ))
               ) : (
-                <p>Loading departments...</p>
+                <p className="text-gray-500">Loading departments...</p>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Search Results */}
-        <div className="results-container">
-          {results.length > 0 ? (
-            results.map((result) => (
-              <ResourceEditCard key={result.resource_id} result={result} />
-            ))
-          ) : (
-            <div className="text-center py-6 bg-white rounded-lg shadow">
-              <p className="text-gray-500">
-                {input
-                  ? "No resources found. Try a different search term."
-                  : "Enter a search term to find resources to modify."}
-              </p>
+          {/* Search Results */}
+          <div className="border-t pt-6 mt-6">
+            <div className="results-container space-y-4">
+              {results.length > 0 ? (
+                results.map((result) => (
+                  <ResourceEditCard key={result.resource_id} result={result} />
+                ))
+              ) : (
+                <div className="text-center py-8 bg-gray-50 rounded-lg border">
+                  <p className="text-gray-500 text-lg">
+                    {input || selectedDepartments.length > 0
+                      ? "No resources found. Try a different search term or filter."
+                      : "Enter a search term or select departments to find resources to modify."}
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
       <Footer />

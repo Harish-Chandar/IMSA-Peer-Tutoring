@@ -131,136 +131,157 @@ function EditBulletin() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 pt-14">
-      <h1 className="text-4xl mb-6 text-center font-bold py-10 text-blue-500">
-        Edit Bulletin Board
-      </h1>
+    <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+      <div className="flex justify-between items-center mb-6 py-10">
+        <button
+          onClick={() => navigate('/adminDashboard')}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+        >
+          Back to Dashboard
+        </button>
+        
+        <h1 className="text-4xl font-bold text-gray-700">
+          Manage Bulletin Board
+        </h1>
+        
+        <div className="w-40"></div>
+      </div>
+
       <div className="flex justify-center">
-        <div className="rounded-2xl shadow-md p-4 bg-white border max-w-2xl w-full">
-          <h2 className="py-4 text-3xl font-bold mb-2 font-sans text-blue-500">
-            Bulletin Board
-          </h2>
-
-          <h3 className="font-sans text-xl font-bold text-gray-600 mb-3  mt-2">
-            Manage Posts
-          </h3>
-          <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
-            {posts.length === 0 ? (
-              <p className="text-gray-500">No posts yet.</p>
-            ) : (
-              posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-blue-200 text-blue-800 px-3 py-1 rounded flex justify-between items-center"
-                >
-                  <span>
-                    {post.title} - {post.event_date}
-                    {post.highpriority && (
-                      <span className="text-red-600 font-bold">
-                        {" "}
-                        (HIGH PRIORITY)
-                      </span>
-                    )}
-                  </span>
-                  <button
-                    onClick={() => handleDeletePost(post.id)}
-                    className="ml-2 text-blue-800 hover:text-blue-900 bg-transparent focus:outline-none"
+        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
+          {/* Manage Posts Section */}
+          <div className="flex flex-col mb-8">
+            <label className="text-gray-700 font-bold mb-2 text-xl">Current Posts</label>
+            <div className="w-full h-40 border rounded-md p-3 overflow-y-auto bg-gray-50 space-y-2">
+              {posts.length === 0 ? (
+                <p className="text-gray-500">No posts yet.</p>
+              ) : (
+                posts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="bg-blue-100 text-blue-800 px-3 py-2 rounded-md flex justify-between items-center border border-blue-200"
                   >
-                    ×
-                  </button>
-                </div>
-              ))
-            )}
+                    <span className="font-medium">
+                      {post.title} - {post.event_date}
+                      {post.highpriority && (
+                        <span className="text-red-600 font-bold ml-2">
+                          (HIGH PRIORITY)
+                        </span>
+                      )}
+                    </span>
+                    <button
+                      onClick={() => handleDeletePost(post.id)}
+                      className="ml-2 text-red-600 hover:text-red-700 bg-transparent focus:outline-none font-bold text-lg"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          <h3 className="font-sans text-xl font-bold text-gray-600 mb-2 mt-8">
-            Create Post
-          </h3>
+          {/* Create Post Section */}
+          <div className="border-t pt-6 mt-6">
+            <h3 className="text-gray-700 font-bold mb-4 text-xl">Create New Post</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Event Title */}
+              <div className="flex flex-col">
+                <label className="text-gray-700 font-bold mb-2">Event Title</label>
+                <input
+                  type="text"
+                  placeholder="Enter event title..."
+                  value={newPost.title}
+                  onChange={(e) => handlePostInputChange("title", e.target.value)}
+                  className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                />
+              </div>
 
-          <p className="font-sans font-bold text-gray-700 text-left">
-            Title of event:
-          </p>
-          <input
-            type="text"
-            placeholder="Enter event title..."
-            value={newPost.title}
-            onChange={(e) => handlePostInputChange("title", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
+              {/* Event Date */}
+              <div className="flex flex-col">
+                <label className="text-gray-700 font-bold mb-2">Event Date</label>
+                {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
+                <input
+                  type="date"
+                  value={newPost.event_date}
+                  onChange={(e) =>
+                    handlePostInputChange("event_date", e.target.value)
+                  }
+                  className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white placeholder:text-gray-500 text-gray-900"
+                />
+              </div>
+            </div>
 
-          <p className="font-sans font-bold text-gray-700 text-left py-2">
-            Date of event:
-          </p>
-          {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
-          <input
-            type="date"
-            value={newPost.event_date}
-            onChange={(e) =>
-              handlePostInputChange("event_date", e.target.value)
-            }
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white placeholder:text-gray-500 text-black"
-          />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Author */}
+              <div className="flex flex-col">
+                <label className="text-gray-700 font-bold mb-2">Author</label>
+                <input
+                  type="text"
+                  placeholder="Enter author name..."
+                  value={newPost.author}
+                  onChange={(e) => handlePostInputChange("author", e.target.value)}
+                  className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                />
+              </div>
 
-          <p className="font-bold py-2 font-sans text-gray-700 text-left">
-            Author:
-          </p>
-          <input
-            type="text"
-            placeholder="Enter author name..."
-            value={newPost.author}
-            onChange={(e) => handlePostInputChange("author", e.target.value)}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
+              {/* Contact Info */}
+              <div className="flex flex-col">
+                <label className="text-gray-700 font-bold mb-2">Contact Info</label>
+                <input
+                  type="text"
+                  placeholder="Enter contact information..."
+                  value={newPost.contact_info}
+                  onChange={(e) =>
+                    handlePostInputChange("contact_info", e.target.value)
+                  }
+                  className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                />
+              </div>
+            </div>
 
-          <p className=" font-bold py-2 font-sans text-gray-700 text-left">
-            Contact Info:
-          </p>
-          <input
-            type="text"
-            placeholder="Enter contact information..."
-            value={newPost.contact_info}
-            onChange={(e) =>
-              handlePostInputChange("contact_info", e.target.value)
-            }
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-          />
+            {/* Description */}
+            <div className="flex flex-col mb-4">
+              <label className="text-gray-700 font-bold mb-2">Description</label>
+              <textarea
+                placeholder="Enter event description..."
+                value={newPost.content}
+                onChange={(e) => {
+                  if (e.target.value.length <= 110) {
+                    handlePostInputChange("content", e.target.value);
+                  }
+                }}
+                className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                maxLength={110}
+                rows={3}
+              />
+              <div className="text-right text-sm text-gray-500 mt-1">
+                {newPost.content.length}/110 characters
+              </div>
+            </div>
 
-          <p className="font-bold py-2 font-sans text-gray-700 text-left">
-            Description:
-          </p>
-          <textarea
-            placeholder="Enter event description..."
-            value={newPost.content}
-            onChange={(e) => {
-              if (e.target.value.length <= 110) {
-                handlePostInputChange("content", e.target.value);
-              }
-            }}
-            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-            maxLength={110}
-          />
-          <div className="text-right text-sm text-gray-500 mb-2">
-            {newPost.content.length}/110 characters
+            {/* High Priority Checkbox */}
+            <div className="flex items-center mb-6">
+              <input
+                type="checkbox"
+                checked={newPost.highpriority}
+                onChange={(e) =>
+                  handlePostInputChange("highpriority", e.target.checked)
+                }
+                className="mr-3 appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <label className="text-gray-700 font-medium">High Priority</label>
+            </div>
+
+            {/* Create Post Button */}
+            <button
+              onClick={handleCreatePost}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              Create Post
+            </button>
           </div>
-
-          <label className="flex items-center mb-2">
-            <input
-              type="checkbox"
-              checked={newPost.highpriority}
-              onChange={(e) =>
-                handlePostInputChange("highpriority", e.target.checked)
-              }
-              className="mr-2 appearance-none w-4 h-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 accent-white"
-            />
-            <span className="font-sans text-gray-700">High Priority</span>
-          </label>
-
-          <button
-            onClick={handleCreatePost}
-            className="w-1/3 text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"
-          >
-            Post
-          </button>
         </div>
       </div>
       <Footer />
