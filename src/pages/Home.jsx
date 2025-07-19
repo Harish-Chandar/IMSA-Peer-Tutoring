@@ -43,7 +43,7 @@ export default function Home() {
           <div className="bg-slate-50 p-4 w-full md:w-2/7">
             <FontAwesomeIcon icon={faThumbTack} className="text-2xl text-blue-500" />
             <h2 className="text-gray-700 text-2xl font-bold mb-2">Bulletin</h2>
-            <h2 className="text-gray-600 text-md">Curious about upcoming events at IMSA? Want to connect with many peer tutors at the same time? Head over to the bulletin to see events happening soon, whether it be study sessions, opportunities to talk to teachers, and more!</h2>
+            <h2 className="text-gray-600 text-md">Curious about upcoming events at IMSA? Want to connect with many peer tutors at the same time? Scroll down to the bulletin to see events happening soon, whether it be study sessions, opportunities to talk to teachers, and more!</h2>
           </div>
         </div>
       </div>
