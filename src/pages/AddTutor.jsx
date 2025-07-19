@@ -490,7 +490,7 @@ function AddTutor() {
 						</div>
 
 						{/* Right card - Delete tutor section */}
-						<div className="rounded-2xl shadow-md p-8 bg-white border h-full flex flex-col">
+						<div className="rounded-2xl shadow-md p-8 bg-white border h-[4859px] flex flex-none flex-col">
 							<div className="flex flex-col h-full">
 								<h3 className="text-2xl font-bold text-gray-700 mb-6">
 									Delete Tutor
@@ -507,10 +507,10 @@ function AddTutor() {
 									/>
 								</div>
 
-								<div className="border rounded-lg p-4 bg-gray-50 flex-1 flex flex-col">
+								<div className="border rounded-lg p-4 bg-gray-50 flex-none flex flex-col">
 									<h4 className="font-bold text-gray-700 mb-3">Tutors List</h4>
 									{/* This div now takes up the remaining height and scrolls when content overflows */}
-									<div className="flex-1 overflow-y-auto space-y-2">
+									<div className="h-full flex-none overflow-y-scroll space-y-2">
 										{filteredTutors.length === 0 && tutors.length > 0 ? (
 											<p className="text-gray-500">No tutors match your search.</p>
 										) : (
