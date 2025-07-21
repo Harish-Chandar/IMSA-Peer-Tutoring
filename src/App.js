@@ -22,6 +22,7 @@ import EditBulletin from "./pages/EditBulletin.jsx";
 import EditTutor from "./pages/EditTutor.jsx";
 
 import AboutUs from "./pages/AboutUs.jsx";
+import CheckInTutors from "./pages/CheckInTutors.jsx";
 
 export default function App() {
     return (
@@ -48,6 +49,7 @@ export default function App() {
                 <Route path="/findTutors" element={<FindTutors />} />
                 <Route path="/tutor/:id" element={<Tutor />} />
                 <Route path="/about" element={<AboutUs />} />
+                <Route path="/checkin" element={<CheckInTutors />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Router>

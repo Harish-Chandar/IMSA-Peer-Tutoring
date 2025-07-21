@@ -49,6 +49,11 @@ function Navbar() {
                     </a>
                 </h3>
                 <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
+                    <a href="/checkin" className={"!font-bold" + (location.pathname === "/checkin" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
+                        Check-In Tutors
+                    </a>
+                </h3>
+                <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0">
                     <a href="/login" className={"!font-bold" + (location.pathname === "/login" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
                         Login
                     </a>

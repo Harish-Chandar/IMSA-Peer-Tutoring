@@ -402,7 +402,7 @@ app.post("/api/login", (req: Request, res: Response) => {
         bcrypt.compare(
             password,
             row.pwd,
-            (err: Error | null, result: Boolean) => {
+            (err: Error | undefined, result: boolean) => {
                 if (err)
                     return res
                         .status(500)
@@ -878,6 +878,70 @@ app.get("/api/classes", (req: Request, res: Response) => {
             }
 
             res.json(rows);
+        }
+    );
+});
+
+// Check-in a tutor (start session)
+app.post("/api/tutors/:id/checkin", authenticateAdmin, (req: Request, res: Response) => {
+    const tutorId = parseInt(req.params.id);
+    if (isNaN(tutorId) || tutorId <= 0) {
+        return res.status(400).json({ error: "Invalid tutor ID" });
+    }
+    const startTime = Date.now();
+    // Set starttime and is_available=1 (active)
+    db.run(
+        "UPDATE tutors SET starttime = ?, is_available = 1 WHERE id = ?",
+        [startTime, tutorId],
+        function (err) {
+            if (err) {
+                console.error("Check-in error:", err);
+                return res.status(500).json({ error: "Error checking in tutor" });
+            }
+            if (this.changes === 0) {
+                return res.status(404).json({ error: "Tutor not found" });
+            }
+            res.json({ message: "Tutor checked in", starttime: startTime });
+        }
+    );
+});
+
+// Check-out a tutor (end session)
+app.post("/api/tutors/:id/checkout", authenticateAdmin, (req: Request, res: Response) => {
+    const tutorId = parseInt(req.params.id);
+    if (isNaN(tutorId) || tutorId <= 0) {
+        return res.status(400).json({ error: "Invalid tutor ID" });
+    }
+    // Get current starttime and totaltime
+    db.get(
+        "SELECT starttime, totaltime FROM tutors WHERE id = ?",
+        [tutorId],
+        (err: Error | null, row: { starttime: number | null, totaltime: number | null } | undefined) => {
+            if (err) {
+                console.error("Check-out fetch error:", err);
+                return res.status(500).json({ error: "Error fetching tutor data" });
+            }
+            if (!row || row.starttime == null) {
+                return res.status(400).json({ error: "Tutor is not checked in" });
+            }
+            const now = Date.now();
+            const elapsed = now - row.starttime;
+            const newTotal = (row.totaltime || 0) + elapsed;
+            // Set starttime to null, update totaltime, set is_available=0 (inactive)
+            db.run(
+                "UPDATE tutors SET starttime = NULL, totaltime = ?, is_available = 0 WHERE id = ?",
+                [newTotal, tutorId],
+                function (err2) {
+                    if (err2) {
+                        console.error("Check-out update error:", err2);
+                        return res.status(500).json({ error: "Error checking out tutor" });
+                    }
+                    if (this.changes === 0) {
+                        return res.status(404).json({ error: "Tutor not found" });
+                    }
+                    res.json({ message: "Tutor checked out", elapsed, totaltime: newTotal });
+                }
+            );
         }
     );
 });
