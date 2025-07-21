@@ -122,7 +122,7 @@ function ModifyResources() {
                 </button>
 
                 <h1 className="text-4xl font-bold text-gray-700">
-                    Modify Resources
+                    Modify Course Information
                 </h1>
 
                 <div className="w-40"></div>
