@@ -17,7 +17,7 @@ app.use(cors());
 
 // set up server
 app.listen(PORT, () => {
-	console.log(`server listening on port ${PORT}`);
+    console.log(`server listening on port ${PORT}`);
 });
 
 // allows routes to parse json
@@ -25,88 +25,88 @@ app.use(express.json());
 
 // initialize database
 const db = new sqlite3.Database(
-	"peertutoringdb.sqlite",
-	(err: Error | null) => {
-		if (err) {
-			return console.error(err.message);
-		}
-		console.log("connected to the database");
-	}
+    "peertutoringdb.sqlite",
+    (err: Error | null) => {
+        if (err) {
+            return console.error(err.message);
+        }
+        console.log("connected to the database");
+    }
 );
 
 // api route for filtering through tutors by either name or hall
 app.get("/api/tutors/search", (req: Request, res: Response) => {
-	const { name, hall } = req.query as { name?: string; hall?: string };
-	let query = "SELECT * FROM tutors WHERE 1=1";
-	const params: (string | number)[] = [];
+    const { name, hall } = req.query as { name?: string; hall?: string };
+    let query = "SELECT * FROM tutors WHERE 1=1";
+    const params: (string | number)[] = [];
 
-	if (name) {
-		// trim so no whitespace
-		const trimmedName = name.trim();
+    if (name) {
+        // trim so no whitespace
+        const trimmedName = name.trim();
 
-		// use full name (first + last) for matching
-		query += " AND LOWER(fname || ' ' || lname) LIKE LOWER(?)";
-	params.push(`%${trimmedName}%`);
-	}
-	if (hall) {
-		// the frontend sends back a comma list for multiple halls, so handle that
-		if (hall.includes(",")) {
-			const hallList = hall
-			.split(",")
-			// maps everything to an int and filters out any NaN values
-			.map((h) => parseInt(h.trim()))
-			.filter((h) => !isNaN(h));
-			if (hallList.length === 0) {
-				return res.status(400).json({ error: "Invalid hall parameter" });
-			}
+        // use full name (first + last) for matching
+        query += " AND LOWER(fname || ' ' || lname) LIKE LOWER(?)";
+        params.push(`%${trimmedName}%`);
+    }
+    if (hall) {
+        // the frontend sends back a comma list for multiple halls, so handle that
+        if (hall.includes(",")) {
+            const hallList = hall
+                .split(",")
+                // maps everything to an int and filters out any NaN values
+                .map((h) => parseInt(h.trim()))
+                .filter((h) => !isNaN(h));
+            if (hallList.length === 0) {
+                return res.status(400).json({ error: "Invalid hall parameter" });
+            }
 
-			// appends to query and params for multiple halls
-			query += " AND hall IN (" + hallList.map(() => "?").join(",") + ")";
-		params.push(...hallList);
+            // appends to query and params for multiple halls
+            query += " AND hall IN (" + hallList.map(() => "?").join(",") + ")";
+            params.push(...hallList);
 
-		// for when there is only 1 hall, just parse int
-		} else {
-			const hallInt = parseInt(hall);
-			if (isNaN(hallInt)) {
-				return res.status(400).json({ error: "Invalid hall parameter" });
-			}
-			query += " AND hall = ?";
-			params.push(hallInt);
-		}
-	}
+            // for when there is only 1 hall, just parse int
+        } else {
+            const hallInt = parseInt(hall);
+            if (isNaN(hallInt)) {
+                return res.status(400).json({ error: "Invalid hall parameter" });
+            }
+            query += " AND hall = ?";
+            params.push(hallInt);
+        }
+    }
 
-	// debug log statement of query
-	console.log("Executing Query:", query, "Params:", params);
+    // debug log statement of query
+    console.log("Executing Query:", query, "Params:", params);
 
-	// execute the query
-	db.all(query, params, (err: Error | null, rows: any[]) => {
-		if (err) {
-			console.error("Database error:", err);
-			res.status(500).json({ error: "Error retrieving tutors" });
-			return;
-		}
+    // execute the query
+    db.all(query, params, (err: Error | null, rows: any[]) => {
+        if (err) {
+            console.error("Database error:", err);
+            res.status(500).json({ error: "Error retrieving tutors" });
+            return;
+        }
 
-		res.json(rows);
-	});
+        res.json(rows);
+    });
 });
 
 app.post("/api/schedule", (req, res) => {
-	const { title, course, teachers, location, date, time } = req.body;
+    const { title, course, teachers, location, date, time } = req.body;
 
-	const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
+    const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
 	VALUES (?, ?, ?, ?, ?, ?)`;
 
-	db.run(sql, [title, course, teachers, location, date, time], function (err) {
-		if (err) {
-			console.error("Error inserting data:", err.message);
-			res.status(500).json({ error: err.message });
-			return;
-		}
-		res.json({
-			message: "Schedule entry added",
-			id: this.lastID,
-		});
-	});
+    db.run(sql, [title, course, teachers, location, date, time], function (err) {
+        if (err) {
+            console.error("Error inserting data:", err.message);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: "Schedule entry added",
+            id: this.lastID,
+        });
+    });
 });
 
 // app.get("/api/tutors/:id", (req, res) => {
@@ -122,601 +122,603 @@ app.post("/api/schedule", (req, res) => {
 // });
 
 app.get("/api/tutors", (req, res) => {
-	db.all("SELECT * FROM tutors WHERE is_available = 1", [], (err, rows) => {
-		if (err) {
-			console.error("Database error:", err.message);
-			return res.status(500).json({ error: err.message });
-		}
+    db.all("SELECT * FROM tutors WHERE is_available = 1", [], (err, rows) => {
+        if (err) {
+            console.error("Database error:", err.message);
+            return res.status(500).json({ error: err.message });
+        }
 
-		res.json(rows);
-	});
+        res.json(rows);
+    });
 });
 
 // api route for retrieving a whole lot about a tutor based on ID
 app.get("/api/tutors/:id", (req: Request, res: Response) => {
-	const tutorId = parseInt(req.params.id);
+    const tutorId = parseInt(req.params.id);
 
-	// validate tutorId
-	if (isNaN(tutorId) || tutorId <= 0) {
-		return res.status(400).json({ error: "Invalid tutor ID" });
-	}
+    // validate tutorId
+    if (isNaN(tutorId) || tutorId <= 0) {
+        return res.status(400).json({ error: "Invalid tutor ID" });
+    }
 
-	db.all(
-		"SELECT * FROM tutors WHERE id = ?",
-			[tutorId],
-		(err: Error | null, rows: any[]) => {
-			if (err) {
-				console.error(err);
-				return res.status(500).json({ error: "Error retrieving tutor data" });
-			}
+    db.all(
+        "SELECT * FROM tutors WHERE id = ?",
+        [tutorId],
+        (err: Error | null, rows: any[]) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Error retrieving tutor data" });
+            }
 
-			if (rows.length === 0) {
-				return res.status(404).json({ error: "Tutor not found" });
-			}
+            if (rows.length === 0) {
+                return res.status(404).json({ error: "Tutor not found" });
+            }
 
-			res.status(200).json(rows[0]);
-		}
-	);
+            res.status(200).json(rows[0]);
+        }
+    );
 });
 
 // create tutor endpoint
 app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
-	const {
-		fname,
-		lname,
-		fbname,
-		imsaid,
-		email,
-		blurb,
-		hall,
-		wing,
-		image,
-		availability,
-		physics,
-		chem,
-		biology,
-		sciother,
-		mathother,
-		mathcore,
-		cs,
-		language,
-	} = req.body;
+    const {
+        fname,
+        lname,
+        fbname,
+        imsaid,
+        email,
+        blurb,
+        hall,
+        wing,
+        image,
+        availability,
+        physics,
+        chem,
+        biology,
+        sciother,
+        mathother,
+        mathcore,
+        cs,
+        language,
+    } = req.body;
 
-	const sql = `INSERT INTO tutors 
+    const sql = `INSERT INTO tutors 
 	(fname, lname, fbname, imsaid, email, blurb, hall, wing, image, availability, 
 	 physics, chem, biology, sciother, mathother, mathcore, cs, language) 
 	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-	 db.run(
-		 sql,
-		 [
-			 fname || "",
-			 lname || "",
-			 fbname || "",
-			 imsaid || null,
-			 email || "",
-			 blurb || "",
-			 hall || null,
-			 wing || null,
-			 image || "",
-			 availability || "",
-			 physics || "",
-			 chem || "",
-			 biology || "",
-			 sciother || "",
-			 mathother || "",
-			 mathcore || "",
-			 cs || "",
-			 language || "",
-		 ],
-		 function (err) {
-			 if (err) {
-				 console.error("tutor insert error:", err);
-				 res.status(500).json({ error: err.message });
-				 return;
-			 }
-			 res.json({ id: this.lastID, message: "tutor created successfully" });
-		 }
-	 );
+    db.run(
+        sql,
+        [
+            fname || "",
+            lname || "",
+            fbname || "",
+            imsaid || null,
+            email || "",
+            blurb || "",
+            hall || null,
+            wing || null,
+            image || "",
+            availability || "",
+            physics || "",
+            chem || "",
+            biology || "",
+            sciother || "",
+            mathother || "",
+            mathcore || "",
+            cs || "",
+            language || "",
+        ],
+        function (err) {
+            if (err) {
+                console.error("tutor insert error:", err);
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.json({ id: this.lastID, message: "tutor created successfully" });
+        }
+    );
 });
 
 // delete tutor endpoint
 app.delete("/api/tutors/:id", authenticateAdmin, (req: Request, res: Response) => {
-	const tutorId = parseInt(req.params.id);
+    const tutorId = parseInt(req.params.id);
 
-	// validate tutorId
-	if (isNaN(tutorId) || tutorId <= 0) {
-		return res.status(400).json({ error: "invalid tutor id" });
-	}
+    // validate tutorId
+    if (isNaN(tutorId) || tutorId <= 0) {
+        return res.status(400).json({ error: "invalid tutor id" });
+    }
 
-	const sql = "DELETE FROM tutors WHERE id = ?";
+    const sql = "DELETE FROM tutors WHERE id = ?";
 
-	db.run(sql, tutorId, function (err) {
-		if (err) {
-			console.error("tutor delete error:", err);
-			res.status(500).json({ error: err.message });
-			return;
-		}
+    db.run(sql, tutorId, function (err) {
+        if (err) {
+            console.error("tutor delete error:", err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
 
-		// check if any rows were actually deleted
-		if (this.changes === 0) {
-			return res.status(404).json({ error: "tutor not found" });
-		}
+        // check if any rows were actually deleted
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "tutor not found" });
+        }
 
-		res.json({ message: "tutor deleted successfully" });
-	});
+        res.json({ message: "tutor deleted successfully" });
+    });
 });
 
 // api route for retrieving parseable string of classes for a given tutor based on ID
 app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
-	const tutorId = req.params.id;
-	db.all(
-		"SELECT physics,chem,biology,sciother,mathother,mathcore,cs,language FROM tutors WHERE id=?",
-			[tutorId],
-		(err: Error | null, rows: any[]) => {
-			if (err) {
-				return res.send("Error retrieving classes");
-			}
-			res.status(200).json(rows);
-		}
-	);
+    const tutorId = req.params.id;
+    db.all(
+        "SELECT physics,chem,biology,sciother,mathother,mathcore,cs,language FROM tutors WHERE id=?",
+        [tutorId],
+        (err: Error | null, rows: any[]) => {
+            if (err) {
+                return res.send("Error retrieving classes");
+            }
+            res.status(200).json(rows);
+        }
+    );
 });
 
 type Admin = {
-	id: number;
-	email: string;
-	pwd: string;
-	access: number;
+    id: number;
+    email: string;
+    pwd: string;
+    access: number;
 };
 
 function authenticateAdmin(req: Request, res: Response, next: Function) {
-	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer ")) {
-		return res.status(401).json({ error: "Missing token" });
-	}
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Missing token" });
+    }
 
-	const token = authHeader.split(" ")[1];
+    const token = authHeader.split(" ")[1];
+    console.log("Token received:", token); 
 
-	try {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-			email: string;
-			access: number;
-		};
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+            email: string;
+            access: number;
+        };
 
-		if (decoded.access < 1) {
-			return res.status(403).json({ error: "Insufficient privileges" });
-		}
+        if (decoded.access < 1) {
+            return res.status(403).json({ error: "Insufficient privileges" });
+        }
 
-		req.user = decoded;
-		next();
-	} catch (err) {
-		return res.status(403).json({ error: "Invalid or expired token" });
-	}
+        //@ts-ignore
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(403).json({ error: "Invalid or expired token" });
+    }
 }
 
 app.post("/api/login", (req: Request, res: Response) => {
-	const { email, password }: { email: string; password: string } = req.body;
+    const { email, password }: { email: string; password: string } = req.body;
 
-	const query = `SELECT * FROM admins WHERE email = ?`;
-	db.get<Admin>(query, [email], (err, row) => {
-		if (err) return res.status(500).json({ error: "DB error" });
-		if (!row)
-			return res.status(401).json({ error: "Invalid email or password" });
+    const query = `SELECT * FROM admins WHERE email = ?`;
+    db.get<Admin>(query, [email], (err, row) => {
+        if (err) return res.status(500).json({ error: "DB error" });
+        if (!row)
+            return res.status(401).json({ error: "Invalid email or password" });
 
-		bcrypt.compare(password, row.pwd, (err: Error | null, result: Boolean) => {
-			if (err) return res.status(500).json({ error: "Hash comparison error" });
-			if (!result)
-				return res.status(401).json({ error: "Invalid email or password" });
+        bcrypt.compare(password, row.pwd, (err: Error | null, result: Boolean) => {
+            if (err) return res.status(500).json({ error: "Hash comparison error" });
+            if (!result)
+                return res.status(401).json({ error: "Invalid email or password" });
 
-			const token = jwt.sign(
-				{ email: row.email, access: row.access },
-				process.env.JWT_SECRET!,
-				{ expiresIn: "1h" }
-			);
+            const token = jwt.sign(
+                { email: row.email, access: row.access },
+                process.env.JWT_SECRET!,
+                { expiresIn: "1h" }
+            );
 
-			res.json({ success: true, token, access: row.access, email: row.email });
-		});
-	});
+            res.json({ success: true, token, access: row.access, email: row.email });
+        });
+    });
 });
 
 // api route for retrieving schedule string for a tutor
 app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
-	const tutorId = req.params.id;
+    const tutorId = req.params.id;
 
-	db.get(
-		"SELECT availability FROM tutors WHERE id = ?",
-			[tutorId],
-		(err: Error | null, row: any) => {
-			if (err) {
-				console.error("Database error:", err);
-				return res.status(500).json({ error: "Error retrieving schedule" });
-			}
+    db.get(
+        "SELECT availability FROM tutors WHERE id = ?",
+        [tutorId],
+        (err: Error | null, row: any) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Error retrieving schedule" });
+            }
 
-			if (!row) {
-				return res.status(404).json({ error: "Tutor not found" });
-			}
+            if (!row) {
+                return res.status(404).json({ error: "Tutor not found" });
+            }
 
-			// Return the raw schedule string
-			res.status(200).json({ availability: row.availability || "" });
-		}
-	);
+            // Return the raw schedule string
+            res.status(200).json({ availability: row.availability || "" });
+        }
+    );
 });
 
 // test api route for fun
 app.get("/api/test", (req: Request, res: Response) => {
-	db.all("SELECT * FROM tutors", (err: Error | null, rows: any[]) => {
-		if (err) {
-			console.error("Database Error:", err);
-			res.status(500).send("Database error occurred");
-			return;
-		}
-		console.log("Fetched tutors:", rows); // ensure this is visible
-		res.status(200).json(rows);
-	});
-	console.log("Test route hit!");
+    db.all("SELECT * FROM tutors", (err: Error | null, rows: any[]) => {
+        if (err) {
+            console.error("Database Error:", err);
+            res.status(500).send("Database error occurred");
+            return;
+        }
+        console.log("Fetched tutors:", rows); // ensure this is visible
+        res.status(200).json(rows);
+    });
+    console.log("Test route hit!");
 });
 
 // bulletin board api routes
 app.post("/api/bulletin", authenticateAdmin, (req: Request, res: Response) => {
-	const { title, content, event_date, author, contact_info, highpriority } =
-		req.body;
-	const creation_date = new Date().toISOString();
+    const { title, content, event_date, author, contact_info, highpriority } =
+        req.body;
+    const creation_date = new Date().toISOString();
 
-	const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority) 
+    const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority) 
 	VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-	db.run(
-		sql,
-		[
-			title || "",
-			content || "",
-			creation_date,
-			event_date || null,
-			author || "Admin",
-			contact_info || "",
-			highpriority || 0,
-		],
-		function (err) {
-			if (err) {
-				console.error("bulletin insert error:", err);
-				res.status(500).json({ error: err.message });
-				return;
-			}
-			res.json({ id: this.lastID, message: "post created successfully" });
-		}
-	);
+    db.run(
+        sql,
+        [
+            title || "",
+            content || "",
+            creation_date,
+            event_date || null,
+            author || "Admin",
+            contact_info || "",
+            highpriority || 0,
+        ],
+        function (err) {
+            if (err) {
+                console.error("bulletin insert error:", err);
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.json({ id: this.lastID, message: "post created successfully" });
+        }
+    );
 });
 
 app.get("/api/bulletin", (req: Request, res: Response) => {
-	const sql = "SELECT * FROM bulletin ORDER BY creation_date DESC";
+    const sql = "SELECT * FROM bulletin ORDER BY creation_date DESC";
 
-	db.all(sql, [], (err: Error | null, rows: any[]) => {
-		if (err) {
-			console.error("bulletin fetch error:", err);
-			res.status(500).json({ error: err.message });
-			return;
-		}
-		res.json(rows);
-	});
+    db.all(sql, [], (err: Error | null, rows: any[]) => {
+        if (err) {
+            console.error("bulletin fetch error:", err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
+    });
 });
 
-app.delete("/api/bulletin/:id", authenticateAdmin,(req: Request, res: Response) => {
-	const sql = "DELETE FROM bulletin WHERE id = ?";
+app.delete("/api/bulletin/:id", authenticateAdmin, (req: Request, res: Response) => {
+    const sql = "DELETE FROM bulletin WHERE id = ?";
 
-	db.run(sql, req.params.id, function (err) {
-		if (err) {
-			console.error("bulletin delete error:", err);
-			res.status(500).json({ error: err.message });
-			return;
-		}
-		res.json({ message: "post deleted successfully" });
-	});
+    db.run(sql, req.params.id, function (err) {
+        if (err) {
+            console.error("bulletin delete error:", err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ message: "post deleted successfully" });
+    });
 });
 
 // resources routes
 
 // api route for inserting new data into the resources table
 app.post("/api/resources", authenticateAdmin, (req: Request, res: Response) => {
-	const { teacher, email, course, department, url, type, links } = req.body;
+    const { teacher, email, course, department, url, type, links } = req.body;
 
-	console.log("Request body:", req.body); // Log the entire request body
-	console.log("Links received:", links); // Log just the links
+    console.log("Request body:", req.body); // Log the entire request body
+    console.log("Links received:", links); // Log just the links
 
-	// Create search field for easier searching
-	const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
+    // Create search field for easier searching
+    const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
 
-// First insert the main resource
-db.run(
-	"INSERT INTO resources (teacher, email, course, department, url, type, search_field) VALUES (?, ?, ?, ?, ?, ?, ?)",
-	[teacher, email, course, department, url, type, search_field],
-	function (this: any, err: Error | null) {
-		if (err) {
-			console.error("Error inserting resource:", err);
-			return res.status(500).json({ error: "Error adding resource" });
-		}
+    // First insert the main resource
+    db.run(
+        "INSERT INTO resources (teacher, email, course, department, url, type, search_field) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [teacher, email, course, department, url, type, search_field],
+        function (this: any, err: Error | null) {
+            if (err) {
+                console.error("Error inserting resource:", err);
+                return res.status(500).json({ error: "Error adding resource" });
+            }
 
-		// Get the ID of the newly inserted resource
-		const resourceId = this.lastID;
-		console.log(`Created resource with ID: ${resourceId}`);
+            // Get the ID of the newly inserted resource
+            const resourceId = this.lastID;
+            console.log(`Created resource with ID: ${resourceId}`);
 
-		// Now handle the links array if it exists
-		if (links && Array.isArray(links) && links.length > 0) {
-			console.log(
-				`Processing ${links.length} links for resource ${resourceId}`
-			);
+            // Now handle the links array if it exists
+            if (links && Array.isArray(links) && links.length > 0) {
+                console.log(
+                    `Processing ${links.length} links for resource ${resourceId}`
+                );
 
-			// Use direct inserts instead of prepared statements
-			let insertedLinks = 0;
-			let errorCount = 0;
+                // Use direct inserts instead of prepared statements
+                let insertedLinks = 0;
+                let errorCount = 0;
 
-			links.forEach((link: { label: string; url: string }, index: number) => {
-				console.log(`Inserting link ${index + 1}:`, link);
+                links.forEach((link: { label: string; url: string }, index: number) => {
+                    console.log(`Inserting link ${index + 1}:`, link);
 
-				db.run(
-					"INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
-					[resourceId, link.label, link.url],
-					function (err: Error | null) {
-						if (err) {
-							console.error(`Error inserting link ${index + 1}:`, err);
-							errorCount++;
-						} else {
-							console.log(
-								`Link ${index + 1} inserted with ID: ${this.lastID}`
-							);
-							insertedLinks++;
-						}
+                    db.run(
+                        "INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
+                        [resourceId, link.label, link.url],
+                        function (err: Error | null) {
+                            if (err) {
+                                console.error(`Error inserting link ${index + 1}:`, err);
+                                errorCount++;
+                            } else {
+                                console.log(
+                                    `Link ${index + 1} inserted with ID: ${this.lastID}`
+                                );
+                                insertedLinks++;
+                            }
 
-						// If this is the last link (whether success or error), send the response
-						if (insertedLinks + errorCount === links.length) {
-							res.status(201).json({
-								id: resourceId,
-								message: `Resource created successfully. ${insertedLinks} links inserted. ${errorCount} links failed.`,
-							});
-						}
-					}
-				);
-			});
-		} else {
-			// No links to insert, send response immediately
-			res.status(201).json({
-				id: resourceId,
-				message: "Resource created successfully with no links.",
-			});
-		}
-	}
-);
+                            // If this is the last link (whether success or error), send the response
+                            if (insertedLinks + errorCount === links.length) {
+                                res.status(201).json({
+                                    id: resourceId,
+                                    message: `Resource created successfully. ${insertedLinks} links inserted. ${errorCount} links failed.`,
+                                });
+                            }
+                        }
+                    );
+                });
+            } else {
+                // No links to insert, send response immediately
+                res.status(201).json({
+                    id: resourceId,
+                    message: "Resource created successfully with no links.",
+                });
+            }
+        }
+    );
 });
 
 // api route for retrieving all resources
 app.get("/api/resources", (req: Request, res: Response) => {
-	db.all("SELECT * FROM resources", (err: Error | null, rows: any[]) => {
-		if (err) {
-			console.error("Database error:", err);
-			return res.status(500).json({ error: "Error retrieving resources" });
-		}
-		res.json(rows);
-	});
+    db.all("SELECT * FROM resources", (err: Error | null, rows: any[]) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Error retrieving resources" });
+        }
+        res.json(rows);
+    });
 });
 
 // api route for retrieving resources by department
 app.get("/api/resources/search", (req: Request, res: Response) => {
-	const searchQuery = req.query.searchQuery as string; // Make sure you use searchQuery
-	const departmentParam = req.query.department as string;
+    const searchQuery = req.query.searchQuery as string; // Make sure you use searchQuery
+    const departmentParam = req.query.department as string;
 
-	console.log("API received searchQuery:", searchQuery); // Debug
-	console.log("API received department:", departmentParam); // Debug
+    console.log("API received searchQuery:", searchQuery); // Debug
+    console.log("API received department:", departmentParam); // Debug
 
-	let query = "SELECT * FROM resources WHERE 1=1"; // 1=1 lets you append more conditions easily with AND operator.
-		const params: (string | number)[] = [];
+    let query = "SELECT * FROM resources WHERE 1=1"; // 1=1 lets you append more conditions easily with AND operator.
+    const params: (string | number)[] = [];
 
-	if (searchQuery) {
-		// search for searchQuery in search_field column
-		//trim so there is no whitespace
-		const trimmedCourse = searchQuery.trim();
-		query += " AND LOWER(search_field) LIKE LOWER(?)";
-		params.push(`%${trimmedCourse}%`);
-	}
-	if (departmentParam) {
-		// the frontend sends back a comma list for multiple departments, so handle that
-		if (departmentParam.includes(",")) {
-			const departmentList = departmentParam.split(",").map((d) => d.trim());
+    if (searchQuery) {
+        // search for searchQuery in search_field column
+        //trim so there is no whitespace
+        const trimmedCourse = searchQuery.trim();
+        query += " AND LOWER(search_field) LIKE LOWER(?)";
+        params.push(`%${trimmedCourse}%`);
+    }
+    if (departmentParam) {
+        // the frontend sends back a comma list for multiple departments, so handle that
+        if (departmentParam.includes(",")) {
+            const departmentList = departmentParam.split(",").map((d) => d.trim());
 
-			if (departmentList.length === 0) {
-				return res.status(400).json({ error: "Invalid department parameter" });
-			}
+            if (departmentList.length === 0) {
+                return res.status(400).json({ error: "Invalid department parameter" });
+            }
 
-			//appends to query and params for multiple departments
-			query +=
-			" AND LOWER(department) IN (" +
-										departmentList.map(() => "?").join(",") +
-									")";
-		params.push(...departmentList.map((d) => d.toLowerCase()));
+            //appends to query and params for multiple departments
+            query +=
+                " AND LOWER(department) IN (" +
+                departmentList.map(() => "?").join(",") +
+                ")";
+            params.push(...departmentList.map((d) => d.toLowerCase()));
 
-		// for when there is only 1 dept
-		} else {
-			query += " AND LOWER(department) = LOWER(?)";
-			params.push(departmentParam.trim().toLowerCase());
-		}
-	}
+            // for when there is only 1 dept
+        } else {
+            query += " AND LOWER(department) = LOWER(?)";
+            params.push(departmentParam.trim().toLowerCase());
+        }
+    }
 
-	// debug log statement of query
-	console.log("Executing Query:", query, "Params:", params);
+    // debug log statement of query
+    console.log("Executing Query:", query, "Params:", params);
 
-	// execute the query
-	db.all(query, params, (err: Error | null, rows: any[]) => {
-		if (err) {
-			console.error("Database error:", err);
-			res.status(500).json({ error: "Error retrieving resources" });
-			return;
-		}
+    // execute the query
+    db.all(query, params, (err: Error | null, rows: any[]) => {
+        if (err) {
+            console.error("Database error:", err);
+            res.status(500).json({ error: "Error retrieving resources" });
+            return;
+        }
 
-		console.log("Query Results:", rows); // Log the query results
+        console.log("Query Results:", rows); // Log the query results
 
-		if (rows.length === 0) {
-			return res.status(404).json({ error: "No resources found" });
-		}
-		res.json(rows || []); // Always return an array
-	});
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "No resources found" });
+        }
+        res.json(rows || []); // Always return an array
+    });
 });
 
 app.get("/api/resources/departments", (req: Request, res: Response) => {
-	db.all(
-		"SELECT DISTINCT department FROM resources ORDER BY department",
-		[],
-		(err: Error | null, departments: { department: string }[]) => {
-			if (err) {
-				return res.status(500).json({ error: "Database error" });
-			}
-			const departmentNames = departments.map((row) => row.department);
-			res.json(departmentNames);
-		}
-	);
+    db.all(
+        "SELECT DISTINCT department FROM resources ORDER BY department",
+        [],
+        (err: Error | null, departments: { department: string }[]) => {
+            if (err) {
+                return res.status(500).json({ error: "Database error" });
+            }
+            const departmentNames = departments.map((row) => row.department);
+            res.json(departmentNames);
+        }
+    );
 });
 
 // route to get details of a resource by ID
 app.get("/api/resources/:id", (req: Request, res: Response) => {
-	const resourceId = parseInt(req.params.id);
+    const resourceId = parseInt(req.params.id);
 
-	// First, get the resource
-	db.get(
-		"SELECT * FROM resources WHERE resource_id = ?",
-			[resourceId],
-		(err, resource) => {
-			if (err) {
-				return res.status(500).json({ error: "Database error" });
-			}
+    // First, get the resource
+    db.get(
+        "SELECT * FROM resources WHERE resource_id = ?",
+        [resourceId],
+        (err, resource) => {
+            if (err) {
+                return res.status(500).json({ error: "Database error" });
+            }
 
-			if (!resource) {
-				return res.status(404).json({ error: "Resource not found" });
-			}
+            if (!resource) {
+                return res.status(404).json({ error: "Resource not found" });
+            }
 
-			// Then, get all links for this resource
-			db.all(
-				"SELECT link_id, label, url FROM resource_links WHERE resource_id = ?",
-					[resourceId],
-				(err, links) => {
-					if (err) {
-						// Even if there's an error getting links, return the resource
-						return res.json({
-							...resource,
-							links: [],
-						});
-					}
+            // Then, get all links for this resource
+            db.all(
+                "SELECT link_id, label, url FROM resource_links WHERE resource_id = ?",
+                [resourceId],
+                (err, links) => {
+                    if (err) {
+                        // Even if there's an error getting links, return the resource
+                        return res.json({
+                            ...resource,
+                            links: [],
+                        });
+                    }
 
-					// Return the resource with links
-					return res.json({
-						...resource,
-						links: links || [],
-					});
-				}
-			);
-		}
-	);
+                    // Return the resource with links
+                    return res.json({
+                        ...resource,
+                        links: links || [],
+                    });
+                }
+            );
+        }
+    );
 });
 
 // Add a new link to a resource
 app.post("/api/resources/:id/links", authenticateAdmin, (req: Request, res: Response) => {
-	const resourceId = parseInt(req.params.id);
-	const { label, url } = req.body;
+    const resourceId = parseInt(req.params.id);
+    const { label, url } = req.body;
 
-	if (!label || !url) {
-		return res.status(400).json({ error: "Label and URL are required" });
-	}
+    if (!label || !url) {
+        return res.status(400).json({ error: "Label and URL are required" });
+    }
 
-	db.run(
-		"INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
-		[resourceId, label, url],
-		function (this: any, err: Error | null) {
-			if (err) {
-				console.error("Error adding link:", err);
-				return res.status(500).json({ error: "Error adding link" });
-			}
+    db.run(
+        "INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)",
+        [resourceId, label, url],
+        function (this: any, err: Error | null) {
+            if (err) {
+                console.error("Error adding link:", err);
+                return res.status(500).json({ error: "Error adding link" });
+            }
 
-			res.status(201).json({
-				linkId: this.lastID,
-				message: "Link added successfully",
-			});
-		}
-	);
+            res.status(201).json({
+                linkId: this.lastID,
+                message: "Link added successfully",
+            });
+        }
+    );
 });
 
 // Delete a link
 app.delete(
-	"/api/resources/:id/links/:linkId", authenticateAdmin,
-	(req: Request, res: Response) => {
-		const linkId = parseInt(req.params.linkId);
+    "/api/resources/:id/links/:linkId", authenticateAdmin,
+    (req: Request, res: Response) => {
+        const linkId = parseInt(req.params.linkId);
 
-		db.run(
-			"DELETE FROM resource_links WHERE link_id = ?",
-				[linkId],
-			(err: Error | null) => {
-				if (err) {
-					console.error("Error deleting link:", err);
-					return res.status(500).json({ error: "Error deleting link" });
-				}
+        db.run(
+            "DELETE FROM resource_links WHERE link_id = ?",
+            [linkId],
+            (err: Error | null) => {
+                if (err) {
+                    console.error("Error deleting link:", err);
+                    return res.status(500).json({ error: "Error deleting link" });
+                }
 
-				res.json({ message: "Link deleted successfully" });
-			}
-		);
-	}
+                res.json({ message: "Link deleted successfully" });
+            }
+        );
+    }
 );
 
 // Update the main resource URL (for legacy resources)
 app.patch("/api/resources/:id", authenticateAdmin, (req: Request, res: Response) => {
-	const resourceId = parseInt(req.params.id);
-	const { url } = req.body;
+    const resourceId = parseInt(req.params.id);
+    const { url } = req.body;
 
-	db.run(
-		"UPDATE resources SET url = ? WHERE resource_id = ?",
-			[url, resourceId],
-		(err: Error | null) => {
-			if (err) {
-				console.error("Error updating resource:", err);
-				return res.status(500).json({ error: "Error updating resource" });
-			}
+    db.run(
+        "UPDATE resources SET url = ? WHERE resource_id = ?",
+        [url, resourceId],
+        (err: Error | null) => {
+            if (err) {
+                console.error("Error updating resource:", err);
+                return res.status(500).json({ error: "Error updating resource" });
+            }
 
-			res.json({ message: "Resource updated successfully" });
-		}
-	);
+            res.json({ message: "Resource updated successfully" });
+        }
+    );
 });
 
 // Update resource information
 app.patch("/api/resources/:id/info", authenticateAdmin, (req: Request, res: Response) => {
-	const resourceId = parseInt(req.params.id);
-	const { teacher, email, course, department, type } = req.body;
+    const resourceId = parseInt(req.params.id);
+    const { teacher, email, course, department, type } = req.body;
 
-	// Create search field for easier searching
-	const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
+    // Create search field for easier searching
+    const search_field = `${teacher.toLowerCase()} ${course.toLowerCase()}`;
 
-db.run(
-	"UPDATE resources SET teacher = ?, email = ?, course = ?, department = ?, type = ?, search_field = ? WHERE resource_id = ?",
-		[teacher, email, course, department, type, search_field, resourceId],
-	(err: Error | null) => {
-		if (err) {
-			console.error("Error updating resource information:", err);
-			return res
-			.status(500)
-			.json({ error: "Error updating resource information" });
-		}
+    db.run(
+        "UPDATE resources SET teacher = ?, email = ?, course = ?, department = ?, type = ?, search_field = ? WHERE resource_id = ?",
+        [teacher, email, course, department, type, search_field, resourceId],
+        (err: Error | null) => {
+            if (err) {
+                console.error("Error updating resource information:", err);
+                return res
+                    .status(500)
+                    .json({ error: "Error updating resource information" });
+            }
 
-		res.json({ message: "Resource information updated successfully" });
-	}
-);
+            res.json({ message: "Resource information updated successfully" });
+        }
+    );
 });
 
 // api route for fetching all classes organized by department
 app.get("/api/classes", (req: Request, res: Response) => {
-	db.all(
-		"SELECT * FROM classes ORDER BY department, class_name",
-		[],
-		(err: Error | null, rows: any[]) => {
-			if (err) {
-				console.error("Database error:", err);
-				res.status(500).json({ error: "Error retrieving classes" });
-				return;
-			}
+    db.all(
+        "SELECT * FROM classes ORDER BY department, class_name",
+        [],
+        (err: Error | null, rows: any[]) => {
+            if (err) {
+                console.error("Database error:", err);
+                res.status(500).json({ error: "Error retrieving classes" });
+                return;
+            }
 
-			res.json(rows);
-		}
-	);
+            res.json(rows);
+        }
+    );
 });

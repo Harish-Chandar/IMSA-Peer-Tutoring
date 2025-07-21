@@ -5,76 +5,76 @@ import { useNavigate } from 'react-router-dom';
 import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 function Dashboard() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  useEffect(() => {
-	  if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
-		  navigate('/login', { replace: true });
-	  }
-  }, [token, navigate]);
+    useEffect(() => {
+        if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+            navigate('/login', { replace: true });
+        }
+    }, [token, navigate]);
 
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
+    const handleNavigation = (path) => {
+        navigate(path);
+    };
 
-  return (
-    <div className="p-6 bg-gray-100 pt-14">
-      <h1 className="text-4xl mb-6 text-center font-bold py-10 text-blue-500">
-        Administrator Dashboard
-      </h1>
-      
-      <div className="flex justify-center">
-        <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl w-full">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-3">
-              Welcome to Your Dashboard
-            </h2>
-            <p className="text-gray-600">
-              Manage tutors, courses, resources, and bulletin posts from here!
-            </p>
-          </div>
+    return (
+        <div className="p-6 bg-gray-100 pt-14">
+            <h1 className="text-4xl mb-6 text-center font-bold py-10 text-blue-500">
+                Administrator Dashboard
+            </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button
-              onClick={() => handleNavigation('/addTutor')}
-              className="bg-blue-500 hover:bg-blue-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              <div className="text-lg mb-1">Manage Tutors</div>
-              <div className="text-sm opacity-90">Add or remove tutors</div>
-            </button>
+            <div className="flex justify-center">
+                <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl w-full">
+                    <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-3">
+                            Welcome to Your Dashboard
+                        </h2>
+                        <p className="text-gray-600">
+                            Manage tutors, courses, resources, and bulletin posts from here!
+                        </p>
+                    </div>
 
-            <button
-              onClick={() => handleNavigation('/resources/new')}
-              className="bg-green-500 hover:bg-green-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              <div className="text-lg mb-1">Add New Course</div>
-              <div className="text-sm opacity-90">Create a page to list class resources</div>
-            </button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                            onClick={() => handleNavigation('/addTutor')}
+                            className="bg-blue-500 hover:bg-blue-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div className="text-lg mb-1">Manage Tutors</div>
+                            <div className="text-sm opacity-90">Add or remove tutors</div>
+                        </button>
 
-            <button
-              onClick={() => handleNavigation('/resources/modify')}
-              className="bg-orange-500 hover:bg-orange-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              <div className="text-lg mb-1">Manage Existing Courses</div>
-              <div className="text-sm opacity-90">Edit current course info and resources</div>
-            </button>
+                        <button
+                            onClick={() => handleNavigation('/resources/new')}
+                            className="bg-green-500 hover:bg-green-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div className="text-lg mb-1">Add New Course</div>
+                            <div className="text-sm opacity-90">Create a page to list class resources</div>
+                        </button>
 
-            <button
-              onClick={() => handleNavigation('/editBulletin')}
-              className="bg-purple-500 hover:bg-purple-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              <div className="text-lg mb-1">Manage Bulletin</div>
-              <div className="text-sm opacity-90">Update announcements</div>
-            </button>
-          </div>
+                        <button
+                            onClick={() => handleNavigation('/resources/modify')}
+                            className="bg-orange-500 hover:bg-orange-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div className="text-lg mb-1">Manage Existing Courses</div>
+                            <div className="text-sm opacity-90">Edit current course info and resources</div>
+                        </button>
+
+                        <button
+                            onClick={() => handleNavigation('/editBulletin')}
+                            className="bg-purple-500 hover:bg-purple-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div className="text-lg mb-1">Manage Bulletin</div>
+                            <div className="text-sm opacity-90">Update announcements</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <Footer />
         </div>
-      </div>
-      
-      <Footer />
-    </div>
-  );
+    );
 }
 
 export default Dashboard;

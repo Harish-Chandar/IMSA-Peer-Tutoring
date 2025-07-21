@@ -8,17 +8,17 @@ import ResourceBoard from "../components/ResourceBoard.jsx";
 import ResourceCard from "../components/ResourceCard.jsx";
 
 export const Resources = () => {
-  const [results, setResults] = useState([]);
+    const [results, setResults] = useState([]);
 
-  return (
-    <div className="flex flex-col w-full">
-      <Navbar />
-      <ResourceHero />
-      <div className="mx-auto w-1/2">
-        <SearchBar setResults={setResults} />
-        <SearchResultsList results={results} />
-      </div>
-      <ResourceBoard />
-    </div>
-  );
+    return (
+        <div className="flex flex-col w-full">
+            <Navbar />
+            <ResourceHero />
+            <div className="mx-auto w-1/2">
+                <SearchBar setResults={setResults} />
+                <SearchResultsList results={results} />
+            </div>
+            <ResourceBoard />
+        </div>
+    );
 };

@@ -4,23 +4,23 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
 :root {
-  --color-primary: #2194f3;
-  --color-secondary: #003a7d;
-  --color-textColor: #4d4d4d;
-  --color-primary-background: #ffffff;
-  --color-secondary-background: #f1f1f1;
-  --color-tertiary-background: #f5f7fa;
+    --color-primary: #2194f3;
+    --color-secondary: #003a7d;
+    --color-textColor: #4d4d4d;
+    --color-primary-background: #ffffff;
+    --color-secondary-background: #f1f1f1;
+    --color-tertiary-background: #f5f7fa;
 
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light;
-  /* color: rgba(255, 255, 255, 0.87); */
-  background-color: #e7e7e7;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light;
+    /* color: rgba(255, 255, 255, 0.87); */
+    background-color: #e7e7e7;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* body { */

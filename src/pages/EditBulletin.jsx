@@ -145,7 +145,7 @@ function EditBulletin() {
 
 	// delete a post with confirmation popup - remove from database
 	const handleDeletePost = async (postId) => {
-		const postToDelete = posts.find((post) => post.id === postId);
+        const postToDelete = posts.find((post) => post.id === postId);
 		const confirmDelete = window.confirm(
 			`Are you sure you want to delete the event "${postToDelete.title}"? This action cannot be undone.`
 		);
