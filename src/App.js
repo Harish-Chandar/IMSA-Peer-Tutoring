@@ -19,6 +19,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import FindTutors from "./pages/FindTutors.jsx";
 import Tutor from "./pages/Tutor.jsx";
 import EditBulletin from "./pages/EditBulletin.jsx";
+import EditTutor from "./pages/EditTutor.jsx";
 
 import AboutUs from "./pages/AboutUs.jsx";
 
@@ -34,12 +35,16 @@ export default function App() {
                 <Route path="/resources/new" element={<AddResource />} />
                 <Route path="/resources/modify" element={<ModifyResources />} />
                 <Route path="/resources/:id/edit" element={<EditResource />} />
-                <Route path="/resources/:id/edit-info" element={<EditResourceInfo />} />
+                <Route
+                    path="/resources/:id/edit-info"
+                    element={<EditResourceInfo />}
+                />
                 <Route path="/resources/:id" element={<ResourceDetails />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/addTutor" element={<AddTutor />} />
                 <Route path="/adminDashboard" element={<Dashboard />} />
                 <Route path="/editBulletin" element={<EditBulletin />} />
+                <Route path="/editTutor/:id" element={<EditTutor />} />
                 <Route path="/findTutors" element={<FindTutors />} />
                 <Route path="/tutor/:id" element={<Tutor />} />
                 <Route path="/about" element={<AboutUs />} />

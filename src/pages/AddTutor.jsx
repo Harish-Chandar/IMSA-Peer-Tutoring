@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-import { isTokenExpired } from "../util.ts"
+import { isTokenExpired } from "../util.ts";
 
 const token = localStorage.getItem("token");
 
@@ -12,7 +12,7 @@ function AddTutor() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token || isTokenExpired(token)) {
-            navigate('/login', { replace: true });
+            navigate("/login", { replace: true });
         }
     }, []);
     // environment variables for API configuration
@@ -182,7 +182,14 @@ function AddTutor() {
 
     // handle creating a new tutor
     const handleCreateTutor = async () => {
-        if (!newTutor.fname || !newTutor.lname || !newTutor.email || !newTutor.imsaid || !newTutor.hall || !newTutor.wing) {
+        if (
+            !newTutor.fname ||
+            !newTutor.lname ||
+            !newTutor.email ||
+            !newTutor.imsaid ||
+            !newTutor.hall ||
+            !newTutor.wing
+        ) {
             alert("Please fill in all fields.");
             return;
         }
@@ -200,8 +207,10 @@ function AddTutor() {
                 }
             });
 
-            const wingMapping = { 'A': 1, 'B': 2, 'C': 3, 'D': 4 };
-            const wingNumber = newTutor.wing ? wingMapping[newTutor.wing] : null;
+            const wingMapping = { A: 1, B: 2, C: 3, D: 4 };
+            const wingNumber = newTutor.wing
+                ? wingMapping[newTutor.wing]
+                : null;
 
             const tutorData = {
                 ...newTutor,
@@ -216,7 +225,7 @@ function AddTutor() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(tutorData),
             });
@@ -276,13 +285,16 @@ function AddTutor() {
 
         if (confirmDelete) {
             try {
-                const response = await fetch(`${baseUrl}/api/tutors/${tutorId}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                    },
-                });
+                const response = await fetch(
+                    `${baseUrl}/api/tutors/${tutorId}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
                 if (response.ok) {
                     // refresh tutors from database after successful deletion
@@ -303,7 +315,7 @@ function AddTutor() {
         <div className="p-6 bg-gray-100 pt-14 min-h-screen">
             <div className="flex justify-between items-center mb-6 py-10">
                 <button
-                    onClick={() => navigate('/adminDashboard')}
+                    onClick={() => navigate("/adminDashboard")}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                     Back to Dashboard
@@ -327,59 +339,94 @@ function AddTutor() {
                                 </h3>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">First Name</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        First Name
+                                    </label>
                                     <input
                                         type="text"
                                         placeholder="Enter first name..."
                                         value={newTutor.fname}
-                                        onChange={(e) => handleInputChange("fname", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "fname",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                         required
                                     />
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">Last Name</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Last Name
+                                    </label>
                                     <input
                                         type="text"
                                         placeholder="Enter last name..."
                                         value={newTutor.lname}
-                                        onChange={(e) => handleInputChange("lname", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "lname",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                         required
                                     />
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">Facebook Name (optional)</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Facebook Name (optional)
+                                    </label>
                                     <input
                                         type="text"
                                         placeholder="Enter facebook name..."
                                         value={newTutor.fbname}
-                                        onChange={(e) => handleInputChange("fbname", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "fbname",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                     />
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">Email</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Email
+                                    </label>
                                     <input
                                         type="email"
                                         placeholder="Enter email..."
                                         value={newTutor.email}
-                                        onChange={(e) => handleInputChange("email", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "email",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                         required
                                     />
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">IMSA ID</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        IMSA ID
+                                    </label>
                                     <input
                                         type="number"
                                         placeholder="Enter IMSA ID..."
                                         value={newTutor.imsaid}
-                                        onChange={(e) => handleInputChange("imsaid", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "imsaid",
+                                                e.target.value
+                                            )
+                                        }
                                         min={126000}
                                         max={200000}
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
@@ -387,23 +434,37 @@ function AddTutor() {
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">Hall</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Hall
+                                    </label>
                                     <input
                                         type="number"
                                         placeholder="Enter hall number..."
                                         value={newTutor.hall}
                                         min={1501}
                                         max={1507}
-                                        onChange={(e) => handleInputChange("hall", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "hall",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                     />
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">Wing</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Wing
+                                    </label>
                                     <select
                                         value={newTutor.wing}
-                                        onChange={(e) => handleInputChange("wing", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "wing",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                     >
                                         <option value="">Select a wing</option>
@@ -415,11 +476,18 @@ function AddTutor() {
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <label className="text-gray-700 font-bold mb-2">Blurb</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Blurb
+                                    </label>
                                     <textarea
                                         placeholder="Enter tutor description..."
                                         value={newTutor.blurb}
-                                        onChange={(e) => handleInputChange("blurb", e.target.value)}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "blurb",
+                                                e.target.value
+                                            )
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                         rows="4"
                                     />
@@ -427,66 +495,130 @@ function AddTutor() {
 
                                 {/* Availability Section */}
                                 <div className="border-t pt-6 mt-6">
-                                    <h3 className="text-xl font-bold mb-4 text-gray-700">Availability</h3>
+                                    <h3 className="text-xl font-bold mb-4 text-gray-700">
+                                        Availability
+                                    </h3>
                                     <p className="text-sm text-gray-600 mb-4">
-                                        Enter time slots separated by commas (e.g., "5:30-6:00, 6:00-6:30, 7:00-7:30"). Do not include AM or PM.
+                                        Enter time slots separated by commas
+                                        (e.g., "5:30-6:00, 6:00-6:30,
+                                        7:00-7:30"). Do not include AM or PM.
                                     </p>
 
-                                    {Object.entries(availability).map(([day, timeSlots]) => (
-                                        <div key={day} className="flex flex-col mb-4">
-                                            <label className="text-gray-700 font-bold mb-2 capitalize">{day}</label>
-                                            <input
-                                                type="text"
-                                                placeholder="e.g., 5:30-6:00, 6:00-6:30"
-                                                value={timeSlots}
-                                                onChange={(e) => handleAvailabilityChange(day, e.target.value)}
-                                                className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                                            />
-                                        </div>
-                                    ))}
+                                    {Object.entries(availability).map(
+                                        ([day, timeSlots]) => (
+                                            <div
+                                                key={day}
+                                                className="flex flex-col mb-4"
+                                            >
+                                                <label className="text-gray-700 font-bold mb-2 capitalize">
+                                                    {day}
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g., 5:30-6:00, 6:00-6:30"
+                                                    value={timeSlots}
+                                                    onChange={(e) =>
+                                                        handleAvailabilityChange(
+                                                            day,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                                />
+                                            </div>
+                                        )
+                                    )}
                                 </div>
 
                                 {/* Class Selection Section */}
                                 <div className="border-t pt-6 mt-6">
-                                    <h3 className="text-xl font-bold mb-4 text-gray-700">Class Selection</h3>
+                                    <h3 className="text-xl font-bold mb-4 text-gray-700">
+                                        Class Selection
+                                    </h3>
 
                                     {isLoadingClasses ? (
-                                        <div className="text-gray-500">Loading classes...</div>
-                                    ) : Object.keys(classCategories).length === 0 ? (
-                                        <div className="text-red-500">Error loading classes. Please refresh the page.</div>
+                                        <div className="text-gray-500">
+                                            Loading classes...
+                                        </div>
+                                    ) : Object.keys(classCategories).length ===
+                                      0 ? (
+                                        <div className="text-red-500">
+                                            Error loading classes. Please
+                                            refresh the page.
+                                        </div>
                                     ) : (
-                                        Object.entries(classCategories).map(([category, classes]) => (
-                                            <div key={category} className="mb-6 p-4 border rounded-lg bg-gray-50">
-                                                <h4 className="font-bold text-gray-700 mb-3 capitalize">{category} Classes</h4>
-                                                <div className="max-h-32 overflow-y-auto">
-                                                    {classes.map((className) => (
-                                                        <label key={className} className="flex items-center mb-2 cursor-pointer">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedClasses[category]?.includes(className) || false}
-                                                                onChange={() => handleClassToggle(category, className)}
-                                                                className="mr-2"
-                                                            />
-                                                            <span className="text-sm text-gray-700">{className}</span>
-                                                        </label>
-                                                    ))}
+                                        Object.entries(classCategories).map(
+                                            ([category, classes]) => (
+                                                <div
+                                                    key={category}
+                                                    className="mb-6 p-4 border rounded-lg bg-gray-50"
+                                                >
+                                                    <h4 className="font-bold text-gray-700 mb-3 capitalize">
+                                                        {category} Classes
+                                                    </h4>
+                                                    <div className="max-h-32 overflow-y-auto">
+                                                        {classes.map(
+                                                            (className) => (
+                                                                <label
+                                                                    key={
+                                                                        className
+                                                                    }
+                                                                    className="flex items-center mb-2 cursor-pointer"
+                                                                >
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={
+                                                                            selectedClasses[
+                                                                                category
+                                                                            ]?.includes(
+                                                                                className
+                                                                            ) ||
+                                                                            false
+                                                                        }
+                                                                        onChange={() =>
+                                                                            handleClassToggle(
+                                                                                category,
+                                                                                className
+                                                                            )
+                                                                        }
+                                                                        className="mr-2"
+                                                                    />
+                                                                    <span className="text-sm text-gray-700">
+                                                                        {
+                                                                            className
+                                                                        }
+                                                                    </span>
+                                                                </label>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                    {selectedClasses[category]
+                                                        ?.length > 0 && (
+                                                        <p className="text-xs text-blue-600 mt-2">
+                                                            Selected:{" "}
+                                                            {selectedClasses[
+                                                                category
+                                                            ].join(", ")}
+                                                        </p>
+                                                    )}
                                                 </div>
-                                                {selectedClasses[category]?.length > 0 && (
-                                                    <p className="text-xs text-blue-600 mt-2">
-                                                        Selected: {selectedClasses[category].join(", ")}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        ))
+                                            )
+                                        )
                                     )}
                                 </div>
 
                                 <button
                                     onClick={handleCreateTutor}
-                                    disabled={isLoadingClasses || Object.keys(classCategories).length === 0}
+                                    disabled={
+                                        isLoadingClasses ||
+                                        Object.keys(classCategories).length ===
+                                            0
+                                    }
                                     className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 px-4 rounded-md font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg"
                                 >
-                                    {isLoadingClasses ? "Loading..." : "Add Tutor"}
+                                    {isLoadingClasses
+                                        ? "Loading..."
+                                        : "Add Tutor"}
                                 </button>
                             </div>
                         </div>
@@ -499,47 +631,81 @@ function AddTutor() {
                                 </h3>
 
                                 <div className="flex flex-col mb-6">
-                                    <label className="text-gray-700 font-bold mb-2">Search Tutor</label>
+                                    <label className="text-gray-700 font-bold mb-2">
+                                        Search Tutor
+                                    </label>
                                     <input
                                         type="text"
                                         placeholder="Search tutor name..."
                                         value={deleteSearchQuery}
-                                        onChange={(e) => setDeleteSearchQuery(e.target.value)}
+                                        onChange={(e) =>
+                                            setDeleteSearchQuery(e.target.value)
+                                        }
                                         className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                     />
                                 </div>
 
                                 <div className="border rounded-lg p-4 bg-gray-50 flex-none flex flex-col">
-                                    <h4 className="font-bold text-gray-700 mb-3">Tutors List</h4>
+                                    <h4 className="font-bold text-gray-700 mb-3">
+                                        Tutors List
+                                    </h4>
                                     {/* This div now takes up the remaining height and scrolls when content overflows */}
                                     <div className="h-full flex-none overflow-y-scroll space-y-2">
-                                        {filteredTutors.length === 0 && tutors.length > 0 ? (
-                                            <p className="text-gray-500">No tutors match your search.</p>
+                                        {filteredTutors.length === 0 &&
+                                        tutors.length > 0 ? (
+                                            <p className="text-gray-500">
+                                                No tutors match your search.
+                                            </p>
                                         ) : (
                                             filteredTutors.map((tutor) => (
                                                 <div
                                                     key={tutor.id}
-                                                    className="flex justify-between items-center p-3 bg-white rounded-md border"
+                                                    className="flex items-center justify-between p-3 bg-white rounded-md border"
                                                 >
-                                                    <div className="flex-1">
+                                                    <div className="flex-1 flex flex-col items-center">
                                                         <p className="font-semibold text-gray-800">
-                                                            {tutor.fname} {tutor.lname}
+                                                            {tutor.fname}{" "}
+                                                            {tutor.lname}
                                                         </p>
                                                         <p className="text-sm text-blue-400">
-                                                            <a href={`mailto:${tutor.email}`}>{tutor.email}</a>
+                                                            <a
+                                                                href={`mailto:${tutor.email}`}
+                                                            >
+                                                                {tutor.email}
+                                                            </a>
                                                         </p>
                                                     </div>
-                                                    <button
-                                                        onClick={() => handleDeleteTutor(tutor.id)}
-                                                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                    <div className="flex items-center space-x-2">
+                                                        <button
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/editTutor/${tutor.id}`
+                                                                )
+                                                            }
+                                                            className="w-10 h-10 flex items-center justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-all duration-200 text-lg font-bold"
+                                                            title="Edit Tutor"
+                                                        >
+                                                            ✎
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDeleteTutor(
+                                                                    tutor.id
+                                                                )
+                                                            }
+                                                            className="w-10 h-10 flex items-center justify-center text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-all duration-200 text-lg font-bold"
+                                                            title="Delete Tutor"
+                                                        >
+                                                            🗑
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ))
                                         )}
                                         {tutors.length === 0 && (
-                                            <p className="text-gray-500">Loading tutors...</p>
+                                            <p className="text-gray-500">
+                                                Loading tutors...
+                                            </p>
                                         )}
                                     </div>
                                 </div>
