@@ -3,6 +3,8 @@ import { tutors } from "./populate-tutors";
 import { classCategories } from "./populate-classes";
 import { sampleData } from "./populate-bulletin";
 import { sampleResources, sampleLinks } from "./populate-resource";
+import { sampleAdmins } from "./populate-admin";
+import bcrypt from "bcrypt";
 
 type SQLiteError = Error | null;
 
@@ -192,7 +194,7 @@ function populateResources(db: sqlite3.Database, callback: () => void) {
                 callback();
                 return;
             }
-            const insertResource = `INSERT INTO resources (teacher, email, course, department, url, type, search_field) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+            const insertResource = `INSERT INTO resources (teacher, email, course, department, url, search_field) VALUES (?, ?, ?, ?, ?, ?)`;
             let completed = 0;
             if (sampleResources.length === 0) {
                 callback();
@@ -208,7 +210,6 @@ function populateResources(db: sqlite3.Database, callback: () => void) {
                         resource.course,
                         resource.department,
                         resource.url,
-                        resource.type,
                         searchField,
                     ],
                     function (err) {
@@ -219,7 +220,7 @@ function populateResources(db: sqlite3.Database, callback: () => void) {
                             );
                         } else {
                             console.log(
-                                `Successfully inserted resource: ${resource.teacher} - ${resource.type}`
+                                `Successfully inserted resource: ${resource.teacher}`
                             );
                             const resourceId = this.lastID;
                             const insertLink = `INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)`;
@@ -303,15 +304,59 @@ db.run(createResourceLinksTable, (err) => {
     }
 });
 
-populateTutorsAndClasses(db, () => {
-    populateBulletin(db, () => {
-        populateResources(db, () => {
-            db.close((err: SQLiteError) => {
+function populateAdmins(db: sqlite3.Database, callback: () => void) {
+    db.run("DELETE FROM admins", (err) => {
+        if (err) {
+            console.error("Error clearing admins table:", err.message);
+            callback();
+            return;
+        }
+        let completed = 0;
+        sampleAdmins.forEach((admin) => {
+            bcrypt.hash(admin.password, 10, (err, hash) => {
                 if (err) {
-                    console.error("Error closing database:", err.message);
+                    console.error(`Error hashing password for ${admin.email}:`, err.message);
                 } else {
-                    console.log("Database population complete and connection closed.");
+                    db.run(
+                        `INSERT INTO admins (email, pwd, access) VALUES (?, ?, ?)`,
+                        [admin.email, hash, admin.access],
+                        (err) => {
+                            if (err) {
+                                console.error(`Error inserting admin ${admin.email}:`, err.message);
+                            } else {
+                                console.log(`Successfully inserted admin: ${admin.email}`);
+                            }
+                            completed++;
+                            if (completed === sampleAdmins.length) {
+                                db.all("SELECT id, email, access FROM admins", [], (err, rows) => {
+                                    if (err) {
+                                        console.error("Error verifying admins data:", err.message);
+                                    } else {
+                                        console.log("Inserted admins:");
+                                        console.table(rows);
+                                    }
+                                    callback();
+                                });
+                            }
+                        }
+                    );
                 }
+            });
+        });
+    });
+}
+
+populateAdmins(db, () => {
+    populateTutorsAndClasses(db, () => {
+        populateBulletin(db, () => {
+            populateResources(db, () => {
+                db.close((err: SQLiteError) => {
+                    if (err) {
+                        console.error("Error closing database:", err.message);
+                    } else {
+                        console.log("Database population complete and connection closed.");
+                    }
+                });
             });
         });
     });

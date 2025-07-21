@@ -2,58 +2,51 @@ export const sampleResources = [
     {
         teacher: "Mr. Pranav Gadde",
         email: "pgadde@imsa.edu",
-        course: "Object Oriented Programming, MI4",
+        course: "Object Oriented Programming",
         department: "Computer Science",
-        url: "https://khanacademy.org/",
-        type: "WeeklySession"
+        url: "https://khanacademy.org/"
     },
     {
         teacher: "Atharv Kanchi",
         email: "akanchi2@imsa.edu",
-        course: "Advanced Programming, WebTech",
+        course: "Advanced Programming",
         department: "Computer Science",
-        url: "https://khanacademy.org/",
-        type: "Weekly Session"
+        url: "https://khanacademy.org/"
     },
     {
         teacher: "Krithik",
         email: "ksenthilkumar@imsa.edu",
-        course: "SI Physics, Computer Science Inquiry",
+        course: "SI Physics",
         department: "Science",
-        url: "https://khanacademy.org/",
-        type: "Final Review"
+        url: "https://khanacademy.org/"
     },
     {
         teacher: "Ian Wang",
         email: "iwang@imsa.edu",
-        course: "BC 1, SI Chemistry",
+        course: "BC 1",
         department: "Math",
-        url: "https://khanacademy.org/",
-        type: "Drop-In"
+        url: "https://khanacademy.org/"
     },
     {
         teacher: "Harish Chandar",
         email: "hchandar@imsa.edu",
         course: "Foundations of Healthy Living",
         department: "Wellness",
-        url: "https://khanacademy.org/",
-        type: "Drop-In"
+        url: "https://khanacademy.org/"
     },
     {
         teacher: "Vishnu Vijay",
         email: "vvijay@imsa.edu",
         course: "Creative Writing",
         department: "English",
-        url: "https://khanacademy.org/",
-        type: "Final Review"
+        url: "https://khanacademy.org/"
     },
     {
         teacher: "Aarav Shah",
         email: "ashah@imsa.edu",
-        course: "BC 2, BC 3",
+        course: "BC 2",
         department: "Math",
-        url: "https://khanacademy.org/",
-        type: "Biweekly Session"
+        url: "https://khanacademy.org/"
     }
 ];
 
