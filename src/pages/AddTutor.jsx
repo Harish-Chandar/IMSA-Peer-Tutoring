@@ -742,12 +742,12 @@ function AddTutor() {
                                                     key={tutor.id}
                                                     className="flex items-center justify-between p-3 bg-white rounded-md border"
                                                 >
-                                                    <div className="flex-1 flex flex-col items-center">
-                                                        <p className="font-semibold text-gray-800">
+                                                    <div className="flex-1 flex flex-col items-center min-w-0">
+                                                        <p className="font-semibold text-gray-800 break-words text-center">
                                                             {tutor.fname}{" "}
                                                             {tutor.lname}
                                                         </p>
-                                                        <p className="text-sm text-blue-400">
+                                                        <p className="text-sm text-blue-400 break-all">
                                                             <a
                                                                 href={`mailto:${tutor.email}`}
                                                             >
