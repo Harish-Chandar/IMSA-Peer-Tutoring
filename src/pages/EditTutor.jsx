@@ -183,24 +183,29 @@ function EditTutor() {
                 setSelectedClasses(parsedClasses);
             } else {
                 // if classCategories isn't ready yet, just initialize empty
+                Object.keys(classCategories).forEach((category) => {
+                    parsedClasses[category] = [];
+                });
                 setSelectedClasses({});
             }
 
             // store original data for restore functionality
+            const originalTutorData = {
+                fname: data.fname || "",
+                lname: data.lname || "",
+                fbname: data.fbname || "",
+                imsaid: data.imsaid || "",
+                email: data.email || "",
+                blurb: data.blurb || "",
+                hall: data.hall || "",
+                wing: data.wing
+                    ? { 1: "A", 2: "B", 3: "C", 4: "D" }[data.wing]
+                    : "",
+                image: data.image || "",
+            };
+
             setOriginalData({
-                tutorData: {
-                    fname: data.fname || "",
-                    lname: data.lname || "",
-                    fbname: data.fbname || "",
-                    imsaid: data.imsaid || "",
-                    email: data.email || "",
-                    blurb: data.blurb || "",
-                    hall: data.hall || "",
-                    wing: data.wing
-                        ? { 1: "A", 2: "B", 3: "C", 4: "D" }[data.wing]
-                        : "",
-                    image: data.image || "",
-                },
+                tutorData: { ...originalTutorData },
                 availability: { ...parsedAvailability },
                 selectedClasses: { ...parsedClasses },
             });
@@ -301,38 +306,67 @@ function EditTutor() {
 
     // restore original data
     const handleRestoreData = () => {
+        const confirmRestore = (confirmed) => {
+            // First, close the confirmation modal
+            setAlertModal({
+                isOpen: false,
+                title: "",
+                message: "",
+                onConfirm: null,
+            });
+
+            if (confirmed) {
+                // Check if originalData has been properly set
+                if (Object.keys(originalData.tutorData).length > 0) {
+                    setTutorData({ ...originalData.tutorData });
+                    setAvailability({ ...originalData.availability });
+                    setSelectedClasses({ ...originalData.selectedClasses });
+
+                    // Now, open the "Restored" confirmation modal
+                    setTimeout(() => {
+                        setAlertModal({
+                            isOpen: true,
+                            title: "Restored",
+                            message:
+                                "All fields have been restored to their original values.",
+                            onConfirm: () =>
+                                setAlertModal({
+                                    isOpen: false,
+                                    title: "",
+                                    message: "",
+                                    onConfirm: null,
+                                }),
+                        });
+                    }, 100); // A small delay ensures the state updates properly
+                } else {
+                    // Fallback: re-fetch the data from server
+                    setTimeout(() => {
+                        setAlertModal({
+                            isOpen: true,
+                            title: "Refreshing Data",
+                            message: "Fetching original data from server...",
+                            onConfirm: () => {
+                                fetchTutorData();
+                                setAlertModal({
+                                    isOpen: false,
+                                    title: "",
+                                    message: "",
+                                    onConfirm: null,
+                                });
+                            },
+                        });
+                    }, 100);
+                }
+            }
+        };
+
+        // Open the initial confirmation modal
         setAlertModal({
             isOpen: true,
             title: "Restore Original Data",
             message:
                 "Are you sure you want to restore all fields to their original values? All unsaved changes will be lost.",
-            onConfirm: (confirmed) => {
-                setAlertModal({
-                    isOpen: false,
-                    title: "",
-                    message: "",
-                    onConfirm: null,
-                });
-
-                if (confirmed) {
-                    setTutorData(originalData.tutorData);
-                    setAvailability(originalData.availability);
-                    setSelectedClasses(originalData.selectedClasses);
-                    setAlertModal({
-                        isOpen: true,
-                        title: "Restored",
-                        message:
-                            "All fields have been restored to their original values.",
-                        onConfirm: () =>
-                            setAlertModal({
-                                isOpen: false,
-                                title: "",
-                                message: "",
-                                onConfirm: null,
-                            }),
-                    });
-                }
-            },
+            onConfirm: confirmRestore,
         });
     };
 
@@ -415,6 +449,9 @@ function EditTutor() {
             });
 
             if (response.ok) {
+                // After a successful update, re-fetch the data to set the new "original" state.
+                fetchTutorData();
+
                 setAlertModal({
                     isOpen: true,
                     title: "Success",

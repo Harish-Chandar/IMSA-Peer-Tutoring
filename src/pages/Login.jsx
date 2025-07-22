@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal";
 import Footer from "../components/Footer";
 
-
 export function Login() {
     // environment variables for API configuration
     const DBPORT = process.env.REACT_APP_DBPORT;
@@ -25,7 +24,7 @@ export function Login() {
             const res = await fetch(`${baseUrl}/api/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email: email.toLowerCase(), password }),
             });
 
             const data = await res.json();

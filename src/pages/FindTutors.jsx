@@ -10,7 +10,8 @@ function FindTutors() {
 
     // default placeholder image URL from environment variable
     const DEFAULT_AVATAR_URL =
-        process.env.REACT_APP_DEFAULT_AVATAR_URL || "https://placehold.co/600x600";
+        process.env.REACT_APP_DEFAULT_AVATAR_URL ||
+        "https://placehold.co/600x600";
 
     const [tutors, setTutors] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -139,7 +140,7 @@ function FindTutors() {
                         ))}
                     </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center mt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-6">
                     {tutors.map((tutor, index) => (
                         <TutorCard
                             key={index}
