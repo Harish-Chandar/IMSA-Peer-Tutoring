@@ -61,6 +61,13 @@ function Navbar() {
             Tutors
           </a>
         </h3>
+        { loggedIn && (
+        <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0 hover:text-slate-700">
+            <a href="/checkin" className={"!font-bold" + (location.pathname === "/checkin" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
+                Check-In Tutors
+            </a>
+        </h3>
+        )}
         {loggedIn && (
           <h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0 hover:text-slate-700">
             <a href="/adminDashboard" className={"!font-bold" + (location.pathname === "/adminDashboard" ? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50" : "")}>
