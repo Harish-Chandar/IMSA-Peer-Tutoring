@@ -3,10 +3,10 @@ import Dashboard from './Dashboard.jsx';
 import AddTutor from './AddTutor.jsx';
 
 export default function App() {
-	return (
-		<>
-		
-		< Dashboard/>
-		</>
-	)
+    return (
+        <>
+
+            < Dashboard />
+        </>
+    )
 }
