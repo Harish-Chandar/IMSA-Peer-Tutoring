@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
+import AlertModal from "../components/AlertModal.jsx";
 
 import { isTokenExpired } from "../util.ts";
 
@@ -55,6 +56,14 @@ function AddTutor() {
     const [deleteSearchQuery, setDeleteSearchQuery] = useState("");
     const [tutors, setTutors] = useState([]);
     const [filteredTutors, setFilteredTutors] = useState([]);
+
+    // alert modal state
+    const [alertModal, setAlertModal] = useState({
+        isOpen: false,
+        title: "",
+        message: "",
+        onConfirm: null,
+    });
 
     // fetch classes from database when component loads
     useEffect(() => {
@@ -132,7 +141,7 @@ function AddTutor() {
     const handleAvailabilityChange = (day, value) => {
         setAvailability((prev) => ({
             ...prev,
-            [day]: value.trim(),
+            [day]: formatTime(value),
         }));
     };
 
@@ -178,6 +187,31 @@ function AddTutor() {
     // convert class name to database format (spaces to underscores, etc.)
     const formatClassForDatabase = (className) => {
         return className.replace(/ /g, "_").replace(/&/g, "&");
+    };
+
+    // format time from "7:30 PM - 8:00 PM" to "7:30-8:00"
+    const formatTime = (timeStr) => {
+        if (!timeStr) return "";
+        return timeStr
+            .replace(/\s*PM\s*/g, "")
+            .replace(/\s*AM\s*/g, "")
+            .replace(/\s*-\s*/g, "-")
+            .trim();
+    };
+
+    // get display name for category headers
+    const getCategoryDisplayName = (category) => {
+        const categoryNames = {
+            physics: "Physics",
+            chem: "Chemistry",
+            biology: "Biology",
+            sciother: "Other Sciences",
+            mathcore: "Core Math",
+            mathother: "Other Math",
+            cs: "Computer Science",
+            language: "World Languages",
+        };
+        return categoryNames[category] || category;
     };
 
     // handle creating a new tutor
@@ -279,36 +313,80 @@ function AddTutor() {
     // handle deleting tutor with confirmation popup
     const handleDeleteTutor = async (tutorId) => {
         const tutorToDelete = tutors.find((tutor) => tutor.id === tutorId);
-        const confirmDelete = window.confirm(
-            `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`
-        );
 
-        if (confirmDelete) {
-            try {
-                const response = await fetch(
-                    `${baseUrl}/api/tutors/${tutorId}`,
-                    {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`,
-                        },
+        setAlertModal({
+            isOpen: true,
+            title: "Confirm Delete",
+            message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`,
+            onConfirm: async (confirmed) => {
+                setAlertModal({
+                    isOpen: false,
+                    title: "",
+                    message: "",
+                    onConfirm: null,
+                });
+
+                if (confirmed) {
+                    try {
+                        const response = await fetch(
+                            `${baseUrl}/api/tutors/${tutorId}`,
+                            {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            }
+                        );
+
+                        if (response.ok) {
+                            // refresh tutors from database after successful deletion
+                            fetchTutors();
+                            setAlertModal({
+                                isOpen: true,
+                                title: "Success",
+                                message: "Tutor deleted successfully!",
+                                onConfirm: () =>
+                                    setAlertModal({
+                                        isOpen: false,
+                                        title: "",
+                                        message: "",
+                                        onConfirm: null,
+                                    }),
+                            });
+                        } else {
+                            const errorData = await response.json();
+                            setAlertModal({
+                                isOpen: true,
+                                title: "Error",
+                                message: `Error deleting tutor: ${errorData.error}`,
+                                onConfirm: () =>
+                                    setAlertModal({
+                                        isOpen: false,
+                                        title: "",
+                                        message: "",
+                                        onConfirm: null,
+                                    }),
+                            });
+                        }
+                    } catch (error) {
+                        console.error("error deleting tutor:", error);
+                        setAlertModal({
+                            isOpen: true,
+                            title: "Error",
+                            message: "Error deleting tutor. Please try again.",
+                            onConfirm: () =>
+                                setAlertModal({
+                                    isOpen: false,
+                                    title: "",
+                                    message: "",
+                                    onConfirm: null,
+                                }),
+                        });
                     }
-                );
-
-                if (response.ok) {
-                    // refresh tutors from database after successful deletion
-                    fetchTutors();
-                    alert("Tutor deleted successfully!");
-                } else {
-                    const errorData = await response.json();
-                    alert(`Error deleting tutor: ${errorData.error}`);
                 }
-            } catch (error) {
-                console.error("error deleting tutor:", error);
-                alert("Error deleting tutor. Please try again.");
-            }
-        }
+            },
+        });
     };
 
     return (
@@ -553,8 +631,10 @@ function AddTutor() {
                                                     key={category}
                                                     className="mb-6 p-4 border rounded-lg bg-gray-50"
                                                 >
-                                                    <h4 className="font-bold text-gray-700 mb-3 capitalize">
-                                                        {category} Classes
+                                                    <h4 className="font-bold text-gray-700 mb-3">
+                                                        {getCategoryDisplayName(
+                                                            category
+                                                        )}
                                                     </h4>
                                                     <div className="max-h-32 overflow-y-auto">
                                                         {classes.map(
@@ -682,10 +762,23 @@ function AddTutor() {
                                                                     `/editTutor/${tutor.id}`
                                                                 )
                                                             }
-                                                            className="w-10 h-10 flex items-center justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-all duration-200 text-lg font-bold"
+                                                            className="w-10 h-10 flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-200 text-sm font-bold"
                                                             title="Edit Tutor"
                                                         >
-                                                            ✎
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="h-4 w-4"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                                strokeWidth={2}
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                                />
+                                                            </svg>
                                                         </button>
                                                         <button
                                                             onClick={() =>
@@ -693,10 +786,23 @@ function AddTutor() {
                                                                     tutor.id
                                                                 )
                                                             }
-                                                            className="w-10 h-10 flex items-center justify-center text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-all duration-200 text-lg font-bold"
+                                                            className="w-10 h-10 flex items-center justify-center text-white bg-red-600 hover:bg-red-700 rounded-md transition-all duration-200 text-sm font-bold"
                                                             title="Delete Tutor"
                                                         >
-                                                            🗑
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="h-4 w-4"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                                strokeWidth={2}
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                                />
+                                                            </svg>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -715,6 +821,12 @@ function AddTutor() {
                 </div>
             </div>
             <Footer />
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                title={alertModal.title}
+                message={alertModal.message}
+                onConfirm={alertModal.onConfirm}
+            />
         </div>
     );
 }

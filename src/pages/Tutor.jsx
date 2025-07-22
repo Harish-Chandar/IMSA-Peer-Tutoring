@@ -102,7 +102,9 @@ function Tutor() {
                 setDebugInfo((prev) => ({ ...prev, step: "starting fetch" }));
 
                 // fetch basic tutor information
-                const tutorResponse = await fetch(`${API_BASE_URL}/api/tutors/${id}`);
+                const tutorResponse = await fetch(
+                    `${API_BASE_URL}/api/tutors/${id}`
+                );
                 setDebugInfo((prev) => ({
                     ...prev,
                     tutorResponseOk: tutorResponse.ok,
@@ -114,17 +116,24 @@ function Tutor() {
 
                 // parse tutor data and update state
                 const tutorData = await tutorResponse.json();
+
+                // Handle both array and object responses (same as EditTutor)
+                const tutor = Array.isArray(tutorData)
+                    ? tutorData[0]
+                    : tutorData;
+
                 setDebugInfo((prev) => ({
                     ...prev,
                     tutorDataReceived: true,
-                    tutorKeys: Object.keys(tutorData),
-                    hallValue: tutorData.hall,
-                    wingValue: tutorData.wing,
-                    imageValue: tutorData.image || tutorData.imgurl,
+                    tutorKeys: Object.keys(tutor),
+                    hallValue: tutor.hall,
+                    wingValue: tutor.wing,
+                    imageValue: tutor.image || tutor.imgurl,
+                    isArray: Array.isArray(tutorData),
                 }));
 
                 // set tutor data
-                setTutor(tutorData);
+                setTutor(tutor);
 
                 // fetch classes the tutor can teach
                 const classesResponse = await fetch(
@@ -147,11 +156,13 @@ function Tutor() {
                     const classesObj = classesData[0];
 
                     if (classesObj) {
-                        Object.entries(classesObj).forEach(([subject, value]) => {
-                            if (value) {
-                                allClasses.push(...parseClasses(value));
+                        Object.entries(classesObj).forEach(
+                            ([subject, value]) => {
+                                if (value) {
+                                    allClasses.push(...parseClasses(value));
+                                }
                             }
-                        });
+                        );
                     }
                 }
 
@@ -168,7 +179,8 @@ function Tutor() {
 
                 if (scheduleResponse.ok) {
                     // extract and parse the schedule string
-                    const { availability: scheduleStr } = await scheduleResponse.json();
+                    const { availability: scheduleStr } =
+                        await scheduleResponse.json();
                     setDebugInfo((prev) => ({
                         ...prev,
                         scheduleStringReceived: Boolean(scheduleStr),
@@ -226,7 +238,10 @@ function Tutor() {
         for (let i = 0; i < 6; i++) {
             const week = [];
             for (let j = 0; j < 7; j++) {
-                if ((i === 0 && j < firstDay.getDay()) || day > lastDay.getDate()) {
+                if (
+                    (i === 0 && j < firstDay.getDay()) ||
+                    day > lastDay.getDate()
+                ) {
                     // empty cells for days outside current month
                     week.push(null);
                 } else {
@@ -244,7 +259,10 @@ function Tutor() {
     // get current month name
     const getCurrentMonthName = () => {
         const today = new Date();
-        return today.toLocaleString("default", { month: "long", year: "numeric" });
+        return today.toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+        });
     };
 
     // get the calendar data
@@ -285,8 +303,8 @@ function Tutor() {
         tutor.hall && tutor.wing
             ? `${tutor.hall}, ${wingDisplay} wing`
             : tutor.hall
-                ? `${tutor.hall}`
-                : "location unknown";
+            ? `${tutor.hall}`
+            : "location unknown";
 
     // handle image with fallback - match FindTutors logic
     const profileImage = tutor.image || DEFAULT_AVATAR_URL;
@@ -311,10 +329,14 @@ function Tutor() {
                         <h2 className="text-3xl md:text-5xl font-semibold text-gray-800 font-sans py-5">
                             {fullName}
                         </h2>
-                        <p className="text-xl text-gray-500 font-sans mb-3">{location}</p>
+                        <p className="text-xl text-gray-500 font-sans mb-3">
+                            {location}
+                        </p>
                         <p className="text-lg text-gray-600 font-sans">
                             <span className="font-bold">Classes taught:</span>{" "}
-                            {classes.length > 0 ? classes.join(", ") : "no classes listed"}
+                            {classes.length > 0
+                                ? classes.join(", ")
+                                : "no classes listed"}
                         </p>
                     </div>
 
@@ -338,12 +360,18 @@ function Tutor() {
                                     dateInfo ? (
                                         <div
                                             key={index}
-                                            className={`p-2 rounded-md cursor-pointer hover:bg-blue-100 transition ${selectedDate &&
-                                                    selectedDate.getTime() === dateInfo.dateObj.getTime()
+                                            className={`p-2 rounded-md cursor-pointer hover:bg-blue-100 transition ${
+                                                selectedDate &&
+                                                selectedDate.getTime() ===
+                                                    dateInfo.dateObj.getTime()
                                                     ? "bg-blue-500 text-white"
                                                     : ""
-                                                }`}
-                                            onClick={() => setSelectedDate(dateInfo.dateObj)}
+                                            }`}
+                                            onClick={() =>
+                                                setSelectedDate(
+                                                    dateInfo.dateObj
+                                                )
+                                            }
                                         >
                                             {dateInfo.day}
                                         </div>
@@ -358,24 +386,36 @@ function Tutor() {
                         <div className="flex-1 text-sm text-gray-700">
                             <h3 className="font-semibold mb-4 text-2xl text-gray-500">
                                 {selectedDate
-                                    ? `Schedule for ${selectedDate.toLocaleDateString("en-US", {
-                                        weekday: "long",
-                                        month: "long",
-                                        day: "numeric",
-                                    })}`
+                                    ? `Schedule for ${selectedDate.toLocaleDateString(
+                                          "en-US",
+                                          {
+                                              weekday: "long",
+                                              month: "long",
+                                              day: "numeric",
+                                          }
+                                      )}`
                                     : "Select a date to view schedule"}
                             </h3>
                             {selectedDate ? (
                                 <div className="text-xl">
                                     {(() => {
-                                        const dayName = fullDayNames[selectedDate.getDay()];
+                                        const dayName =
+                                            fullDayNames[selectedDate.getDay()];
 
-                                        if (schedule[dayName] && schedule[dayName].length > 0) {
-                                            return schedule[dayName].map((timeSlot, index) => (
-                                                <div key={index} className="mb-1">
-                                                    {timeSlot} PM
-                                                </div>
-                                            ));
+                                        if (
+                                            schedule[dayName] &&
+                                            schedule[dayName].length > 0
+                                        ) {
+                                            return schedule[dayName].map(
+                                                (timeSlot, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="mb-1"
+                                                    >
+                                                        {timeSlot} PM
+                                                    </div>
+                                                )
+                                            );
                                         } else {
                                             return "No schedule available for this day";
                                         }
@@ -383,8 +423,8 @@ function Tutor() {
                                 </div>
                             ) : (
                                 <div className="text-xl text-gray-400">
-                                    Click on a date above to see the tutor's availability for that
-                                    day.
+                                    Click on a date above to see the tutor's
+                                    availability for that day.
                                 </div>
                             )}
                         </div>

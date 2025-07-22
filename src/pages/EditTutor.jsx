@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
+import AlertModal from "../components/AlertModal.jsx";
 import { isTokenExpired } from "../util.ts";
 
 function EditTutor() {
@@ -15,16 +16,16 @@ function EditTutor() {
         }
     }, [navigate]);
 
-    // Environment variables for API configuration
+    // no hardcoded localhosts!!!
     const DBPORT = process.env.REACT_APP_DBPORT;
     const HOST = process.env.REACT_APP_HOST;
     const baseUrl = `http://${HOST}:${DBPORT}`;
 
-    // State for class categories from database
+    // states for class categories
     const [classCategories, setClassCategories] = useState({});
     const [isLoadingClasses, setIsLoadingClasses] = useState(true);
 
-    // Form state for the tutor being edited
+    // state for the tutor being edited
     const [tutorData, setTutorData] = useState({
         fname: "",
         lname: "",
@@ -37,7 +38,7 @@ function EditTutor() {
         image: "",
     });
 
-    // Separate state for availability by day
+    // separate state for availability by day since it's not separated in the tutor data
     const [availability, setAvailability] = useState({
         sunday: "",
         monday: "",
@@ -48,33 +49,37 @@ function EditTutor() {
         saturday: "",
     });
 
-    // Selected classes for each category
+    // selected classes for each category
     const [selectedClasses, setSelectedClasses] = useState({});
 
-    // Fetch tutor data and all classes when component mounts
+    // alert modal state
+    const [alertModal, setAlertModal] = useState({
+        isOpen: false,
+        title: "",
+        message: "",
+        onConfirm: null,
+    });
+
+    // store original data for restore functionality
+    const [originalData, setOriginalData] = useState({
+        tutorData: {},
+        availability: {},
+        selectedClasses: {},
+    });
+
+    // fetch tutor data and all classes when component loads
     useEffect(() => {
         fetchClasses();
     }, [id]);
 
-    // Fetch tutor data after classes are loaded
+    // fetch tutor data after classes are loaded
     useEffect(() => {
         if (Object.keys(classCategories).length > 0) {
             fetchTutorData();
         }
     }, [classCategories, id]);
 
-    // Initialize selectedClasses when classCategories changes
-    useEffect(() => {
-        if (Object.keys(classCategories).length > 0) {
-            const initialSelectedClasses = {};
-            Object.keys(classCategories).forEach((department) => {
-                initialSelectedClasses[department] = [];
-            });
-            setSelectedClasses(initialSelectedClasses);
-        }
-    }, [classCategories]);
-
-    // Fetch classes from database and organize by department
+    // fetch classes from database and organize by department
     const fetchClasses = async () => {
         try {
             setIsLoadingClasses(true);
@@ -86,7 +91,6 @@ function EditTutor() {
 
             const classes = await response.json();
 
-            // Organize classes by department
             const organizedClasses = {};
             classes.forEach((classItem) => {
                 const { department, class_name } = classItem;
@@ -105,16 +109,25 @@ function EditTutor() {
         }
     };
 
-    // Fetch data for the specific tutor
+    // fetch data for the specific tutor
     const fetchTutorData = async () => {
         try {
             const response = await fetch(`${baseUrl}/api/tutors/${id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data = await response.json();
+            const responseData = await response.json();
 
-            // Set basic tutor data
+            // handle both array and object responses
+            const data = Array.isArray(responseData)
+                ? responseData[0]
+                : responseData;
+
+            if (!data) {
+                throw new Error("No tutor data found");
+            }
+
+            // set tutor data
             setTutorData({
                 fname: data.fname || "",
                 lname: data.lname || "",
@@ -129,7 +142,7 @@ function EditTutor() {
                 image: data.image || "",
             });
 
-            // Parse and set availability
+            // parse and set availability
             const parsedAvailability = {
                 sunday: "",
                 monday: "",
@@ -151,31 +164,16 @@ function EditTutor() {
             }
             setAvailability(parsedAvailability);
 
-            // Parse and set selected classes when classCategories is ready
+            // parse and set selected classes when classCategories is ready
+            const parsedClasses = {};
             if (Object.keys(classCategories).length > 0) {
-                const parsedClasses = {};
-                // Map category names to database field names
-                const categoryToDbField = {
-                    biology: "biology",
-                    chem: "chem",
-                    cs: "cs",
-                    language: "language",
-                    mathcore: "mathcore",
-                    mathother: "mathother",
-                    physics: "physics",
-                    sciother: "sciother",
-                };
-
                 Object.keys(classCategories).forEach((category) => {
                     parsedClasses[category] = [];
-                    // Get the corresponding database field name
-                    const dbFieldName = categoryToDbField[category];
-                    if (
-                        dbFieldName &&
-                        data[dbFieldName] &&
-                        data[dbFieldName].trim()
-                    ) {
-                        const classNames = data[dbFieldName]
+                });
+
+                Object.keys(classCategories).forEach((category) => {
+                    if (data[category] && data[category].trim()) {
+                        const classNames = data[category]
                             .split(";")
                             .map((c) => c.replace(/_/g, " "))
                             .filter((name) => name.trim());
@@ -183,40 +181,78 @@ function EditTutor() {
                     }
                 });
                 setSelectedClasses(parsedClasses);
+            } else {
+                // if classCategories isn't ready yet, just initialize empty
+                setSelectedClasses({});
             }
+
+            // store original data for restore functionality
+            setOriginalData({
+                tutorData: {
+                    fname: data.fname || "",
+                    lname: data.lname || "",
+                    fbname: data.fbname || "",
+                    imsaid: data.imsaid || "",
+                    email: data.email || "",
+                    blurb: data.blurb || "",
+                    hall: data.hall || "",
+                    wing: data.wing
+                        ? { 1: "A", 2: "B", 3: "C", 4: "D" }[data.wing]
+                        : "",
+                    image: data.image || "",
+                },
+                availability: { ...parsedAvailability },
+                selectedClasses: { ...parsedClasses },
+            });
         } catch (error) {
             console.error("Error fetching tutor data:", error);
-            console.log("Could not fetch tutor data. Please try again.");
+            setAlertModal({
+                isOpen: true,
+                title: "Error",
+                message: "Could not fetch tutor data. Please try again.",
+                onConfirm: () =>
+                    setAlertModal({
+                        isOpen: false,
+                        title: "",
+                        message: "",
+                        onConfirm: null,
+                    }),
+            });
         }
     };
 
-    // Handle availability input changes
+    // handle availability input changes
     const handleAvailabilityChange = (day, value) => {
         setAvailability((prev) => ({
             ...prev,
-            [day]: value.trim(),
+            [day]: value,
         }));
     };
 
-    // Construct availability string for database
+    // construct availability string for database
     const constructAvailabilityString = () => {
         const dayEntries = [];
         Object.entries(availability).forEach(([day, timeSlots]) => {
             if (timeSlots && timeSlots.trim()) {
-                const slots = timeSlots
-                    .split(",")
-                    .map((slot) => slot.trim())
-                    .filter((slot) => slot.length > 0);
+                // Format the time slots during post-processing
+                const formattedTimeSlots = formatTime(timeSlots);
 
-                if (slots.length > 0) {
-                    dayEntries.push(`${day},${slots.join(",")}`);
+                if (formattedTimeSlots) {
+                    const slots = formattedTimeSlots
+                        .split(",")
+                        .map((slot) => slot.trim())
+                        .filter((slot) => slot.length > 0);
+
+                    if (slots.length > 0) {
+                        dayEntries.push(`${day},${slots.join(",")}`);
+                    }
                 }
             }
         });
         return dayEntries.join(";");
     };
 
-    // Handle form input changes
+    // handle form input changes
     const handleInputChange = (field, value) => {
         setTutorData((prev) => ({
             ...prev,
@@ -224,7 +260,7 @@ function EditTutor() {
         }));
     };
 
-    // Handle class selection for each category
+    // handle class selection for each category
     const handleClassToggle = (category, className) => {
         setSelectedClasses((prev) => ({
             ...prev,
@@ -234,47 +270,123 @@ function EditTutor() {
         }));
     };
 
-    // Convert class name to database format
+    // convert class name to database format
     const formatClassForDatabase = (className) => {
         return className.replace(/ /g, "_").replace(/&/g, "&");
     };
 
-    // Handle updating the tutor
+    // format time - remove whitespace and any text, keep only numbers, colons, commas, and dashes
+    const formatTime = (timeStr) => {
+        if (!timeStr) return "";
+        return timeStr
+            .replace(/[^0-9:,-]/g, "") // Remove everything except numbers, colons, commas, and dashes
+            .replace(/\s+/g, "") // Remove all whitespace
+            .trim();
+    };
+
+    // get display name for category headers
+    const getCategoryDisplayName = (category) => {
+        const categoryNames = {
+            physics: "Physics",
+            chem: "Chemistry",
+            biology: "Biology",
+            sciother: "Other Sciences",
+            mathcore: "Core Math",
+            mathother: "Other Math",
+            cs: "Computer Science",
+            language: "World Languages",
+        };
+        return categoryNames[category] || category;
+    };
+
+    // restore original data
+    const handleRestoreData = () => {
+        setAlertModal({
+            isOpen: true,
+            title: "Restore Original Data",
+            message:
+                "Are you sure you want to restore all fields to their original values? All unsaved changes will be lost.",
+            onConfirm: (confirmed) => {
+                setAlertModal({
+                    isOpen: false,
+                    title: "",
+                    message: "",
+                    onConfirm: null,
+                });
+
+                if (confirmed) {
+                    setTutorData(originalData.tutorData);
+                    setAvailability(originalData.availability);
+                    setSelectedClasses(originalData.selectedClasses);
+                    setAlertModal({
+                        isOpen: true,
+                        title: "Restored",
+                        message:
+                            "All fields have been restored to their original values.",
+                        onConfirm: () =>
+                            setAlertModal({
+                                isOpen: false,
+                                title: "",
+                                message: "",
+                                onConfirm: null,
+                            }),
+                    });
+                }
+            },
+        });
+    };
+
+    // discard changes and go back
+    const handleDiscardChanges = () => {
+        setAlertModal({
+            isOpen: true,
+            title: "Discard Changes",
+            message:
+                "Are you sure you want to discard all changes and go back? All unsaved changes will be lost.",
+            onConfirm: (confirmed) => {
+                setAlertModal({
+                    isOpen: false,
+                    title: "",
+                    message: "",
+                    onConfirm: null,
+                });
+
+                if (confirmed) {
+                    navigate("/addTutor");
+                }
+            },
+        });
+    };
+
+    // handle updating the tutor
     const handleUpdateTutor = async () => {
         if (!tutorData.fname || !tutorData.lname || !tutorData.email) {
-            console.log(
-                "Please fill in at least first name, last name, and email."
-            );
+            setAlertModal({
+                isOpen: true,
+                title: "Missing Information",
+                message:
+                    "Please fill in at least first name, last name, and email.",
+                onConfirm: () =>
+                    setAlertModal({
+                        isOpen: false,
+                        title: "",
+                        message: "",
+                        onConfirm: null,
+                    }),
+            });
             return;
         }
 
         try {
             const formattedClasses = {};
-            // Map category names to database field names
-            const categoryToDbField = {
-                biology: "biology",
-                chem: "chem",
-                cs: "cs",
-                language: "language",
-                mathcore: "mathcore",
-                mathother: "mathother",
-                physics: "physics",
-                sciother: "sciother",
-            };
 
             Object.keys(selectedClasses).forEach((category) => {
-                // Convert category name to database field name
-                const dbFieldName = categoryToDbField[category];
-                if (dbFieldName) {
-                    if (selectedClasses[category]?.length > 0) {
-                        formattedClasses[dbFieldName] = selectedClasses[
-                            category
-                        ]
-                            .map(formatClassForDatabase)
-                            .join(";");
-                    } else {
-                        formattedClasses[dbFieldName] = "";
-                    }
+                if (selectedClasses[category]?.length > 0) {
+                    formattedClasses[category] = selectedClasses[category]
+                        .map(formatClassForDatabase)
+                        .join(";");
+                } else {
+                    formattedClasses[category] = "";
                 }
             });
 
@@ -303,250 +415,398 @@ function EditTutor() {
             });
 
             if (response.ok) {
-                console.log("Tutor information updated successfully!");
-                // Don't navigate anywhere yet as requested
+                setAlertModal({
+                    isOpen: true,
+                    title: "Success",
+                    message: "Tutor information updated successfully!",
+                    onConfirm: () => {
+                        setAlertModal({
+                            isOpen: false,
+                            title: "",
+                            message: "",
+                            onConfirm: null,
+                        });
+                        navigate("/addTutor");
+                    },
+                });
             } else {
                 const errorData = await response.json();
-                console.log(`Error updating tutor: ${errorData.error}`);
+                setAlertModal({
+                    isOpen: true,
+                    title: "Error",
+                    message: `Error updating tutor: ${errorData.error}`,
+                    onConfirm: () =>
+                        setAlertModal({
+                            isOpen: false,
+                            title: "",
+                            message: "",
+                            onConfirm: null,
+                        }),
+                });
             }
         } catch (error) {
             console.error("Error updating tutor:", error);
-            console.log("Error updating tutor. Please try again.");
+            setAlertModal({
+                isOpen: true,
+                title: "Error",
+                message: "Error updating tutor. Please try again.",
+                onConfirm: () =>
+                    setAlertModal({
+                        isOpen: false,
+                        title: "",
+                        message: "",
+                        onConfirm: null,
+                    }),
+            });
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <div className="min-h-screen overflow-x-hidden overflow-y-auto py-[6rem] px-4 custom-container">
-                <h1 className="text-blue-500 text-4xl mb-6 text-center font-sans font-bold">
-                    Edit Tutor Information
-                </h1>
-                <div className="flex justify-center">
+        <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+            <div className="flex justify-between items-center mb-6 py-10">
+                <button
+                    onClick={() => navigate("/adminDashboard")}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                    Back to Dashboard
+                </button>
+
+                <h1 className="text-4xl font-bold text-gray-700">Edit Tutor</h1>
+
+                <div className="w-40"></div>
+            </div>
+
+            <div className="flex justify-center">
+                <div className="max-w-4xl w-full">
                     {/* single card for editing tutor */}
-                    <div className="max-w-4xl w-full">
-                        <div className="rounded-2xl shadow-md p-4 bg-white border overflow-y-auto w-full overflow-x-hidden">
-                            <h3 className="text-lg font-bold mb-4 text-blue-500">
-                                Update Your Information
+                    <div className="w-full">
+                        <div className="rounded-2xl shadow-md p-8 bg-white border overflow-y-auto w-full overflow-x-hidden">
+                            <h3 className="text-2xl font-bold text-gray-700 mb-6">
+                                Update {tutorData.fname} {tutorData.lname}'s
+                                Information
                             </h3>
 
-                            <p className="font-sans text-gray-700 text-left">
-                                First Name:
-                            </p>
-                            <input
-                                type="text"
-                                placeholder="Enter first name..."
-                                value={tutorData.fname}
-                                onChange={(e) =>
-                                    handleInputChange("fname", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                Last Name:
-                            </p>
-                            <input
-                                type="text"
-                                placeholder="Enter last name..."
-                                value={tutorData.lname}
-                                onChange={(e) =>
-                                    handleInputChange("lname", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                Facebook Name (optional):
-                            </p>
-                            <input
-                                type="text"
-                                placeholder="Enter facebook name..."
-                                value={tutorData.fbname}
-                                onChange={(e) =>
-                                    handleInputChange("fbname", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                Email:
-                            </p>
-                            <input
-                                type="email"
-                                placeholder="Enter email..."
-                                value={tutorData.email}
-                                onChange={(e) =>
-                                    handleInputChange("email", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                IMSA ID:
-                            </p>
-                            <input
-                                type="number"
-                                placeholder="Enter IMSA ID..."
-                                value={tutorData.imsaid}
-                                onChange={(e) =>
-                                    handleInputChange("imsaid", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                Hall:
-                            </p>
-                            <input
-                                type="number"
-                                placeholder="Enter hall number..."
-                                value={tutorData.hall}
-                                onChange={(e) =>
-                                    handleInputChange("hall", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                Wing:
-                            </p>
-                            <input
-                                type="text"
-                                placeholder="Enter wing (A, B, C, or D)..."
-                                value={tutorData.wing}
-                                onChange={(e) =>
-                                    handleInputChange("wing", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 bg-white text-black"
-                            />
-
-                            <p className="font-sans text-gray-700 text-left">
-                                Blurb:
-                            </p>
-                            <textarea
-                                placeholder="Enter tutor description..."
-                                value={tutorData.blurb}
-                                onChange={(e) =>
-                                    handleInputChange("blurb", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white text-black"
-                            />
-
-                            {/* availability fields for each day */}
-                            <div className="mb-4">
-                                <p className="font-sans font-bold text-gray-700 text-left mb-2">
-                                    Availability (enter time slots separated by
-                                    commas):
-                                </p>
-                                <p className="font-sans text-xs text-gray-500 mb-3 text-left">
-                                    Example: "5:30-6:00, 6:00-6:30, 7:00-7:30",
-                                    please do not include AM or PM!
-                                </p>
-
-                                {Object.entries(availability).map(
-                                    ([day, timeSlots]) => (
-                                        <div key={day} className="mb-2">
-                                            <label className="font-sans text-gray-600 text-sm capitalize mb-1 block text-left">
-                                                {day}:
-                                            </label>
-                                            <input
-                                                type="text"
-                                                placeholder="e.g., 5:30-6:00, 6:00-6:30"
-                                                value={timeSlots}
-                                                onChange={(e) =>
-                                                    handleAvailabilityChange(
-                                                        day,
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black text-sm"
-                                            />
-                                        </div>
-                                    )
-                                )}
-                            </div>
-
-                            {/* class selection sections */}
-                            {isLoadingClasses ? (
-                                <div className="mb-4">
-                                    <p className="font-sans text-gray-500">
-                                        Loading classes...
-                                    </p>
+                            <div className="space-y-6">
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        First Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter first name..."
+                                        value={tutorData.fname}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "fname",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    />
                                 </div>
-                            ) : Object.keys(classCategories).length === 0 ? (
-                                <div className="mb-4">
-                                    <p className="font-sans text-red-500">
-                                        Error loading classes. Please refresh
-                                        the page.
-                                    </p>
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        Last Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter last name..."
+                                        value={tutorData.lname}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "lname",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    />
                                 </div>
-                            ) : (
-                                Object.entries(classCategories).map(
-                                    ([category, classes]) => (
-                                        <div key={category} className="mb-4">
-                                            <p className="font-sans font-bold capitalize text-gray-700 text-left">
-                                                {category} Classes:
-                                            </p>
-                                            <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
-                                                {classes.map((className) => (
-                                                    <label
-                                                        key={className}
-                                                        className="flex items-center mb-1"
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={
-                                                                selectedClasses[
-                                                                    category
-                                                                ]?.includes(
-                                                                    className
-                                                                ) || false
-                                                            }
-                                                            onChange={() =>
-                                                                handleClassToggle(
-                                                                    category,
-                                                                    className
-                                                                )
-                                                            }
-                                                            className="mr-2"
-                                                        />
-                                                        <span className="text-sm">
-                                                            {className}
-                                                        </span>
-                                                    </label>
-                                                ))}
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        Facebook Name (optional)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter facebook name..."
+                                        value={tutorData.fbname}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "fbname",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        placeholder="Enter email..."
+                                        value={tutorData.email}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "email",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        IMSA ID
+                                    </label>
+                                    <input
+                                        type="number"
+                                        placeholder="Enter IMSA ID..."
+                                        value={tutorData.imsaid}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "imsaid",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        Hall
+                                    </label>
+                                    <select
+                                        value={tutorData.hall}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "hall",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    >
+                                        <option value="">Select a hall</option>
+                                        <option value="1501">1501</option>
+                                        <option value="1502">1502</option>
+                                        <option value="1503">1503</option>
+                                        <option value="1504">1504</option>
+                                        <option value="1505">1505</option>
+                                        <option value="1506">1506</option>
+                                        <option value="1507">1507</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        Wing
+                                    </label>
+                                    <select
+                                        value={tutorData.wing}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "wing",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    >
+                                        <option value="">Select a wing</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-bold mb-2 text-center">
+                                        Blurb
+                                    </label>
+                                    <textarea
+                                        placeholder="Enter tutor description..."
+                                        value={tutorData.blurb}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                "blurb",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                    />
+                                </div>
+
+                                {/* availability fields for each day */}
+                                <div className="space-y-4">
+                                    <label className="text-gray-700 font-bold mb-2 text-center block">
+                                        Availability (enter time slots separated
+                                        by commas)
+                                    </label>
+                                    <p className="text-xs text-gray-500 mb-3 text-center">
+                                        Example: "5:30-6:00, 6:00-6:30,
+                                        7:00-7:30", please do not include AM or
+                                        PM!
+                                    </p>
+
+                                    {Object.entries(availability).map(
+                                        ([day, timeSlots]) => (
+                                            <div
+                                                key={day}
+                                                className="flex flex-col"
+                                            >
+                                                <label className="text-gray-700 font-bold mb-2 capitalize text-center">
+                                                    {day}
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g., 5:30-6:00, 6:00-6:30"
+                                                    value={timeSlots}
+                                                    onChange={(e) =>
+                                                        handleAvailabilityChange(
+                                                            day,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                                                />
                                             </div>
-                                            {selectedClasses[category]?.length >
-                                                0 && (
-                                                <p className="text-xs text-blue-600 mt-1">
-                                                    Selected:{" "}
-                                                    {selectedClasses[
-                                                        category
-                                                    ].join(", ")}
-                                                </p>
-                                            )}
-                                        </div>
-                                    )
-                                )
-                            )}
+                                        )
+                                    )}
+                                </div>
 
-                            <button
-                                onClick={handleUpdateTutor}
-                                disabled={
-                                    isLoadingClasses ||
-                                    Object.keys(classCategories).length === 0
-                                }
-                                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-sans mt-4 w-full"
-                            >
-                                {isLoadingClasses
-                                    ? "Loading..."
-                                    : "Update Information"}
-                            </button>
+                                {/* class selection sections */}
+                                {isLoadingClasses ? (
+                                    <div className="space-y-4">
+                                        <p className="text-gray-500 text-center">
+                                            Loading classes...
+                                        </p>
+                                    </div>
+                                ) : Object.keys(classCategories).length ===
+                                  0 ? (
+                                    <div className="space-y-4">
+                                        <p className="text-red-500 text-center">
+                                            Error loading classes. Please
+                                            refresh the page.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <label className="text-gray-700 font-bold mb-2 text-center block">
+                                            Class Selection
+                                        </label>
+                                        {Object.entries(classCategories).map(
+                                            ([category, classes]) => (
+                                                <div
+                                                    key={category}
+                                                    className="space-y-2"
+                                                >
+                                                    <label className="text-gray-700 font-bold text-center block">
+                                                        {getCategoryDisplayName(
+                                                            category
+                                                        )}
+                                                    </label>
+                                                    <div className="border rounded-md p-4 max-h-32 overflow-y-auto bg-gray-50">
+                                                        {classes.map(
+                                                            (className) => (
+                                                                <label
+                                                                    key={
+                                                                        className
+                                                                    }
+                                                                    className="flex items-center mb-2 cursor-pointer"
+                                                                >
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={
+                                                                            selectedClasses[
+                                                                                category
+                                                                            ]?.includes(
+                                                                                className
+                                                                            ) ||
+                                                                            false
+                                                                        }
+                                                                        onChange={() =>
+                                                                            handleClassToggle(
+                                                                                category,
+                                                                                className
+                                                                            )
+                                                                        }
+                                                                        className="mr-3"
+                                                                    />
+                                                                    <span className="text-sm text-gray-700">
+                                                                        {
+                                                                            className
+                                                                        }
+                                                                    </span>
+                                                                </label>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                    {selectedClasses[category]
+                                                        ?.length > 0 && (
+                                                        <p className="text-xs text-blue-600 mt-2 text-center">
+                                                            Selected:{" "}
+                                                            {selectedClasses[
+                                                                category
+                                                            ].join(", ")}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="flex gap-4 mt-6">
+                                    <button
+                                        onClick={handleUpdateTutor}
+                                        disabled={
+                                            isLoadingClasses ||
+                                            Object.keys(classCategories)
+                                                .length === 0
+                                        }
+                                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-semibold flex-1 transition-all duration-200"
+                                    >
+                                        {isLoadingClasses
+                                            ? "Loading..."
+                                            : "Update Information"}
+                                    </button>
+
+                                    <button
+                                        onClick={handleRestoreData}
+                                        disabled={
+                                            isLoadingClasses ||
+                                            Object.keys(classCategories)
+                                                .length === 0
+                                        }
+                                        className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-semibold flex-1 transition-all duration-200"
+                                    >
+                                        Restore Original
+                                    </button>
+
+                                    <button
+                                        onClick={handleDiscardChanges}
+                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-semibold flex-1 transition-all duration-200"
+                                    >
+                                        Discard & Back
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <Footer />
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                title={alertModal.title}
+                message={alertModal.message}
+                onConfirm={alertModal.onConfirm}
+            />
         </div>
     );
 }
