@@ -18,6 +18,9 @@ export function isTokenExpired(token) {
 }
 
 export function getTokenAccess(token) {
+	// 1: superadmin
+	// 2: teacher
+	// 3: resident counselor
 	if (!token) return 0;
 	try {
 		const payload = JSON.parse(base64UrlDecode(token.split('.')[1]));
