@@ -229,7 +229,7 @@ export default function ManageAccounts() {
                 </button>
 
                 <h1 className="text-4xl font-bold text-gray-700">
-                    Manage Tutors
+                    Manage Administrator Accounts 
                 </h1>
 
                 <div className="w-40"></div>
@@ -357,7 +357,7 @@ export default function ManageAccounts() {
                                                         </div>
                                                     </div>
                                                     <div className="ml-4 flex items-center space-x-3">
-                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                        {/* <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                                             admin.access === 1 ? 'bg-red-300 text-red-800' :
                                                             admin.access === 2 ? 'bg-purple-200 text-purple-700' :
                                                             admin.access === 3 ? 'bg-blue-200 text-blue-700' :
@@ -365,6 +365,7 @@ export default function ManageAccounts() {
                                                         }`}>
                                                             Level {admin.access}
                                                         </span>
+														*/}
                                                         {isCurrentUser ? (
                                                             <div
                                                                 className="bg-green-600 text-white p-3 rounded-md flex items-center justify-center cursor-not-allowed opacity-75"
