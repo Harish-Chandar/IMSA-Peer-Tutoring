@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 
@@ -10,9 +10,16 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+        if (!token || isTokenExpired(token) || getTokenAccess(token) < 1 || getTokenAccess(token) > 3) {
             navigate('/login', { replace: true });
         }
+
+		const manageAccountsButton = document.getElementById("manage-accounts-button");
+		if (getTokenAccess(token) === 1) {
+			manageAccountsButton.style.display = "block";
+		} else {
+			manageAccountsButton.style.display = "none";
+		}
     }, [token, navigate]);
 
     const handleNavigation = (path) => {
@@ -68,6 +75,15 @@ function Dashboard() {
                             <div className="text-lg mb-1">Manage Bulletin</div>
                             <div className="text-sm opacity-90">Update announcements</div>
                         </button>
+						<button
+							type="button"
+							id="manage-accounts-button"
+							onClick={() => handleNavigation('/admin/accounts')}
+							className="bg-teal-500 hover:bg-teal-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+						>
+							<div className="text-lg mb-1">Manage Accounts</div>
+							<div className="text-sm opacity-90">View and manage administrator accounts</div>
+						</button>
                     </div>
                 </div>
             </div>
