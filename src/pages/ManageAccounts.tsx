@@ -3,7 +3,7 @@ import AlertModal from "../components/AlertModal";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 
-import { isTokenExpired, getTokenAccess } from "../util.ts"
+import { isTokenExpired, getTokenAccess, getTokenEmail } from "../util.ts"
 
 
 export default function ManageAccounts() {
@@ -339,7 +339,11 @@ export default function ManageAccounts() {
                                         Administrators List
                                     </h4>
                                     <div className="h-full flex-none overflow-y-scroll space-y-3">
-                                        {admins.map((admin) => (
+                                        {admins.map((admin) => {
+                                            const currentUserEmail = getTokenEmail(token);
+                                            const isCurrentUser = admin.email === currentUserEmail;
+                                            
+                                            return (
                                             <div key={admin.id} className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow duration-200">
                                                 <div className="flex justify-between items-center">
                                                     <div className="flex-1">
@@ -361,19 +365,32 @@ export default function ManageAccounts() {
                                                         }`}>
                                                             Level {admin.access}
                                                         </span>
-                                                        <button
-                                                            onClick={() => deleteAdmin(admin.email)}
-                                                            className="bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transition-colors duration-200 flex items-center justify-center mx-auto"
-                                                            title="Delete admin account"
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                            </svg>
-                                                        </button>
+                                                        {isCurrentUser ? (
+                                                            <div
+                                                                className="bg-green-600 text-white p-3 rounded-md flex items-center justify-center cursor-not-allowed opacity-75"
+                                                                title="Cannot delete your own account"
+                                                            >
+                                                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-slash-circle" viewBox="0 0 16 16">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708"/>
+</svg> 
+                                                            </div>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => deleteAdmin(admin.email)}
+                                                                className="bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transition-colors duration-200 flex items-center justify-center"
+                                                                title="Delete admin account"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
-                                        ))}
+                                            );
+                                        })}
                                         {admins.length === 0 && (
                                             <div className="text-center text-gray-500 py-8">
                                                 No administrators found

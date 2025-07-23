@@ -29,3 +29,13 @@ export function getTokenAccess(token) {
 		return 0;
 	}
 }
+
+export function getTokenEmail(token) {
+	if (!token) return null;
+	try {
+		const payload = JSON.parse(base64UrlDecode(token.split('.')[1]));
+		return payload.email;
+	} catch (e) {
+		return null;
+	}
+}
