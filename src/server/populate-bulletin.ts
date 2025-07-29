@@ -1,13 +1,28 @@
 import pkg from 'sqlite3';
 const { Database, verbose } = pkg;
 
-const db = new (verbose().Database)('peertutoringdb.sqlite', (err: Error | null) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-        process.exit(1);
-    }
-    console.log('Connected to SQLite database.');
-});
+export function ensureBulletinImageColumn(db: any, callback: () => void) {
+    db.all("PRAGMA table_info(bulletin)", [], (err: Error | null, columns: any[]) => {
+        if (err) {
+            console.error("Error checking bulletin table columns:", err.message);
+            callback();
+            return;
+        }
+        const hasImage = columns.some(col => col.name === 'image');
+        if (hasImage) {
+            callback();
+        } else {
+            db.run("ALTER TABLE bulletin ADD COLUMN image TEXT", (err: Error | null) => {
+                if (err) {
+                    console.error("Error adding image column to bulletin table:", err.message);
+                } else {
+                    console.log("Added 'image' column to bulletin table.");
+                }
+                callback();
+            });
+        }
+    });
+}
 
 export const sampleData = [
     {
@@ -44,3 +59,51 @@ export const sampleData = [
         image: "/Bulletin Images/in2.jpg"
     }
 ];
+
+export function populateBulletin(db: any, callback: () => void) {
+    db.run("DELETE FROM bulletin", (err: Error | null) => {
+        if (err) {
+            console.error("Error clearing table:", err.message);
+            callback();
+            return;
+        }
+        const stmt = db.prepare(`
+      INSERT INTO bulletin (
+        title, content, creation_date, event_date, expiration_date, author, contact_info, highpriority, image
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+        let completed = 0;
+        sampleData.forEach((data) => {
+            stmt.run(
+                data.title,
+                data.content,
+                data.creation_date,
+                data.event_date,
+                data.expiration_date,
+                data.author,
+                data.contact_info,
+                data.highpriority,
+                data.image,
+                (err: Error | null) => {
+                    if (err) {
+                        console.error("Error inserting data:", err.message);
+                    }
+                    completed++;
+                    if (completed === sampleData.length) {
+                        stmt.finalize(() => {
+                            db.all("SELECT * FROM bulletin", [], (err: Error | null, rows: any[]) => {
+                                if (err) {
+                                    console.error("Error verifying bulletin data:", err.message);
+                                } else {
+                                    console.log("Inserted bulletin posts:");
+                                    console.table(rows);
+                                }
+                                callback();
+                            });
+                        });
+                    }
+                }
+            );
+        });
+    });
+}

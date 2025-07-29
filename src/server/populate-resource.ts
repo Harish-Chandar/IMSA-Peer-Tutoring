@@ -56,3 +56,96 @@ export const sampleLinks = [
     { resource_id: 2, label: "Periodic Table", url: "https://chemguide.co.uk/periodictable" },
     { resource_id: 3, label: "Reaction Mechanisms", url: "https://chemguide.co.uk/mechanisms" }
 ];
+
+export function populateResources(db: any, sampleResources: any[], sampleLinks: any[], callback: () => void) {
+    db.run("DELETE FROM resource_links", (err: Error | null) => {
+        if (err) {
+            console.error("Error clearing resource_links table:", err.message);
+            callback();
+            return;
+        }
+        db.run("DELETE FROM resources", (err: Error | null) => {
+            if (err) {
+                console.error("Error clearing resources table:", err.message);
+                callback();
+                return;
+            }
+            const insertResource = `INSERT INTO resources (teacher, email, course, department, url, search_field) VALUES (?, ?, ?, ?, ?, ?)`;
+            let completed = 0;
+            if (sampleResources.length === 0) {
+                callback();
+                return;
+            }
+            sampleResources.forEach((resource, index) => {
+                const searchField = `${resource.teacher.toLowerCase()} ${resource.course.toLowerCase()}`;
+                db.run(
+                    insertResource,
+                    [
+                        resource.teacher,
+                        resource.email,
+                        resource.course,
+                        resource.department,
+                        resource.url,
+                        searchField,
+                    ],
+                    function (err: Error | null) {
+                        if (err) {
+                            console.error(
+                                `Error inserting resource ${index + 1}:`,
+                                err?.message
+                            );
+                        } else {
+                            console.log(
+                                `Successfully inserted resource: ${resource.teacher}`
+                            );
+                            const resourceId = this.lastID;
+                            const insertLink = `INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)`;
+                            const linksForThisResource = sampleLinks.filter(
+                                (link) => link.resource_id === index + 1
+                            );
+                            linksForThisResource.forEach((link) => {
+                                db.run(
+                                    insertLink,
+                                    [resourceId, link.label, link.url],
+                                    (err: Error | null) => {
+                                        if (err) {
+                                            console.error(
+                                                `Error inserting link for resource ${resourceId}:`,
+                                                err.message
+                                            );
+                                        } else {
+                                            console.log(`Successfully inserted link: ${link.label}`);
+                                        }
+                                    }
+                                );
+                            });
+                        }
+                        completed++;
+                        if (completed === sampleResources.length) {
+                            db.all("SELECT * FROM resources", [], (err: Error | null, rows: any[]) => {
+                                if (err) {
+                                    console.error("Error verifying resources data:", err.message);
+                                } else {
+                                    console.log("Inserted resources:");
+                                    console.table(rows);
+                                }
+                                db.all("SELECT * FROM resource_links", [], (err: Error | null, rows: any[]) => {
+                                    if (err) {
+                                        console.error(
+                                            "Error verifying resource_links data:",
+                                            err.message
+                                        );
+                                    } else {
+                                        console.log("Inserted resource links:");
+                                        console.table(rows);
+                                    }
+                                    callback();
+                                });
+                            });
+                        }
+                    }
+                );
+            });
+        });
+    });
+}

@@ -89,3 +89,54 @@ export const classCategories = {
         "Mandarin Chinese III",
     ],
 };
+
+export function populateClasses(db: any, classCategories: any, callback: () => void) {
+    console.log("Starting insertion of class data...");
+    db.run("DELETE FROM classes", [], (err: Error | null) => {
+        if (err) {
+            console.error("Error deleting existing classes:", err?.message);
+            callback();
+            return;
+        }
+        console.log("Cleared existing class data.");
+        const insertClassStmt = db.prepare(
+            "INSERT INTO classes (class_name, department) VALUES (?, ?)"
+        );
+        let insertedCount = 0;
+        let totalClasses = 0;
+        for (const classes of Object.values(classCategories)) {
+            totalClasses += (classes as string[]).length;
+        }
+        if (totalClasses === 0) {
+            insertClassStmt.finalize();
+            callback();
+            return;
+        }
+        for (const [department, classes] of Object.entries(classCategories)) {
+            for (const className of classes as string[]) {
+                insertClassStmt.run(
+                    className,
+                    department,
+                    function (err: Error | null) {
+                        if (err) {
+                            console.error(
+                                `Error inserting class "${className}":`,
+                                err?.message
+                            );
+                        } else {
+                            insertedCount++;
+                            console.log(
+                                `Successfully inserted class: ${className} (Department: ${department})`
+                            );
+                        }
+                        if (insertedCount === totalClasses) {
+                            insertClassStmt.finalize();
+                            console.log(`Total of ${insertedCount} classes inserted.`);
+                            callback();
+                        }
+                    }
+                );
+            }
+        }
+    });
+}

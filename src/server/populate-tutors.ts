@@ -215,3 +215,74 @@ export const tutors: Tutor[] = [
         language: "",
     },
 ];
+
+export function populateTutors(db: any, tutors: Tutor[], callback: () => void) {
+    console.log("Starting insertion of tutor data...");
+    db.run("DELETE FROM tutors", [], (err: Error | null) => {
+        if (err) {
+            console.error("Error deleting existing tutors:", err?.message);
+            callback();
+            return;
+        }
+        console.log("Cleared existing tutor data.");
+        const insertStmt = db.prepare(`
+        INSERT INTO tutors (
+            id, fname, lname, fbname, imsaid, email, blurb, hall, wing, image, 
+            totaltime, approvedtime, starttime, is_available, availability, courses,
+            physics, chem, biology, sciother, mathother, mathcore, cs, language
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      `);
+        tutors.forEach((tutor) => {
+            insertStmt.run(
+                tutor.id,
+                tutor.fname,
+                tutor.lname,
+                tutor.fbname,
+                tutor.imsaid,
+                tutor.email,
+                tutor.blurb,
+                tutor.hall,
+                tutor.wing,
+                tutor.image,
+                tutor.totaltime,
+                tutor.approvedtime,
+                tutor.starttime,
+                tutor.is_available,
+                tutor.availability,
+                tutor.courses,
+                tutor.physics,
+                tutor.chem,
+                tutor.biology,
+                tutor.sciother,
+                tutor.mathother,
+                tutor.mathcore,
+                tutor.cs,
+                tutor.language,
+                function (err: Error | null) {
+                    if (err) {
+                        console.error(`Error inserting tutor ${tutor.id}:`, err?.message);
+                    } else {
+                        console.log(
+                            `Successfully inserted tutor: ${tutor.fname} ${tutor.lname} (ID: ${tutor.id})`
+                        );
+                    }
+                }
+            );
+        });
+        insertStmt.finalize();
+        db.all(
+            "SELECT id, fname, lname, hall, wing, image, availability FROM tutors",
+            [],
+            (err: Error | null, rows: any[]) => {
+                if (err) {
+                    console.error("Error verifying inserted data:", err?.message);
+                } else {
+                    console.log("Inserted tutors:");
+                    console.table(rows);
+                    console.log(`Total of ${rows.length} tutors inserted.`);
+                }
+                callback();
+            }
+        );
+    });
+}
