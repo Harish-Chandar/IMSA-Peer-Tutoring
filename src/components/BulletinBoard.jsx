@@ -53,7 +53,7 @@ function Bulletin() {
                             contact={note.contact_info}
                             color={note.highpriority}
                             description={note.content}
-                            image={"/in2.jpg"}
+                            image={note.image}
                         />
                     ))}
                 </div>}

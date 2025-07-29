@@ -143,8 +143,8 @@ function populateBulletin(db: sqlite3.Database, callback: () => void) {
         }
         const stmt = db.prepare(`
       INSERT INTO bulletin (
-        title, content, creation_date, event_date, expiration_date, author, contact_info, highpriority
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        title, content, creation_date, event_date, expiration_date, author, contact_info, highpriority, image
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
         let completed = 0;
         sampleData.forEach((data) => {
@@ -157,6 +157,7 @@ function populateBulletin(db: sqlite3.Database, callback: () => void) {
                 data.author,
                 data.contact_info,
                 data.highpriority,
+                data.image,
                 (err: Error | null) => {
                     if (err) {
                         console.error("Error inserting data:", err.message);

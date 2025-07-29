@@ -531,12 +531,12 @@ app.get("/api/test", (req: Request, res: Response) => {
 
 // bulletin board api routes
 app.post("/api/bulletin", authenticateAdmin, (req: Request, res: Response) => {
-    const { title, content, event_date, author, contact_info, highpriority } =
+    const { title, content, event_date, author, contact_info, highpriority, image } =
         req.body;
     const creation_date = new Date().toISOString();
 
-    const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority) 
-	VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority, image) 
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.run(
         sql,
@@ -548,6 +548,7 @@ app.post("/api/bulletin", authenticateAdmin, (req: Request, res: Response) => {
             author || "Admin",
             contact_info || "",
             highpriority || 0,
+            image || ""
         ],
         function (err) {
             if (err) {

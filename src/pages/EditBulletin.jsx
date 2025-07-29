@@ -31,7 +31,14 @@ function EditBulletin() {
 		author: "",
 		contact_info: "",
 		highpriority: false,
+		image: "",
 	});
+
+	const availableImages = [
+		{ id: 1, src: "/Bulletin Images/imsa.jpg" },
+		{ id: 2, src: "/Bulletin Images/blackboard.jpg"},
+		{ id: 3, src: "/Bulletin Images/in2.jpg"},
+	];
 
 	const [showAlert, setShowAlert] = useState(false);
 	const [alertMessage, setAlertMessage] = useState('');
@@ -113,6 +120,7 @@ function EditBulletin() {
 						author: newPost.author || "Admin",
 						contact_info: newPost.contact_info,
 						highpriority: newPost.highpriority,
+                        image: newPost.image,
 					}),
 				});
 
@@ -128,6 +136,7 @@ function EditBulletin() {
 						author: "",
 						contact_info: "",
 						highpriority: false,
+						image: "",
 					});
 
 					window.location.reload(); // Refresh the page after successful post creation to reset the react state
@@ -300,6 +309,17 @@ function EditBulletin() {
 								{newPost.content.length}/110 characters
 							</div>
 						</div>
+                        {/* Add Image */}
+                        <div className="flex flex-col mb-4 items-center">
+                            <label className="text-gray-700 font-bold mb-2 self-center">Post Image</label>
+                            <div className="grid grid-cols-3 gap-4 max-w-xl">
+                                {availableImages.map((image) => (   
+                                    <div key={image.id} onClick={() => handlePostInputChange("image", image.src)} className={`relative cursor-pointer rounded-lg overflow-hidden border-4 transition-all duration-200 hover:shadow-lg ${newPost.image === image.src ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300 hover:border-gray-400"}`}>
+                                        <img src={image.src} className="w-full h-28 object-cover"/>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
 						{/* High Priority Checkbox */}
 						<div className="flex items-center mb-6">
