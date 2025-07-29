@@ -94,28 +94,28 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
 	});
 });
 
-app.post("/api/schedule", (req, res) => {
-	const { title, course, teachers, location, date, time } = req.body;
-
-	const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
-	VALUES (?, ?, ?, ?, ?, ?)`;
-
-	db.run(
-		sql,
-		[title, course, teachers, location, date, time],
-		function (err) {
-			if (err) {
-				console.error("Error inserting data:", err.message);
-				res.status(500).json({ error: err.message });
-				return;
-			}
-			res.json({
-				message: "Schedule entry added",
-				id: this.lastID,
-			});
-		}
-	);
-});
+// app.post("/api/schedule", (req, res) => {
+// 	const { title, course, teachers, location, date, time } = req.body;
+//
+// 	const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
+// 	VALUES (?, ?, ?, ?, ?, ?)`;
+//
+// 	db.run(
+// 		sql,
+// 		[title, course, teachers, location, date, time],
+// 		function (err) {
+// 			if (err) {
+// 				console.error("Error inserting data:", err.message);
+// 				res.status(500).json({ error: err.message });
+// 				return;
+// 			}
+// 			res.json({
+// 				message: "Schedule entry added",
+// 				id: this.lastID,
+// 			});
+// 		}
+// 	);
+// });
 
 app.get("/api/tutors/:id", (req, res) => {
 	const id = req.params.id;
