@@ -429,6 +429,67 @@ app.post("/api/login", (req: Request, res: Response) => {
     });
 });
 
+app.post("/api/admin/create", authenticateAdmin, (req: Request, res: Response) => {
+    const { email, password, role } = req.body;
+
+    if (!email || !password || !role) {
+        return res.status(400).json({ error: "Email, password, and role are required" });
+    }
+
+    // Hash the password
+    bcrypt.hash(password, 10, (err: Error | undefined, hash: string) => {
+        if (err) {
+            console.error("Hashing error:", err);
+            return res.status(500).json({ error: "Error creating admin account" });
+        }
+
+        const sql = `INSERT INTO admins (email, pwd, access) VALUES (?, ?, ?)`;
+        db.run(
+            sql,
+            [email, hash,  role],
+            function (this: any, err: Error | null) {
+                if (err) {
+                    console.error("Database error:", err);
+                    return res.status(500).json({ error: "Error creating admin account" });
+                }
+                res.status(201).json({
+                    id: this.lastID,
+                    message: "Admin account created successfully",
+                });
+            }
+        );
+    });
+});
+
+app.get("/api/admins", authenticateAdmin, (req: Request, res: Response) => {
+    const sql = "SELECT * FROM admins";
+
+    db.all(sql, [], (err: Error | null, rows: any[]) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Error retrieving admin accounts" });
+        }
+        res.json(rows);
+    });
+});
+
+app.post("/api/admins/:email/delete", authenticateAdmin, (req: Request, res: Response) => {
+    const adminEmail = req.params.email;
+
+    if (!adminEmail) {
+        return res.status(400).json({ error: "Invalid admin email" });
+    }
+
+    const sql = "DELETE FROM admins WHERE email = ?";
+    db.run(sql, [adminEmail], function (err) {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Error deleting admin account" });
+        }
+        res.json({ message: "Admin account deleted successfully" });
+    });
+});
+
 // api route for retrieving schedule string for a tutor
 app.get("/api/tutors/:id/schedule", (req: Request, res: Response) => {
     const tutorId = req.params.id;

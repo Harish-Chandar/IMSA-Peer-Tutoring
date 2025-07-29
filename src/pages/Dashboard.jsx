@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 
@@ -10,25 +10,44 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+        if (!token || isTokenExpired(token) || getTokenAccess(token) < 1 || getTokenAccess(token) > 3) {
             navigate('/login', { replace: true });
         }
+
+		const manageAccountsButton = document.getElementById("manage-accounts-button");
+		if (getTokenAccess(token) === 1) {
+			manageAccountsButton.style.display = "block";
+		} else {
+			manageAccountsButton.style.display = "none";
+		}
     }, [token, navigate]);
 
     const handleNavigation = (path) => {
         navigate(path);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate('/login', { replace: true });
+    };
+
     return (
         <div className="p-6 bg-gray-100 pt-14">
-            <h1 className="text-4xl mb-6 text-center font-bold py-10 text-blue-500">
+            <h1 className="text-3xl lg:text-4xl mb-6 text-center font-bold pt-10 text-blue-500">
                 Administrator Dashboard
             </h1>
+
+            <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white p-2 lg:px-4 lg:py-2 rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg mt-6 md:mt-8 absolute top-12 right-3"
+            >
+                Logout
+            </button>
 
             <div className="flex justify-center">
                 <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl w-full">
                     <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-3">
+                        <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-3">
                             Welcome to Your Dashboard
                         </h2>
                         <p className="text-gray-600">
@@ -68,6 +87,15 @@ function Dashboard() {
                             <div className="text-lg mb-1">Manage Bulletin</div>
                             <div className="text-sm opacity-90">Update announcements</div>
                         </button>
+						<button
+							type="button"
+							id="manage-accounts-button"
+							onClick={() => handleNavigation('/admin/accounts')}
+							className="bg-teal-500 hover:bg-teal-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+						>
+							<div className="text-lg mb-1">Manage Accounts</div>
+							<div className="text-sm opacity-90">View and manage administrator accounts</div>
+						</button>
                     </div>
                 </div>
             </div>
