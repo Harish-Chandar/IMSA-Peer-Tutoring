@@ -41,13 +41,6 @@ export function Login() {
         }
     };
 
-    // example for showing the alert
-    const handleTestButtonClick = () => {
-        setModalTitle("testing");
-        setModalMessage("lehfsgs etg");
-        setShowModal(true);
-    };
-
     return (
         <div className="bg-gray-100">
             <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -82,13 +75,6 @@ export function Login() {
                                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
-                        <button
-                            type="button"
-                            className="w-full text-lg bg-gray-400 hover:bg-gray-500 text-white py-3 rounded-md font-semibold transition-all duration-200 mb-2"
-                            onClick={handleTestButtonClick}
-                        >
-                            Test Button
-                        </button>
 
                         <button
                             type="submit"
