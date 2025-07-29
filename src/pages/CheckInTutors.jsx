@@ -27,6 +27,7 @@ function CheckInTutors() {
     const [alertTitle, setAlertTitle] = useState("");
     const [pendingTutor, setPendingTutor] = useState(null);
     const [pendingElapsed, setPendingElapsed] = useState(0);
+    const [pendingHours, setPendingHours] = useState(0);
 
     const fetchTutors = async () => {
         setLoading(true);
@@ -74,8 +75,9 @@ function CheckInTutors() {
         const elapsedHours = elapsedMs / 3600000;
         setPendingTutor(tutor);
         setPendingElapsed(elapsedHours);
+        setPendingHours(Number(elapsedHours.toFixed(2)));
         setAlertTitle("RC Override: End Session");
-        setAlertMessage(`Are you sure you want to end the session and approve ${elapsedHours.toFixed(2)} hours for the tutor?`);
+        setAlertMessage(`Are you sure you want to end the session and approve the following number of hours for the tutor?`);
         setShowAlert(true);
     };
 
@@ -84,10 +86,10 @@ function CheckInTutors() {
         setShowAlert(false);
         if (!pendingTutor) return;
         if (accept) {
-            // Approve elapsed time: PATCH to update approvedtime, then end session
             try {
                 const token = localStorage.getItem("token");
-                // PATCH approvedtime
+                // Convert hours to ms for backend
+                const msToAdd = Number(pendingHours) * 3600000;
                 await fetch(`${baseUrl}/api/tutors/${pendingTutor.id}/approvehours`, {
                     method: "PATCH",
                     headers: {
@@ -95,20 +97,19 @@ function CheckInTutors() {
                         Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
-                        approvedtime: (pendingTutor.approvedtime || 0) + pendingElapsed * 3600000,
+                        approvedtime: msToAdd,
                     }),
                 });
-                // End session
                 await handleCheckOut(pendingTutor.id, true);
             } catch (err) {
                 setError("Failed to approve hours and end session");
             }
         } else {
-            // Just end session, don't update approvedtime
             await handleCheckOut(pendingTutor.id, true);
         }
         setPendingTutor(null);
         setPendingElapsed(0);
+        setPendingHours(0);
     };
 
     // Modified handleCheckOut to optionally skip modal
@@ -253,6 +254,9 @@ function CheckInTutors() {
                 message={alertMessage}
                 onConfirm={handleAlertConfirm}
                 title={alertTitle}
+                inputValue={pendingHours}
+                onInputChange={val => setPendingHours(val)}
+                inputLabel={"Hours to approve"}
             />
             <Footer />
         </div>

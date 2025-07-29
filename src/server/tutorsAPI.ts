@@ -1035,3 +1035,42 @@ app.post(
 		);
 	}
 );
+
+// PATCH endpoint to approve hours for a tutor (RC override)
+app.patch("/api/tutors/:id/approvehours", authenticateAdmin, (req: Request, res: Response) => {
+    const tutorId = parseInt(req.params.id);
+    let { approvedtime } = req.body;
+    if (isNaN(tutorId) || tutorId <= 0) {
+        return res.status(400).json({ error: "Invalid tutor ID" });
+    }
+    approvedtime = Number(approvedtime);
+    if (isNaN(approvedtime) || approvedtime < 0) {
+        return res.status(400).json({ error: "Invalid approvedtime value" });
+    }
+    // Get current approvedtime and totaltime
+    db.get("SELECT approvedtime, totaltime FROM tutors WHERE id = ?", [tutorId], (err, row: any) => {
+        if (err) {
+            console.error("Error fetching tutor for approve hours:", err);
+            return res.status(500).json({ error: "Error fetching tutor data" });
+        }
+        if (!row) {
+            return res.status(404).json({ error: "Tutor not found" });
+        }
+        const newApproved = (row.approvedtime || 0) + approvedtime;
+        const newTotal = (row.totaltime || 0) + approvedtime;
+        db.run(
+            "UPDATE tutors SET approvedtime = ?, totaltime = ? WHERE id = ?",
+            [newApproved, newTotal, tutorId],
+            function (err2) {
+                if (err2) {
+                    console.error("Error updating approved/totaltime:", err2);
+                    return res.status(500).json({ error: "Error updating tutor hours" });
+                }
+                if (this.changes === 0) {
+                    return res.status(404).json({ error: "Tutor not found" });
+                }
+                res.json({ message: "Tutor hours updated", approvedtime: newApproved, totaltime: newTotal });
+            }
+        );
+    });
+});

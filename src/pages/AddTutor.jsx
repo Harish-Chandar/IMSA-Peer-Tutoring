@@ -750,11 +750,8 @@ function AddTutor() {
 															<span className="text-sm font-normal text-gray-600 ml-2">
 																(
 																{tutor.totaltime
-																	? tutor.totaltime.toFixed(
-																			1
-																	  )
-																	: "0.0"}{" "}
-																hrs)
+																	? (tutor.totaltime / 3600000).toFixed(2)
+																	: "0.00"} hrs)
 															</span>
 														</p>
 														<p className="text-sm text-blue-400 break-all">

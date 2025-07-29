@@ -25,7 +25,7 @@ All you need to do to call the alert is this:
 	setShowAlert(true);
 */
 
-export function AlertModal({ isOpen, message, onConfirm, title = "Warning" }) {
+export function AlertModal({ isOpen, message, onConfirm, title = "Warning", inputValue, onInputChange, inputLabel }) {
 	const [isVisible, setIsVisible] = useState(false);
 
 	React.useEffect(() => {
@@ -56,6 +56,19 @@ export function AlertModal({ isOpen, message, onConfirm, title = "Warning" }) {
 				</div>
 				<div className="mb-6">
 					<p className="text-gray-700">{message}</p>
+					{typeof inputValue !== 'undefined' && onInputChange && (
+						<div className="mt-4">
+							{inputLabel && <label className="block text-gray-700 mb-1">{inputLabel}</label>}
+							<input
+								type="number"
+								step="0.01"
+								min="0"
+								value={inputValue}
+								onChange={e => onInputChange(e.target.value)}
+								className="border rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+							/>
+						</div>
+					)}
 				</div>
 				<div className="flex justify-end space-x-3">
 					<button onClick={handleCancel} className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md font-medium transition-colors duration-200">Cancel</button>
