@@ -61,7 +61,7 @@ function Tutor() {
 
     // state variables for component
     const [tutor, setTutor] = useState(null);
-    const [classes, setClasses] = useState([]);
+    const [classes, setClasses] = useState({});
     const [schedule, setSchedule] = useState({});
     const [selectedDate, setSelectedDate] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -150,23 +150,8 @@ function Tutor() {
                     classesDataReceived: Boolean(classesData),
                 }));
 
-                // process classes into a flat array
-                const allClasses = [];
-                if (classesData && classesData.length > 0) {
-                    const classesObj = classesData[0];
+                setClasses(classesData[0]);
 
-                    if (classesObj) {
-                        Object.entries(classesObj).forEach(
-                            ([subject, value]) => {
-                                if (value) {
-                                    allClasses.push(...parseClasses(value));
-                                }
-                            }
-                        );
-                    }
-                }
-
-                setClasses(allClasses);
 
                 // fetch tutor's availability schedule
                 const scheduleResponse = await fetch(
@@ -200,7 +185,7 @@ function Tutor() {
                 // update debug info with fetch completion status
                 setDebugInfo((prev) => ({
                     ...prev,
-                    classesCount: allClasses.length,
+                    classesCount: classesData[0].length,
                     fetchComplete: true,
                 }));
             } catch (err) {
@@ -332,12 +317,60 @@ function Tutor() {
                         <p className="text-xl text-gray-500 font-sans mb-3">
                             {location}
                         </p>
-                        <p className="text-lg text-gray-600 font-sans">
-                            <span className="font-bold">Classes taught:</span>{" "}
-                            {classes.length > 0
-                                ? classes.join(", ")
-                                : "no classes listed"}
-                        </p>
+                        <div className="text-lg text-gray-600 font-sans">
+                            <span className="font-bold text-left">Classes taught:</span>
+                            <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-2 text-base">
+                                {/* Math Core */}
+                                {parseClasses(classes.mathcore).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">Math Courses(Core)</div>
+                                    {parseClasses(classes.mathcore).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                                {/* Math Non-Core */}
+                                {parseClasses(classes.mathother).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">Math Courses(Non-Core)</div>
+                                    {parseClasses(classes.mathother).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                                {/* Physics */}
+                                {parseClasses(classes.physics).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">Physics Courses</div>
+                                    {parseClasses(classes.physics).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                                {/* Chemistry */}
+                                {parseClasses(classes.chem).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">Chemistry Courses</div>
+                                    {parseClasses(classes.chem).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                                {/* CS */}
+                                {parseClasses(classes.cs).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">CS Courses</div>
+                                    {parseClasses(classes.cs).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                                {/* Language */}
+                                {parseClasses(classes.language).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">Language Courses</div>
+                                    {parseClasses(classes.language).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                                {/* Sci Other */}
+                                {parseClasses(classes.sciother).length > 0 && (
+                                  <div>
+                                    <div className="underline font-semibold mb-1">Other Science</div>
+                                    {parseClasses(classes.sciother).map((c, i) => c && <div key={i}>{c}</div>)}
+                                  </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     {/* calendar and schedule section */}
