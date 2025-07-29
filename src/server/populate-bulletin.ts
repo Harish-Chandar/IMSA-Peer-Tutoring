@@ -18,7 +18,8 @@ export const sampleData = [
         expiration_date: "2025-04-30",
         author: "Dr. Trimm",
         contact_info: "trimm@imsa.edu",
-        highpriority: 1
+        highpriority: 1,
+        image: "/Bulletin Images/imsa.jpg"
     },
     {
         title: "Study Session #2",
@@ -28,7 +29,8 @@ export const sampleData = [
         expiration_date: "2025-04-30",
         author: "Dr. Krouse",
         contact_info: "krouse@imsa.edu",
-        highpriority: 0
+        highpriority: 0,
+        image: "/Bulletin Images/blackboard.jpg"
     },
     {
         title: "Study Session #3",
@@ -38,6 +40,7 @@ export const sampleData = [
         expiration_date: "2025-04-30",
         author: "Dr. Fogel",
         contact_info: "fogel@imsa.edu",
-        highpriority: 1
+        highpriority: 1,
+        image: "/Bulletin Images/in2.jpg"
     }
 ];

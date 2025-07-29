@@ -55,7 +55,8 @@ event_date TEXT,
 expiration_date TEXT,
 author TEXT NOT NULL,
 contact_info TEXT,
-highpriority BOOLEAN DEFAULT 0
+highpriority BOOLEAN DEFAULT 0,
+image TEXT
 );
 `;
 
