@@ -398,7 +398,10 @@ function AddTutor() {
 		<div className="p-6 bg-gray-100 pt-14 min-h-screen">
 			<div className="flex justify-between items-center mb-6 py-10">
 				<button
-					onClick={() => navigate("/adminDashboard")}
+					onClick={() => {
+						window.scrollTo(0, 0);
+						navigate("/adminDashboard");
+					}}
 					className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
 				>
 					Back to Dashboard
@@ -740,8 +743,8 @@ function AddTutor() {
 													key={tutor.id}
 													className="flex items-center justify-between p-3 bg-white rounded-md border"
 												>
-													<div className="flex-1 flex flex-col items-center min-w-0">
-														<p className="font-semibold text-gray-800 break-words text-center">
+													<div className="flex-1 flex flex-col items-start min-w-0">
+														<p className="font-semibold text-gray-800 break-words text-left">
 															{tutor.fname}{" "}
 															{tutor.lname}
 														</p>
@@ -755,11 +758,15 @@ function AddTutor() {
 													</div>
 													<div className="flex items-center space-x-2">
 														<button
-															onClick={() =>
+															onClick={() => {
+																window.scrollTo(
+																	0,
+																	0
+																);
 																navigate(
 																	`/editTutor/${tutor.id}`
-																)
-															}
+																);
+															}}
 															className="w-10 h-10 flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-200 text-sm font-bold"
 															title="Edit Tutor"
 														>

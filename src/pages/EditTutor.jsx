@@ -345,6 +345,7 @@ function EditTutor() {
 				});
 
 				if (confirmed) {
+					window.scrollTo(0, 0);
 					navigate("/addTutor");
 				}
 			},
@@ -422,6 +423,7 @@ function EditTutor() {
 							message: "",
 							onConfirm: null,
 						});
+						window.scrollTo(0, 0);
 						navigate("/addTutor");
 					},
 				});
@@ -461,7 +463,10 @@ function EditTutor() {
 		<div className="p-6 bg-gray-100 pt-14 min-h-screen">
 			<div className="flex justify-between items-center mb-6 py-10">
 				<button
-					onClick={() => navigate("/adminDashboard")}
+					onClick={() => {
+						window.scrollTo(0, 0);
+						navigate("/adminDashboard");
+					}}
 					className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
 				>
 					Back to Dashboard
@@ -473,7 +478,7 @@ function EditTutor() {
 			</div>
 
 			<div className="flex justify-center">
-				<div className="max-w-4xl w-full">
+				<div className="max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
 					{/* single card for editing tutor */}
 					<div className="w-full">
 						<div className="rounded-2xl shadow-md p-8 bg-white border overflow-y-auto w-full overflow-x-hidden">
