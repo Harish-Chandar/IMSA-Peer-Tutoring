@@ -194,8 +194,8 @@ app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 
 	const sql = `INSERT INTO tutors 
 	(fname, lname, fbname, imsaid, email, blurb, hall, wing, image, availability, 
-	 physics, chem, biology, sciother, mathother, mathcore, cs, language) 
-	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+	 physics, chem, biology, sciother, mathother, mathcore, cs, language, totaltime, approvedtime, starttime) 
+	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NULL)`;
 
 	db.run(
 		sql,

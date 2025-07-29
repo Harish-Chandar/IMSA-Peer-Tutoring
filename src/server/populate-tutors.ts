@@ -214,7 +214,11 @@ export const tutors: Tutor[] = [
         cs: "OOP",
         language: "",
     },
-];
+].map(tutor => ({
+    ...tutor,
+    totaltime: 0,
+    approvedtime: 0,
+}));
 
 export function populateTutors(db: any, tutors: Tutor[], callback: () => void) {
     console.log("Starting insertion of tutor data...");

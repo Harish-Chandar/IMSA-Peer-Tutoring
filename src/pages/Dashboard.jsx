@@ -87,6 +87,14 @@ function Dashboard() {
                             <div className="text-lg mb-1">Manage Bulletin</div>
                             <div className="text-sm opacity-90">Update announcements</div>
                         </button>
+
+                        <button
+                            onClick={() => handleNavigation('/checkin')}
+                            className="bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div className="text-lg mb-1">Check-In Tutors</div>
+                            <div className="text-sm opacity-90">Check tutors in and out</div>
+                        </button>
 						<button
 							type="button"
 							id="manage-accounts-button"
