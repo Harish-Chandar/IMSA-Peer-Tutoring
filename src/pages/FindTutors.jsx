@@ -111,7 +111,7 @@ function FindTutors() {
 					Find Tutors Below!
 				</h1>
 				<h1 className="text-xl mb-6 text-center font-sans text-gray-700">
-					Sort by hall, subject, and more!
+					Sort by hall or subject!
 				</h1>
 				<div className="flex items-center border-2 border-blue-500 rounded-lg overflow-hidden">
 					<input
