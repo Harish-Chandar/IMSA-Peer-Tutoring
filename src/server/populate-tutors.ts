@@ -31,7 +31,7 @@ export interface Tutor {
 
 export const tutors: Tutor[] = [
     {
-        id: 126001,
+        id: 0,
         fname: "Aarav",
         lname: "Shah",
         fbname: "Aarav Shah",
@@ -58,7 +58,7 @@ export const tutors: Tutor[] = [
         language: "",
     },
     {
-        id: 126002,
+        id: 1,
         fname: "Harish",
         lname: "Chandar",
         fbname: "Harish Chandar",
@@ -85,7 +85,7 @@ export const tutors: Tutor[] = [
         language: "",
     },
     {
-        id: 126003,
+        id: 2,
         fname: "Vishnu",
         lname: "Vijay",
         fbname: "Vishnu Vijay",
@@ -111,7 +111,7 @@ export const tutors: Tutor[] = [
         language: "Spanish_V",
     },
     {
-        id: 127001,
+        id: 3,
         fname: "Ian",
         lname: "Wang",
         fbname: "Ian Wang",
@@ -137,7 +137,7 @@ export const tutors: Tutor[] = [
         language: "",
     },
     {
-        id: 127002,
+        id: 4,
         fname: "Krithik",
         lname: "Senthilkumar",
         fbname: "Krithik Senthilkumar",
@@ -163,7 +163,7 @@ export const tutors: Tutor[] = [
         language: "French_I",
     },
     {
-        id: 127003,
+        id: 5,
         fname: "Pranav",
         lname: "Gadde",
         fbname: "Pranav Gadde",
@@ -189,7 +189,7 @@ export const tutors: Tutor[] = [
         language: "",
     },
     {
-        id: 127004,
+        id: 6,
         fname: "Atharv",
         lname: "Kanchi",
         fbname: "Atharv Kanchi",

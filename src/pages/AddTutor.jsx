@@ -141,28 +141,30 @@ function AddTutor() {
     const handleAvailabilityChange = (day, value) => {
         setAvailability((prev) => ({
             ...prev,
-            [day]: formatTime(value),
+            [day]: value,
         }));
     };
 
     // construct availability string for database
     const constructAvailabilityString = () => {
         const dayEntries = [];
-
         Object.entries(availability).forEach(([day, timeSlots]) => {
             if (timeSlots && timeSlots.trim()) {
-                // split by commas and filter out empty entries
-                const slots = timeSlots
-                    .split(",")
-                    .map((slot) => slot.trim())
-                    .filter((slot) => slot.length > 0);
+                // Format the time slots during post-processing
+                const formattedTimeSlots = formatTime(timeSlots);
 
-                if (slots.length > 0) {
-                    dayEntries.push(`${day},${slots.join(",")}`);
+                if (formattedTimeSlots) {
+                    const slots = formattedTimeSlots
+                        .split(",")
+                        .map((slot) => slot.trim())
+                        .filter((slot) => slot.length > 0);
+
+                    if (slots.length > 0) {
+                        dayEntries.push(`${day},${slots.join(",")}`);
+                    }
                 }
             }
         });
-
         return dayEntries.join(";");
     };
 
@@ -189,13 +191,12 @@ function AddTutor() {
         return className.replace(/ /g, "_").replace(/&/g, "&");
     };
 
-    // format time from "7:30 PM - 8:00 PM" to "7:30-8:00"
+    // format time - remove whitespace and any text, keep only numbers, colons, commas, and dashes
     const formatTime = (timeStr) => {
         if (!timeStr) return "";
         return timeStr
-            .replace(/\s*PM\s*/g, "")
-            .replace(/\s*AM\s*/g, "")
-            .replace(/\s*-\s*/g, "-")
+            .replace(/[^0-9:,-]/g, "") // Remove everything except numbers, colons, commas, and dashes
+            .replace(/\s+/g, "") // Remove all whitespace
             .trim();
     };
 

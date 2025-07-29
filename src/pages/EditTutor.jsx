@@ -449,7 +449,7 @@ function EditTutor() {
             });
 
             if (response.ok) {
-                // After a successful update, re-fetch the data to set the new "original" state.
+                // after a successful update, re-fetch the data
                 fetchTutorData();
 
                 setAlertModal({
@@ -685,9 +685,7 @@ function EditTutor() {
                                         by commas)
                                     </label>
                                     <p className="text-xs text-gray-500 mb-3 text-center">
-                                        Example: "5:30-6:00, 6:00-6:30,
-                                        7:00-7:30", please do not include AM or
-                                        PM!
+                                        Example: "5:30-6:00, 7:00-7:30 PM"
                                     </p>
 
                                     {Object.entries(availability).map(
@@ -701,7 +699,7 @@ function EditTutor() {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    placeholder="e.g., 5:30-6:00, 6:00-6:30"
+                                                    placeholder="e.g., 5:30-6:00, 6:00-6:30 PM"
                                                     value={timeSlots}
                                                     onChange={(e) =>
                                                         handleAvailabilityChange(
