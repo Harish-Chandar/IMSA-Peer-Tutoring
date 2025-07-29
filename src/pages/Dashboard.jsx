@@ -90,7 +90,7 @@ function Dashboard() {
 
                         <button
                             onClick={() => handleNavigation('/checkin')}
-                            className="bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                            className="bg-red-500 hover:bg-red-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
                         >
                             <div className="text-lg mb-1">Check-In Tutors</div>
                             <div className="text-sm opacity-90">Check tutors in and out</div>
@@ -102,7 +102,7 @@ function Dashboard() {
 							className="bg-teal-500 hover:bg-teal-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
 						>
 							<div className="text-lg mb-1">Manage Accounts</div>
-							<div className="text-sm opacity-90">View and manage administrator accounts</div>
+							<div className="text-sm opacity-90">Manage administrator accounts</div>
 						</button>
                     </div>
                 </div>
