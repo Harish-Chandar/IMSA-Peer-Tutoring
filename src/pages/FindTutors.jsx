@@ -114,7 +114,7 @@ function FindTutors() {
 					Sort by hall or subject!
 				</h1>
 				{/* search bar and button */}
-				<div className="flex flex-col sm:flex-row items-center border-2 border-blue-500 rounded-lg overflow-hidden">
+				<div className="flex items-center border-2 border-blue-500 rounded-lg overflow-hidden">
 					<input
 						type="text"
 						placeholder="Search..."
@@ -124,15 +124,15 @@ function FindTutors() {
 					/>
 					<button
 						onClick={handleSearch}
-						className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 text-3xl"
+						className="bg-blue-500 text-white px-4 py-4 hover:bg-blue-600 text-xl"
 					>
 						⌕
 					</button>
 				</div>
 				<div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
-					<div className="relative w-full">
+					<div className="relative w-full sm:w-auto">
 						<button
-							className="w-full p-2 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100"
+							className="w-full sm:w-auto p-2 px-4 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100"
 							onClick={() => setFilterDropdown(!filterDropdown)}
 						>
 							+ Add Filter

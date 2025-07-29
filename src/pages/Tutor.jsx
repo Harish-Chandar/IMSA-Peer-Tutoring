@@ -217,22 +217,38 @@ function Tutor() {
 
 		const calendarDays = [];
 		let day = 1;
+		// Counter for next month's days to fill trailing cells
+		let nextMonthDay = 1;
 
-		// create a 6-week calendar grid
-		for (let i = 0; i < 6; i++) {
+		// create calendar grid - determine how many weeks we need
+		let totalCells = 0;
+		const startingWeekday = firstDay.getDay();
+		const daysInMonth = lastDay.getDate();
+
+		// calculate minimum weeks needed
+		const minWeeks = Math.ceil((startingWeekday + daysInMonth) / 7);
+
+		for (let i = 0; i < minWeeks; i++) {
 			const week = [];
 			for (let j = 0; j < 7; j++) {
-				if (
-					(i === 0 && j < firstDay.getDay()) ||
-					day > lastDay.getDate()
-				) {
-					// empty cells for days outside current month
+				if (i === 0 && j < firstDay.getDay()) {
+					// Leading empty cells before month start
 					week.push(null);
-				} else {
-					// Store the actual date object instead of just the day number
+				} else if (day <= lastDay.getDate()) {
+					// Current month days
 					const dateObj = new Date(currentYear, currentMonth, day);
 					week.push({ day, dateObj });
 					day++;
+				} else {
+					// Trailing cells: next month's days to fill the square
+					// Determine next month and year for dateObj
+					const nextMonth =
+						currentMonth === 11 ? 0 : currentMonth + 1;
+					const nextYear =
+						currentMonth === 11 ? currentYear + 1 : currentYear;
+					const dateObj = new Date(nextYear, nextMonth, nextMonthDay);
+					week.push({ day: nextMonthDay, dateObj });
+					nextMonthDay++;
 				}
 			}
 			calendarDays.push(week);
@@ -299,7 +315,7 @@ function Tutor() {
 					<img
 						src={profileImage}
 						alt={fullName}
-						className="rounded-2xl shadow-md w-[500px] h-[500px] object-cover"
+						className="rounded-2xl shadow-md w-80 h-80 md:w-[500px] md:h-[500px] object-cover"
 					/>
 				</div>
 
