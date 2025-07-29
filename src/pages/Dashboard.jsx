@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 
-import { isTokenExpired, getTokenAccess } from "../util.ts"
+import { isTokenExpired, getTokenAccess, getTokenEmail } from "../util.ts"
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -31,7 +31,7 @@ function Dashboard() {
         navigate('/login', { replace: true });
     };
 
-    return (
+	return (
         <div className="p-6 bg-gray-100 pt-14">
             <h1 className="text-3xl lg:text-4xl mb-6 text-center font-bold pt-10 text-blue-500">
                 Administrator Dashboard
@@ -47,8 +47,8 @@ function Dashboard() {
             <div className="flex justify-center">
                 <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl w-full">
                     <div className="text-center mb-8">
-                        <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-3">
-                            Welcome to Your Dashboard
+                        <h2 className="text-lg lg:text-xl font-semibold text-gray-800 mb-3">
+                            Logged in as <span className="italic">{getTokenEmail(token)}</span>
                         </h2>
                         <p className="text-gray-600">
                             Manage tutors, courses, resources, and bulletin posts from here!
