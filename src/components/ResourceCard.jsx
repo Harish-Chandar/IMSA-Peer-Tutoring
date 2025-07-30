@@ -17,7 +17,7 @@ function ResourceCard({ course, teacher, department, url, type }) {
     >
       <img
         className="self-end h-full w-full object-cover rounded-lg "
-        src={testimage}
+        src={url || testimage}
         alt="placeholder"
       />
       <div

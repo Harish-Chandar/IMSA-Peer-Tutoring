@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
+import UploadWidget from "../components/UploadWidget"; 
+
 
 function Dashboard() {
   // we actually don't have a field in the database for all the classes so i hardcoded it
@@ -372,7 +374,6 @@ function Dashboard() {
           />
 
           <p className="font-sans font-bold text-gray-700 text-left py-2">Date of event:</p>
-          {/* IDK HOW TO STYLE THIS GOOD LUCK VISHNU!!! @vishnu @vishnu @vishnu @vishnu */}
           <input
             type="date"
             value={newPost.event_date}
@@ -421,7 +422,6 @@ function Dashboard() {
             />
             <span className="font-sans text-gray-700">High Priority</span>
           </label>
-
           <button
             onClick={handleCreatePost}
             className="w-1/3 text-lg bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold transition-all duration-200"

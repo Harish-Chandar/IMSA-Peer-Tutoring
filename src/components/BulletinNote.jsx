@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./../App.css";
 
-function Note({ title, course, teachers, date, color, contact,description }) {
+function Note({ title, course, teachers, date, color, contact, description}) {
   const colorClasses = {
     0: "bg-[#c1e6fd]",
     1: "bg-[#48a4ea]",

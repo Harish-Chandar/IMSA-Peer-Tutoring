@@ -21,7 +21,7 @@ const UploadWidget = ({ setImageUrl }) => {
     }, [setImageUrl]);
     return(
         <div>
-            <button onClick={() => widgetRef.current.open()} className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition duration-300"> 
+            <button type="button" onClick={() => widgetRef.current.open()} className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition duration-300"> 
                 Upload 
             </button>
             <p>

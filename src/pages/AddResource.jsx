@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Footer from "../components/Footer.jsx";
+import UploadWidget from "../components/UploadWidget.js";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -235,6 +236,8 @@ function ResourceForm() {
               + Add Another Link
             </button>
           </div>
+          
+          <UploadWidget setImageUrl={(url) => handleLinkChange(0,"url",url)} />
 
           <button
             type="submit"
