@@ -37,7 +37,7 @@ export const tutors: Tutor[] = [
         fbname: "Aarav Shah",
         imsaid: 126001,
         email: "ashah2@imsa.edu",
-        blurb: "",
+        blurb: "Hello! I'm Aarav Shah, a junior at the Illinois Math and Science Academy (IMSA) with a passion for all things tech. I'm an aspiring computer scientist with an interest in web development and machine learning, and I'm always open to learning something new! When I'm not coding, you can find me studying, playing chess, reading, or just hanging out with friends somewhere on IMSA campus.",
         hall: 1505,
         wing: 1,
         image: "https://res.cloudinary.com/dskx71n2n/image/upload/v1744998409/aarav_gapvmk.jpg",
