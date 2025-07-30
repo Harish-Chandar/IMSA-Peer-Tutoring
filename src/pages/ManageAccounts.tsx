@@ -312,7 +312,7 @@ export default function ManageAccounts() {
                                         <option value="">Select Role</option>
                                         <option value="1">Top Level Administrator</option>
                                         <option value="2">Teacher</option>
-                                        <option value="3">Residence Counselor</option>
+                                        <option value="3">Resident Counselor</option>
                                     </select>
                                 </div>
 
@@ -353,7 +353,7 @@ export default function ManageAccounts() {
                                                         <div className="text-gray-500 text-xs mt-1">
                                                             {admin.access === 1 ? 'Administrator' : 
                                                              admin.access === 2 ? 'Teacher' : 
-                                                             admin.access === 3 ? 'Residence Counselor' : '???'}
+                                                             admin.access === 3 ? 'Resident Counselor' : '???'}
                                                         </div>
                                                     </div>
                                                     <div className="ml-4 flex items-center space-x-3">
