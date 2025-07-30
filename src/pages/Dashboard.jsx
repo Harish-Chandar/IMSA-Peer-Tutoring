@@ -51,7 +51,7 @@ function Dashboard() {
             manageCoursesButton.style.display = "none";
             editBulletinButton.style.display = "none";
             checkinButton.style.display = "block";
-            welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage tutors and check-in/out! Your access level is: Residential Counselor.";
+            welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage tutors and check-in/out! Your access level is: Resident Counselor.";
         }
         else {
 			manageAccountsButton.style.display = "none";

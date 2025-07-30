@@ -64,7 +64,7 @@ function Footer() {
                             </a>
                         </button>
                         <p className="text-gray-500 text-xs">
-                            Contact your hall's residential counselor for more information.
+                            Contact your hall's resident counselor for more information.
                         </p>
                     </div>
                 </div>
