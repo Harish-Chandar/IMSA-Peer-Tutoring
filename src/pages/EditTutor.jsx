@@ -627,19 +627,33 @@ function EditTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2 text-center">
-										Blurb
+										Blurb (max 400 characters)
 									</label>
 									<textarea
 										placeholder="Enter tutor description..."
 										value={tutorData.blurb}
-										onChange={(e) =>
-											handleInputChange(
-												"blurb",
-												e.target.value
-											)
-										}
+										onChange={(e) => {
+											if (e.target.value.length <= 400) {
+												handleInputChange(
+													"blurb",
+													e.target.value
+												);
+											}
+										}}
 										className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 									/>
+									<div className="text-sm text-gray-600 mt-1 text-center">
+										<span
+											className={
+												tutorData.blurb.length > 400
+													? "text-red-500"
+													: ""
+											}
+										>
+											{tutorData.blurb.length}/400
+											characters
+										</span>
+									</div>
 								</div>
 
 								{/* availability fields for each day */}

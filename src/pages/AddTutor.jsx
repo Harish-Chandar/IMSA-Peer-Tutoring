@@ -563,20 +563,34 @@ function AddTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										Blurb
+										Blurb (max 400 characters)
 									</label>
 									<textarea
 										placeholder="Enter tutor description..."
 										value={newTutor.blurb}
-										onChange={(e) =>
-											handleInputChange(
-												"blurb",
-												e.target.value
-											)
-										}
+										onChange={(e) => {
+											if (e.target.value.length <= 400) {
+												handleInputChange(
+													"blurb",
+													e.target.value
+												);
+											}
+										}}
 										className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 										rows="4"
 									/>
+									<div className="text-sm text-gray-600 mt-1">
+										<span
+											className={
+												newTutor.blurb.length > 400
+													? "text-red-500"
+													: ""
+											}
+										>
+											{newTutor.blurb.length}/400
+											characters
+										</span>
+									</div>
 								</div>
 
 								{/* Availability Section */}
@@ -587,7 +601,7 @@ function AddTutor() {
 									<p className="text-sm text-gray-600 mb-4">
 										Enter time slots separated by commas
 										(e.g., "5:30-6:00, 6:00-6:30,
-										7:00-7:30"). Do not include AM or PM.
+										7:00-7:30").
 									</p>
 
 									{Object.entries(availability).map(
@@ -750,8 +764,14 @@ function AddTutor() {
 															<span className="text-sm font-normal text-gray-600 ml-2">
 																(
 																{tutor.totaltime
-																	? (tutor.totaltime / 3600000).toFixed(2)
-																	: "0.00"} hrs)
+																	? (
+																			tutor.totaltime /
+																			3600000
+																	  ).toFixed(
+																			2
+																	  )
+																	: "0.00"}{" "}
+																hrs)
 															</span>
 														</p>
 														<p className="text-sm text-blue-400 break-all">

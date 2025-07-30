@@ -311,12 +311,21 @@ function Tutor() {
 		<div className="min-h-screen flex flex-col">
 			<div className="flex flex-col md:flex-row px-4 md:px-[6rem] py-4 gap-8 items-start w-full pt-20 flex-grow">
 				{/* tutor profile image section */}
-				<div className="w-full md:w-2/5 flex justify-center items-center md:min-h-[600px]">
+				<div className="w-full md:w-2/5 flex flex-col items-center space-y-6">
 					<img
 						src={profileImage}
 						alt={fullName}
 						className="rounded-2xl shadow-md w-80 h-80 md:w-[500px] md:h-[500px] object-cover"
 					/>
+					{/* blurb panel - only show on desktop */}
+					<div className="hidden md:block bg-white shadow-xl p-6 w-80 md:w-[500px] rounded-2xl">
+						<h3 className="text-xl font-semibold text-gray-800 mb-3">
+							About {tutor.fname}
+						</h3>
+						<p className="text-gray-600 leading-relaxed">
+							{tutor.blurb || "No description available."}
+						</p>
+					</div>
 				</div>
 
 				{/* tutor information section */}
@@ -494,7 +503,7 @@ function Tutor() {
 														key={index}
 														className="mb-1"
 													>
-														{timeSlot} PM
+														{timeSlot}
 													</div>
 												)
 											);
@@ -513,6 +522,19 @@ function Tutor() {
 					</div>
 				</div>
 			</div>
+
+			{/* blurb panel - only show on mobile, placed below main content */}
+			<div className="block md:hidden px-4 md:px-[6rem] pb-4">
+				<div className="bg-white shadow-xl p-6 w-full rounded-2xl">
+					<h3 className="text-xl font-semibold text-gray-800 mb-3">
+						About {tutor.fname}
+					</h3>
+					<p className="text-gray-600 leading-relaxed">
+						{tutor.blurb || "No description available."}
+					</p>
+				</div>
+			</div>
+
 			<Footer />
 		</div>
 	);
