@@ -9,8 +9,6 @@ import EditResourceInfo from "./components/EditResourceInfo.jsx";
 
 import Home from "./pages/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
-import ScheduleForm from "./pages/ScheduleForm.jsx";
-import Bulletin from "./components/BulletinBoard.jsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import Login from "./pages/Login.jsx";

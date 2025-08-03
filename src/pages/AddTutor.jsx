@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal.jsx";
 
 import { isTokenExpired, classCategories } from "../util.ts";
-
 const token = localStorage.getItem("token");
+
+import UploadWidget from "../components/UploadWidget.js";
 
 function AddTutor() {
 	const navigate = useNavigate();
@@ -20,6 +21,8 @@ function AddTutor() {
 	const DBPORT = process.env.REACT_APP_DBPORT;
 	const HOST = process.env.REACT_APP_HOST;
 	const baseUrl = `http://${HOST}:${DBPORT}`;
+
+	const isLoadingClasses = Object.keys(classCategories).length === 0; //TODO: I did this to fix a post-merge bug, probably not the right way to do it, whoever needs this review it later
 
 	// form state for new tutor
 	const [newTutor, setNewTutor] = useState({
@@ -442,6 +445,49 @@ function AddTutor() {
 										required
 									/>
 								</div>
+            <UploadWidget  setImageUrl={(url) => handleInputChange("image", url)} />
+
+            {/* class selection sections */}
+            {isLoadingClasses ? (
+              <div className="mb-4">
+                <p className="font-sans text-gray-500">Loading classes...</p>
+              </div>
+            ) : Object.keys(classCategories).length === 0 ? (
+              <div className="mb-4">
+                <p className="font-sans text-red-500">
+                  Error loading classes. Please refresh the page.
+                </p>
+              </div>
+            ) : (
+              Object.entries(classCategories).map(([category, classes]) => (
+                <div key={category} className="mb-4">
+                  <p className="font-sans font-bold capitalize text-gray-700 text-left">
+                    {category} Classes:
+                  </p>
+                  <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
+                    {classes.map((className) => (
+                      <label key={className} className="flex items-center mb-1">
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedClasses[category]?.includes(className) ||
+                            false
+                          }
+                          onChange={() => handleClassToggle(category, className)}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">{className}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {selectedClasses[category]?.length > 0 && (
+                    <p className="text-xs text-blue-600 mt-1">
+                      Selected: {selectedClasses[category].join(", ")}
+                    </p>
+                  )}
+                </div>
+              ))
+            )}
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
