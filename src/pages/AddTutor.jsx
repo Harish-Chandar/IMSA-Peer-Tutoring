@@ -203,6 +203,24 @@ function AddTutor() {
 			return;
 		}
 
+		// Validate hall number range
+		const hallNumber = parseInt(newTutor.hall);
+		if (hallNumber < 1501 || hallNumber > 1507) {
+			setAlertModal({
+				isOpen: true,
+				title: "Invalid Hall Number",
+				message: "Hall number must be between 1501 and 1507.",
+				onConfirm: () =>
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					}),
+			});
+			return;
+		}
+
 		try {
 			// format selected classes for database
 			const formattedClasses = {};
@@ -419,9 +437,9 @@ function AddTutor() {
 
 			<div className="flex justify-center">
 				<div className="max-w-2xl md:max-w-4xl lg:max-w-6xl w-full">
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
 						{/* Left card - Add tutor form */}
-						<div className="rounded-2xl shadow-md p-8 bg-white border h-full">
+						<div className="rounded-2xl shadow-md p-8 bg-white border">
 							<div className="space-y-6">
 								<h3 className="text-2xl font-bold text-gray-700 mb-6">
 									Add New Tutor
@@ -445,49 +463,11 @@ function AddTutor() {
 										required
 									/>
 								</div>
-            <UploadWidget  setImageUrl={(url) => handleInputChange("image", url)} />
-
-            {/* class selection sections */}
-            {isLoadingClasses ? (
-              <div className="mb-4">
-                <p className="font-sans text-gray-500">Loading classes...</p>
-              </div>
-            ) : Object.keys(classCategories).length === 0 ? (
-              <div className="mb-4">
-                <p className="font-sans text-red-500">
-                  Error loading classes. Please refresh the page.
-                </p>
-              </div>
-            ) : (
-              Object.entries(classCategories).map(([category, classes]) => (
-                <div key={category} className="mb-4">
-                  <p className="font-sans font-bold capitalize text-gray-700 text-left">
-                    {category} Classes:
-                  </p>
-                  <div className="border rounded-md p-2 max-h-32 overflow-y-auto text-black">
-                    {classes.map((className) => (
-                      <label key={className} className="flex items-center mb-1">
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedClasses[category]?.includes(className) ||
-                            false
-                          }
-                          onChange={() => handleClassToggle(category, className)}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">{className}</span>
-                      </label>
-                    ))}
-                  </div>
-                  {selectedClasses[category]?.length > 0 && (
-                    <p className="text-xs text-blue-600 mt-1">
-                      Selected: {selectedClasses[category].join(", ")}
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
+								<UploadWidget
+									setImageUrl={(url) =>
+										handleInputChange("image", url)
+									}
+								/>
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
@@ -559,8 +539,7 @@ function AddTutor() {
 												e.target.value
 											)
 										}
-										min={126000}
-										max={200000}
+										min={10}
 										className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 									/>
 								</div>
@@ -765,7 +744,7 @@ function AddTutor() {
 						</div>
 
 						{/* Right card - Delete tutor section */}
-						<div className="rounded-2xl shadow-md p-8 bg-white border h-[4859px] flex flex-none flex-col">
+						<div className="rounded-2xl shadow-md p-8 bg-white border flex flex-col">
 							<div className="flex flex-col h-full">
 								<h3 className="text-2xl font-bold text-gray-700 mb-6">
 									Delete Tutor
@@ -786,12 +765,11 @@ function AddTutor() {
 									/>
 								</div>
 
-								<div className="border rounded-lg p-4 bg-gray-50 flex-none flex flex-col">
+								<div className="border rounded-lg p-4 bg-gray-50 flex-1 flex flex-col min-h-0">
 									<h4 className="font-bold text-gray-700 mb-3">
 										Tutors List
 									</h4>
-									{/* This div now takes up the remaining height and scrolls when content overflows */}
-									<div className="h-full flex-none overflow-y-scroll space-y-2">
+									<div className="flex-1 overflow-y-auto space-y-2">
 										{filteredTutors.length === 0 &&
 										tutors.length > 0 ? (
 											<p className="text-gray-500">

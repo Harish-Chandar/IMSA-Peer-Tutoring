@@ -54,6 +54,24 @@ function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// helper function to format time slots by adding PM if not present
+function formatTimeSlot(timeSlot) {
+	if (!timeSlot) return "";
+	const trimmed = timeSlot.trim();
+	if (!trimmed) return "";
+
+	// Check if it already has AM or PM
+	if (
+		trimmed.toLowerCase().includes("am") ||
+		trimmed.toLowerCase().includes("pm")
+	) {
+		return trimmed;
+	}
+
+	// Add PM to the end
+	return trimmed + " PM";
+}
+
 function Tutor() {
 	// extract tutor id from url path
 	const urlPath = window.location.pathname;
@@ -319,10 +337,10 @@ function Tutor() {
 					/>
 					{/* blurb panel - only show on desktop */}
 					<div className="hidden md:block bg-white shadow-xl p-6 w-80 md:w-[500px] rounded-2xl">
-						<h3 className="text-xl font-semibold text-gray-800 mb-3">
+						<h3 className="text-xl font-semibold text-gray-800 mb-3 break-words">
 							About {tutor.fname}
 						</h3>
-						<p className="text-gray-600 leading-relaxed">
+						<p className="text-gray-600 leading-relaxed break-words overflow-wrap-anywhere">
 							{tutor.blurb || "No description available."}
 						</p>
 					</div>
@@ -503,7 +521,9 @@ function Tutor() {
 														key={index}
 														className="mb-1"
 													>
-														{timeSlot}
+														{formatTimeSlot(
+															timeSlot
+														)}
 													</div>
 												)
 											);
@@ -526,10 +546,10 @@ function Tutor() {
 			{/* blurb panel - only show on mobile, placed below main content */}
 			<div className="block md:hidden px-4 md:px-[6rem] pb-4">
 				<div className="bg-white shadow-xl p-6 w-full rounded-2xl">
-					<h3 className="text-xl font-semibold text-gray-800 mb-3">
+					<h3 className="text-xl font-semibold text-gray-800 mb-3 break-words">
 						About {tutor.fname}
 					</h3>
-					<p className="text-gray-600 leading-relaxed">
+					<p className="text-gray-600 leading-relaxed break-words overflow-wrap-anywhere">
 						{tutor.blurb || "No description available."}
 					</p>
 				</div>

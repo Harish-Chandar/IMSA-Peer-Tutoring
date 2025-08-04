@@ -4,6 +4,7 @@ import "./custom.css";
 import Footer from "../components/Footer.jsx";
 import AlertModal from "../components/AlertModal.jsx";
 import { isTokenExpired, classCategories } from "../util.ts";
+import UploadWidget from "../components/UploadWidget.js";
 
 function EditTutor() {
 	const { id } = useParams();
@@ -504,6 +505,41 @@ function EditTutor() {
 										}
 										className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 									/>
+								</div>
+
+								{/* Image Upload Section */}
+								<div className="flex flex-col">
+									<label className="text-gray-700 font-bold mb-2 text-center">
+										Profile Image
+									</label>
+
+									{/* Show current image status */}
+									{tutorData.image && (
+										<div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-md">
+											<p className="text-sm text-green-700 text-center">
+												This tutor already has an
+												image uploaded
+											</p>
+											<p className="text-xs text-gray-600 text-center mt-1">
+												Current image URL:{" "}
+												{tutorData.image}
+											</p>
+										</div>
+									)}
+
+									{/* Upload widget for new/replacement image */}
+									<div className="text-center">
+										<p className="text-xs text-gray-500 mb-2">
+											{tutorData.image
+												? "Upload a new image to replace the current one:"
+												: "Upload a new image:"}
+										</p>
+										<UploadWidget
+											setImageUrl={(url) =>
+												handleInputChange("image", url)
+											}
+										/>
+									</div>
 								</div>
 
 								<div className="flex flex-col">
