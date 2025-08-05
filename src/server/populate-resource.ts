@@ -47,7 +47,14 @@ export const sampleResources = [
         course: "BC 2",
         department: "Math",
         url: "https://khanacademy.org/"
-    }
+    },
+    {
+        teacher: "Ms. Zuidema",
+        email: "mzuidema@imsa.edu",
+        course: "Spanish IV",
+        department: "World Languages",
+        url: "https://conjuguemos.com/"
+    },
 ];
 
 export const sampleLinks = [

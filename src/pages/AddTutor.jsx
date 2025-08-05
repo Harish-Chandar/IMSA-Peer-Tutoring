@@ -245,6 +245,7 @@ function AddTutor() {
 				hall: newTutor.hall ? parseInt(newTutor.hall) : null,
 				wing: wingNumber,
 				availability: constructAvailabilityString(),
+				is_available: 0, // Set availability to 0 (false) for new tutors
 				...formattedClasses,
 			};
 

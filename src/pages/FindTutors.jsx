@@ -105,14 +105,28 @@ function FindTutors() {
 	};
 
 	return (
-		<div className="bg-gray-100 min-h-screen pt-20">
+		<div className="bg-[#e4e5e3] min-h-screen">
+			{/* Hero Section */}
+			<div className="w-full h-16 pt-16"></div>
+			<div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
+				<div className="self-start flex flex-col text-left h-full justify-center py-8">
+					<h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
+						Find <span className="text-blue-500">tutors</span>{" "}
+						below!
+					</h1>
+					<h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
+						Sort by hall or subject!
+					</h2>
+				</div>
+				<img
+					src="/smartguy.png"
+					alt="Tutor Hero"
+					className="w-full md:w-auto max-w-xs h-64 object-contain mx-auto md:mx-0"
+				/>
+			</div>
+
+			{/* Main Content */}
 			<div className="p-4 max-w-6xl mx-auto py-10">
-				<h1 className="text-5xl mb-6 text-center font-sans font-bold tracking-wide text-gray-700">
-					Find Tutors Below!
-				</h1>
-				<h1 className="text-xl mb-6 text-center font-sans text-gray-700">
-					Sort by hall or subject!
-				</h1>
 				{/* search bar and button */}
 				<div className="flex items-center border-2 border-blue-500 rounded-lg overflow-hidden">
 					<input
@@ -132,7 +146,7 @@ function FindTutors() {
 				<div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
 					<div className="relative w-full sm:w-auto">
 						<button
-							className="w-full sm:w-auto p-2 px-4 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100"
+							className="w-full sm:w-40 p-2 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100 text-sm sm:text-base"
 							onClick={() => setFilterDropdown(!filterDropdown)}
 						>
 							+ Add Filter
@@ -155,7 +169,7 @@ function FindTutors() {
 						{selectedFilters.map((filter, index) => (
 							<span
 								key={index}
-								className="flex items-center bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold"
+								className="flex items-center bg-blue-200 text-blue-700 px-4 py-2 rounded-lg text-sm font-semibold border-2 border-blue-200"
 							>
 								{filter}
 								<button
