@@ -25,6 +25,13 @@ function Bulletin() {
                 return new Date(a.event_date) - new Date(b.event_date);
             });
 
+            for (let i = 0; i < sortedData.length; i++) {
+                if(sortedData[i].event_date < new Date().toISOString()) {
+                    sortedData.splice(i, 1);
+                    i--;
+                }
+            }
+
             setBulletinNotes(sortedData);
             setError(null);
         };

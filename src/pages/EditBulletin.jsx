@@ -54,6 +54,22 @@ function EditBulletin() {
 		try {
 			const response = await fetch(`${baseUrl}/api/bulletin`);
 			const data = await response.json();
+            for (let i = 0; i < data.length; i++) {
+                if(data[i].event_date < new Date().toISOString()) {
+                    const deletePost = await fetch(`${baseUrl}/api/bulletin/${data[i].id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    if (!deletePost.ok) {
+                        console.error(`couldn't delete bulletin post`);
+                    }
+                    data.splice(i, 1);
+                    i--;
+                }
+            }
 			setPosts(data);
 		} catch (error) {
 			console.error("error fetching posts:", error);
