@@ -951,7 +951,7 @@ app.post(
 	authenticateAdmin,
 	(req: Request, res: Response) => {
 		const tutorId = parseInt(req.params.id);
-		if (isNaN(tutorId) || tutorId <= 0) {
+		if (isNaN(tutorId) || tutorId < 0) {
 			return res.status(400).json({ error: "Invalid tutor ID" });
 		}
 		const startTime = Date.now();
@@ -981,7 +981,7 @@ app.post(
 	authenticateAdmin,
 	(req: Request, res: Response) => {
 		const tutorId = parseInt(req.params.id);
-		if (isNaN(tutorId) || tutorId <= 0) {
+		if (isNaN(tutorId) || tutorId < 0) {
 			return res.status(400).json({ error: "Invalid tutor ID" });
 		}
 		// Get current starttime and totaltime
@@ -1040,7 +1040,7 @@ app.post(
 app.patch("/api/tutors/:id/approvehours", authenticateAdmin, (req: Request, res: Response) => {
     const tutorId = parseInt(req.params.id);
     let { approvedtime } = req.body;
-    if (isNaN(tutorId) || tutorId <= 0) {
+    if (isNaN(tutorId) || tutorId < 0) {
         return res.status(400).json({ error: "Invalid tutor ID" });
     }
     approvedtime = Number(approvedtime);
