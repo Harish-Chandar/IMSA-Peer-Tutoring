@@ -35,9 +35,9 @@ function EditBulletin() {
 	});
 
 	const availableImages = [
-		{ id: 1, src: "/Bulletin Images/imsa.jpg" },
-		{ id: 2, src: "/Bulletin Images/blackboard.jpg"},
-		{ id: 3, src: "/Bulletin Images/in2.jpg"},
+		{ id: 1, src: "/BulletinImages/imsa.jpg" },
+		{ id: 2, src: "/BulletinImages/blackboard.jpg"},
+		{ id: 3, src: "/BulletinImages/in2.jpg"},
 	];
 
 	const [showAlert, setShowAlert] = useState(false);

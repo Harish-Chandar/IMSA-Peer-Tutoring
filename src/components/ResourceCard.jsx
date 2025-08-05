@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../App.css";
-import testimage from "../resourceImages/gateway-arch.png";
 
 function ResourceCard({ course, teacher, department, url, type }) {
     // All the colors needed for the background of notes
@@ -11,13 +10,32 @@ function ResourceCard({ course, teacher, department, url, type }) {
     //   blue: "bg-blue-100",
     // };
 
+    const resourceImage = {
+        "English" : "/ClassImages/english.png",
+        "Math" : "/ClassImages/math.png",
+        "Science" : "/ClassImages/science.png",
+        "World Languages" : "/ClassImages/worldlanguages.png",
+        "Computer Science" : "/ClassImages/computerscience.png",
+        "Wellness" : "/ClassImages/wellness.png",
+    }
+    const resourceImage2 = {
+        "English" : "/ClassImages/english2.png",
+        "Math" : "/ClassImages/math2.png",
+        "Science" : "/ClassImages/science2.png",
+        "World Languages" : "/ClassImages/worldlanguages2.png",
+        "Computer Science" : "/ClassImages/computerscience2.png",
+        "Wellness" : "/ClassImages/wellness2.png",
+    }
+
+    console.log(department);
+
   return (
     <div
       className={`w-60 h-60 shadow-2xl rounded-lg m-5 relative hover:scale-105 duration-300`}
     >
       <img
         className="self-end h-full w-full object-cover rounded-lg "
-        src={url || testimage}
+        src={resourceImage[department]}
         alt="placeholder"
       />
       <div
