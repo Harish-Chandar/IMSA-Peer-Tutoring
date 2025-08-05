@@ -196,9 +196,6 @@ function CheckInTutors() {
                                                     <span className="text-lg font-bold text-gray-800">{tutor.fname} {tutor.lname}</span>
                                                     <span className="text-sm text-blue-600">{tutor.email}</span>
                                                     <span className="text-xs text-gray-500">Hall: {tutor.hall} | Wing: {String.fromCharCode(64 + Number(tutor.wing))}</span>
-                                                    {typeof tutor.starttime === 'number' && tutor.starttime !== null && (
-                                                        <span className="text-xs text-gray-500">Start Time: {new Date(tutor.starttime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                    )}
                                                     <span className="text-xs text-gray-500">Total Time: {(tutor.totaltime ? (tutor.totaltime / 3600000).toFixed(2) : "0.00")} hours</span>
                                                 </div>
                                                 <button
@@ -231,7 +228,6 @@ function CheckInTutors() {
                                                     {typeof tutor.starttime === 'number' && tutor.starttime !== null && (
                                                         <span className="text-xs text-gray-500">Start Time: {new Date(tutor.starttime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                     )}
-                                                    <span className="text-xs text-gray-500">Total Time: {(tutor.totaltime ? (tutor.totaltime / 3600000).toFixed(2) : "0.00")} hours</span>
                                                 </div>
                                                 <button
                                                     className="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md border-2 border-red-400 shadow font-sans font-semibold transition-colors duration-150"
