@@ -64,7 +64,6 @@ function CheckInTutors() {
         }
     };
 
-    // Helper to handle RC override modal and logic
     const handleEndSession = (tutor) => {
         if (!tutor.starttime) {
             setError("No start time for this tutor.");
@@ -77,7 +76,7 @@ function CheckInTutors() {
         setPendingElapsed(elapsedHours);
         setPendingHours(Number(elapsedHours.toFixed(2)));
         setAlertTitle("RC Override: End Session");
-        setAlertMessage(`Are you sure you want to end the session and approve the following number of hours for the tutor?`);
+        setAlertMessage(`The tutor has been active for ${elapsedHours.toFixed(2)} hours. Are you sure you want to end the session and approve the following number of hours for the tutor?`);
         setShowAlert(true);
     };
 
@@ -104,15 +103,13 @@ function CheckInTutors() {
             } catch (err) {
                 setError("Failed to approve hours and end session");
             }
-        } else {
-            await handleCheckOut(pendingTutor.id, true);
         }
+        // If accept is false (cancel), do nothing - tutor stays active
         setPendingTutor(null);
         setPendingElapsed(0);
         setPendingHours(0);
     };
 
-    // Modified handleCheckOut to optionally skip modal
     const handleCheckOut = async (id, skipModal = false) => {
         setError("");
         if (!skipModal) {
