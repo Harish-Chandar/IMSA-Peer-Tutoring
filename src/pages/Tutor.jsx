@@ -310,6 +310,10 @@ function Tutor() {
 	// prepare display information with safety checks
 	const fullName = `${tutor.fname || ""} ${tutor.lname || ""}`;
 
+	const email = tutor.email || "email not provided";
+
+	const fbname = tutor.fbname || "Facebook name not provided";
+
 	// safely handle wing with fallback - use the same logic as TutorCard
 	const wingDisplay = tutor.wing ? assignWing(tutor.wing) : "";
 
@@ -356,11 +360,16 @@ function Tutor() {
 						<p className="text-xl text-gray-500 font-sans mb-3">
 							{location}
 						</p>
+						<p className="text-xl text-gray-500 mb-3">
+							Contact Information <br></br>
+							Email: <span className=" font-bold text-blue-500">{email}</span> <br></br>
+							Facebook name: <span className=" font-bold text-blue-500">{fbname}</span>
+						</p>
 						<div className="text-lg text-gray-600 font-sans">
-							<span className="font-bold text-left">
+							<span className="font-bold text-left text-2xl">
 								Classes taught:
 							</span>
-							<div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-2 text-base">
+							<div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-2 text-base">
 								{/* Math Core */}
 								{parseClasses(classes.mathcore).length > 0 && (
 									<div>
