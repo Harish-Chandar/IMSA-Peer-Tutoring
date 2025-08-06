@@ -18,14 +18,6 @@ function ResourceCard({ course, teacher, department, url, type }) {
         "Computer Science" : "/ClassImages/computerscience.png",
         "Wellness" : "/ClassImages/wellness.png",
     }
-    const resourceImage2 = {
-        "English" : "/ClassImages/english2.png",
-        "Math" : "/ClassImages/math2.png",
-        "Science" : "/ClassImages/science2.png",
-        "World Languages" : "/ClassImages/worldlanguages2.png",
-        "Computer Science" : "/ClassImages/computerscience2.png",
-        "Wellness" : "/ClassImages/wellness2.png",
-    }
 
     console.log(department);
 

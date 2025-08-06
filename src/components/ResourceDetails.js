@@ -14,6 +14,15 @@ function ResourceDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const resourceImage = {
+        "English" : "/ClassImages/english.png",
+        "Math" : "/ClassImages/math.png",
+        "Science" : "/ClassImages/science.png",
+        "World Languages" : "/ClassImages/worldlanguages.png",
+        "Computer Science" : "/ClassImages/computerscience.png",
+        "Wellness" : "/ClassImages/wellness.png",
+    }
+
     useEffect(() => {
         const fetchResource = async () => {
             try {
@@ -87,7 +96,7 @@ function ResourceDetails() {
                     <div className="order-1 lg:order-1">
                         <div className="h-48 sm:h-64 lg:h-[calc(100vh-10rem)]">
                             <img
-                                src={testimage}
+                                src={resourceImage[resource.department]}
                                 alt="Resource"
                                 className="h-full w-full rounded-lg shadow-md object-cover"
                             />
