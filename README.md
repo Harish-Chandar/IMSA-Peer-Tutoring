@@ -1,115 +1,48 @@
-# IMSA Peer Tutoring System
+# IMSA Peer Tutoring Platform
 
-A web-based application for peer tutors at the Illinois Mathematics and Science Academy (IMSA).
+This project is a full-stack web application for managing peer tutoring at IMSA. It includes a React frontend, a Node.js/Express backend, and a SQLite database for storing tutors, resources, bulletins, and more.
 
-## Overview
+## Folder Structure
 
-The IMSA Peer Tutoring System is designed to facilitate the scheduling and management of peer tutoring sessions. It provides a user-friendly interface for creating and managing tutoring schedules, making it easier for students to find and participate in tutoring sessions.
+- **root directory**: Contains frontend code, configuration files, and static assets.
+- **src/server/**: Contains backend API code, database population scripts, and server logic.
+- **public/**: Contains images and static files used by the frontend.
+- **peertutoringdb.sqlite**: The SQLite database file (created/populated by scripts in `src/server`).
 
-## Features
+## How to Start the Website
 
-- Schedule creation and management
-- Course-specific tutoring sessions
-- Date and time scheduling
-- Bulletin board for announcements
-- Resource management
-- Tutor availability tracking
+1. **Terminal 1 (Frontend):**
+   - Run `npm start` in the root directory to start the React frontend.
 
-## Technical Stack
+2. **Terminal 2 (Backend):**
+   - Run `cd src/server` then `npm start` to start the Express backend server.
 
-- Frontend: React.js, HTML5, CSS3, JavaScript
-- Backend: Node.js/Express (API endpoints)
-- Database: SQLite3
-- State Management: React Hooks
+## How to Create and Populate the Database
 
-## Project Structure
+3. **Terminal 3 (Database Setup):**
+   - Run `cd src/server`.
+   - Run `npx tsx create-db.ts` to create the database and tables.
+   - Run `npx tsx populate-all.ts` to populate the database with sample data.
 
-### Components (`src/Components/`)
-- `navbar.jsx`: Navigation bar component
-- `tutorBoard.jsx`: Display and management of tutor information
-- `scheduleForm.jsx`: Form for scheduling tutoring sessions
-- `tutorNote.jsx`: Notes and feedback for tutoring sessions
-- `bulletinBoard.jsx`: Announcement board component
-- `note.jsx`: Post-it note Component
+## Main Features
 
-### Database Structure (`src/create-db.ts`)
-The system uses SQLite3 with the following tables:
+- **Tutors:** Add, edit, search, and manage tutor profiles and availability.
+- **Resources:** Add and search for academic resources, with support for resource links.
+- **Bulletin Board:** Post and manage announcements/events for students and tutors.
+- **Classes:** Manage class and department information for matching tutors and resources.
+- **Admin Panel:** Admin authentication and account management.
 
-1. **Tutors Table**
-   - Personal information (name, email, IMSA ID)
-   - Availability tracking
-   - Subject expertise (physics, chemistry, biology, etc.)
-   - Time tracking (total and approved hours)
+## Scripts in `src/server/`
+- `create-db.ts`: Creates the SQLite database and all required tables.
+- `populate-all.ts`: Populates all tables with sample data.
+- `populate-admin.ts`, `populate-bulletin.ts`, `populate-classes.ts`, `populate-resource.ts`, `populate-tutors.ts`: Populate individual tables.
+- `tutorsAPI.ts`: Main Express API for tutors, resources, bulletins, and admin endpoints.
 
-2. **Bulletin Table**
-   - Announcements and events
-   - Priority levels
-   - Creation and expiration dates
-   - Author information
+## Requirements
+- Node.js and npm
+- SQLite (database is created automatically by scripts)
 
-3. **Resources Table**
-   - Educational resources
-   - Contact information
-   - Resource types and URLs
-   - Timestamps
-
-### Schedule Form (`Server/schedule-form.html`)
-The schedule form provides a user-friendly interface for:
-- Creating new tutoring sessions
-- Specifying course details
-- Setting location and time
-- Managing multiple teachers
-- Real-time submission feedback
-
-## Getting Started
-
-### Prerequisites
-
-- A modern web browser
-- Node.js and npm installed (for backend development)
-- SQLite3
-- Access to the IMSA network (if required)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone [repository-url]
-cd IMSA-Peer-Tutoring
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Initialize the database:
-```bash
-node Server/create-db.ts
-```
-
-4. Start the server:
-```bash
-npm start
-```
-
-5. Access the application through your web browser
-
-## API Endpoints
-
-- `POST /api/schedule`: Create a new tutoring session
-  - Request body: JSON object containing session details
-  - Response: Success/error message
-- `GET /api/tutors`: Retrieve tutor information
-- `POST /api/bulletin`: Create new bulletin board entries
-- `GET /api/resources`: Access educational resources
-
-## Database Management
-
-The system includes several database management scripts:
-- `create-db.ts`: Initial database setup
-- `populate-db.ts`: Sample data population
-- `view-db.ts`: Database inspection tool
-
-
+## Notes
+- Make sure to run the database setup scripts before starting the backend server for the first time.
+- The frontend and backend run separately; both must be started for the app to work.
 
