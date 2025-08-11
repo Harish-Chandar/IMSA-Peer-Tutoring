@@ -3,7 +3,7 @@ import ResourceEditCard from "../components/ResourceEditCard";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from 'react-router-dom';
 
-import { isTokenExpired } from "../util.ts"
+import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -14,6 +14,9 @@ function ModifyResources() {
         const token = localStorage.getItem("token");
         if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
+        }
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 2)) {
+            navigate('/adminDashboard');
         }
     }, []);
     const [input, setInput] = useState("");

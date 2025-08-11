@@ -10,7 +10,7 @@ function Navbar() {
 	const token = localStorage.getItem("token");
 
 	useEffect(() => {
-		if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+		if (!token || isTokenExpired(token)) {
 			setLoggedIn(false);
 		} else {
 			setLoggedIn(true);

@@ -16,7 +16,7 @@ export default function ManageAccounts() {
 			navigate("/login");
 		}
 		if ((token && !isTokenExpired(token) && getTokenAccess(token) != 1)) {
-			navigate("/dashboard");
+			navigate("/adminDashboard");
 		};
 	}, [token, navigate]);
 		

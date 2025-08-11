@@ -3,7 +3,7 @@ import Footer from "../components/Footer.jsx";
 import { useNavigate } from 'react-router-dom';
 import { AlertModal } from '../components/AlertModal.jsx'
 
-import { isTokenExpired } from "../util.ts"
+import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 function EditBulletin() {
 	// environment variables for API configuration
@@ -16,8 +16,11 @@ function EditBulletin() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		if (!token || isTokenExpired(token)) {
-			navigate('/login', { replace: true });
+			navigate('/login');
 		}
+        if ((token && !isTokenExpired(token) && getTokenAccess(token) != 1)) {
+            navigate('/adminDashboard');
+        }
 	}, [token, navigate]);
 
 	// bulletin board states - updated for backend integration
@@ -55,8 +58,10 @@ function EditBulletin() {
 			const response = await fetch(`${baseUrl}/api/bulletin`);
 			const data = await response.json();
             for (let i = 0; i < data.length; i++) {
-                //TODO buffer 1 or 2 day
-                if(data[i].event_date < new Date().toISOString()) {
+                const eventDate = new Date(data[i].event_date);
+                eventDate.setDate(eventDate.getDate() + 1);
+                
+                if(eventDate < new Date()) {
                     const deletePost = await fetch(`${baseUrl}/api/bulletin/${data[i].id}`, {
                         method: 'DELETE',
                         headers: {

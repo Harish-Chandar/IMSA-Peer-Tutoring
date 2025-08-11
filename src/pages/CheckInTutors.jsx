@@ -13,8 +13,11 @@ function CheckInTutors() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     useEffect(() => {
-        if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+        if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
+        }
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 3 || getTokenAccess(token) === 2)) {
+            navigate('/adminDashboard');
         }
     }, [token, navigate]);
 
