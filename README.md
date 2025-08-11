@@ -1,6 +1,26 @@
 # IMSA Peer Tutoring Platform
 
-This project is a full-stack web application for managing peer tutoring at IMSA. It includes a React frontend, a Node.js/Express backend, and a SQLite database for storing tutors, resources, bulletins, and more.
+## Getting Started
+
+1. **Fork the Repository:**  
+   Click the "Fork" button on GitHub to create your own copy of this repository.
+
+2. **Clone Your Fork:**  
+   Run `git clone https://github.com/<your-username>/IMSA-Peer-Tutoring.git` to clone your fork locally.
+
+3. **Install Dependencies:**  
+   In the root directory, run `npm install` to install all required packages.
+
+4. **No Branches Needed:**  
+   Please work directly on your forked repository. Branching is not required since each contributor works on their own fork.
+
+5. **Making Contributions:**  
+   - Make your changes and commit them to your fork.
+   - Push your changes: `git push origin main`
+   - Submit a Pull Request (PR) from your fork to the main repository.
+   - Add a summary of your changes in the PR description.
+
+---
 
 ## Folder Structure
 
