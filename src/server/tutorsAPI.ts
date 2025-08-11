@@ -145,7 +145,7 @@ app.get("/api/tutors/:id", (req: Request, res: Response) => {
 	const tutorId = parseInt(req.params.id);
 
 	// validate tutorId
-	if (isNaN(tutorId) || tutorId <= 0) {
+	if (isNaN(tutorId) || tutorId < 0) {
 		return res.status(400).json({ error: "Invalid tutor ID" });
 	}
 
@@ -241,7 +241,7 @@ app.delete(
 		const tutorId = parseInt(req.params.id);
 
 		// validate tutorId
-		if (isNaN(tutorId) || tutorId <= 0) {
+		if (isNaN(tutorId) || tutorId < 0) {
 			return res.status(400).json({ error: "invalid tutor id" });
 		}
 
@@ -269,7 +269,7 @@ app.put("/api/tutors/:id", authenticateAdmin, (req: Request, res: Response) => {
 	const tutorId = parseInt(req.params.id);
 
 	// validate tutorId
-	if (isNaN(tutorId) || tutorId <= 0) {
+	if (isNaN(tutorId) || tutorId < 0) {
 		return res.status(400).json({ error: "invalid tutor id" });
 	}
 

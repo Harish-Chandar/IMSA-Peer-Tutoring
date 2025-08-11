@@ -3,7 +3,7 @@ import Footer from "../components/Footer.jsx";
 import { useNavigate } from 'react-router-dom';
 import { AlertModal } from '../components/AlertModal.jsx'
 
-import { isTokenExpired } from "../util.ts"
+import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 function EditBulletin() {
 	// environment variables for API configuration
@@ -16,8 +16,11 @@ function EditBulletin() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		if (!token || isTokenExpired(token)) {
-			navigate('/login', { replace: true });
+			navigate('/login');
 		}
+        if ((token && !isTokenExpired(token) && getTokenAccess(token) != 1)) {
+            navigate('/adminDashboard');
+        }
 	}, [token, navigate]);
 
 	// bulletin board states - updated for backend integration

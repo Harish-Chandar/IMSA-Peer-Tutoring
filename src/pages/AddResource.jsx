@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from 'react-router-dom';
-import { isTokenExpired } from "../util.ts";
+import { isTokenExpired, getTokenAccess } from "../util.ts";
 import UploadWidget from "../components/UploadWidget.js";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
@@ -14,8 +14,13 @@ function ResourceForm() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token || isTokenExpired(token)) {
-            navigate('/login', { replace: true });
+            navigate('/login');
         }
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 2)) {
+            navigate('/adminDashboard');
+        }
+        console.log("Token access level:", getTokenAccess(token));
+
     }, []);
 
     const departments = [

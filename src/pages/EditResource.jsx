@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 
-import { isTokenExpired } from "../util.ts"
+import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 function EditResource() {
     const navigate = useNavigate();
@@ -11,6 +11,9 @@ function EditResource() {
     useEffect(() => {
         if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
+        }
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 2)) {
+            navigate('/adminDashboard');
         }
     }, []);
     const { id } = useParams();
