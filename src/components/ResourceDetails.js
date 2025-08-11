@@ -1,7 +1,6 @@
 import Navbar from "./Navbar.jsx";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import testimage from "../resourceImages/gateway-arch.png";
 import Footer from "./Footer.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;

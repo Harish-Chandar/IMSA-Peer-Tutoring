@@ -45,7 +45,7 @@ export default function Home() {
 						<a href="/findTutors">Find tutors now →</a>
 					</button>
 				</div>
-				<img src="/smartguy.png" className="w-full md:w-auto"></img>
+				<img src="GeneralImages/smartguy.png" className="w-full md:w-auto"></img>
 			</div>
 			<div className="mt-10 mx-2 mb-4 px-4 md:mx-20 md:px-0">
 				<h2 className="text-gray-700 text-3xl md:text-5xl font-bold w-full">

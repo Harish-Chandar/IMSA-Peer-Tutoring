@@ -29,8 +29,6 @@ export default function App() {
             <Navbar />
             <Routes>
                 <Route path="/" element={<Home />} />
-                {/* <Route path="/scheduleForm" element={<ScheduleForm />} /> */}
-                {/* <Route path="/bulletinBoard" element={<Bulletin />} /> */}
                 <Route path="/resources" element={<FindResources />} />
                 <Route path="/resources/new" element={<AddResource />} />
                 <Route path="/resources/modify" element={<ModifyResources />} />

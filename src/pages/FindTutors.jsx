@@ -119,7 +119,7 @@ function FindTutors() {
 					</h2>
 				</div>
 				<img
-					src="/smartguy.png"
+					src="GeneralImages/smartguy.png"
 					alt="Tutor Hero"
 					className="w-full md:w-auto max-w-xs h-64 object-contain mx-auto md:mx-0"
 				/>
