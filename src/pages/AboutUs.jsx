@@ -21,7 +21,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/aarav.png"
+						src="AboutUsImages/aarav.png"
 						alt="placeholder"
 					/>
 					<div
@@ -47,7 +47,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/harish.png"
+						src="AboutUsImages/harish.png"
 						alt="placeholder"
 					/>
 					<div
@@ -73,7 +73,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/vishnu.png"
+						src="AboutUsImages/vishnu.png"
 						alt="placeholder"
 					/>
 					<div
@@ -99,7 +99,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/atharv.png"
+						src="AboutUsImages/atharv.png"
 						alt="placeholder"
 					/>
 					<div
@@ -125,7 +125,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/ian.png"
+						src="AboutUsImages/ian.png"
 						alt="placeholder"
 					/>
 					<div
@@ -151,7 +151,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/pranav.png"
+						src="AboutUsImages/pranav.png"
 						alt="placeholder"
 					/>
 					<div
@@ -177,7 +177,7 @@ function AboutUs() {
 				>
 					<img
 						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
-						src="/krithik.png"
+						src="AboutUsImages/krithik.png"
 						alt="placeholder"
 					/>
 					<div

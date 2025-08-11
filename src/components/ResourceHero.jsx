@@ -16,7 +16,7 @@ class ResourceHero extends Component {
 						Sort by teacher, subject, and more!
 					</h2>
 				</div>
-				<img src="/resourceHero.png" className="w-full md:w-auto"></img>
+				<img src="GeneralImages/resourceHero.png" className="w-full md:w-auto"></img>
 			</div>
             </div>
         );

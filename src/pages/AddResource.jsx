@@ -19,7 +19,6 @@ function ResourceForm() {
         if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 2)) {
             navigate('/adminDashboard');
         }
-        console.log("Token access level:", getTokenAccess(token));
 
     }, []);
 
