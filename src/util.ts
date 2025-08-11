@@ -65,8 +65,8 @@ export const classCategories = {
 		"Pathophysiology",
 		"Biology of Behavior",
 		"Biophysics",
-		"Human Anatomy& Physiology 1",
-		"Human Anatomy& Physiology 2",
+		"Human Anatomy & Physiology 1",
+		"Human Anatomy & Physiology 2",
 	],
 	sciother: [
 		"MSI",
