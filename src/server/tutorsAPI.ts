@@ -441,6 +441,20 @@ app.post(
 				.json({ error: "Email, password, and role are required" });
 		}
 
+		// check if email already exists, return 400 error if it does
+		const checkEmailQuery = `SELECT * FROM admins WHERE email = ?`;
+		db.get(checkEmailQuery, [email], (err: Error | null, row: Admin | undefined) => {
+			if (err) {
+				console.error("Database error:", err);
+				return res.status(500).json({ error: "Error checking email" });
+			}
+			if (row) {
+				return res
+					.status(400)
+					.json({ error: "Email already exists" });
+			}
+		});
+
 		// Hash the password
 		bcrypt.hash(password, 10, (err: Error | undefined, hash: string) => {
 			if (err) {
