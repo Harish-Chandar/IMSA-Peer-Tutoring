@@ -308,7 +308,9 @@ function Tutor() {
 	}
 
 	// prepare display information with safety checks
-	const fullName = `${tutor.fname || ""} ${tutor.lname || ""}`;
+	const fullName = `${(tutor.fname && tutor.fname.toString()) || ""} ${
+		(tutor.lname && tutor.lname.toString()) || ""
+	}`;
 
 	// safely handle wing with fallback - use the same logic as TutorCard
 	const wingDisplay = tutor.wing ? assignWing(tutor.wing) : "";
@@ -316,13 +318,14 @@ function Tutor() {
 	// construct location string safely - match TutorCard format
 	const location =
 		tutor.hall && tutor.wing
-			? `${tutor.hall}, ${wingDisplay} wing`
+			? `${tutor.hall.toString()}, ${wingDisplay} wing`
 			: tutor.hall
-			? `${tutor.hall}`
+			? `${tutor.hall.toString()}`
 			: "location unknown";
 
 	// handle image with fallback - match FindTutors logic
-	const profileImage = tutor.image || DEFAULT_AVATAR_URL;
+	const profileImage =
+		(tutor.image && tutor.image.toString()) || DEFAULT_AVATAR_URL;
 
 	// render main component
 	return (
@@ -332,16 +335,20 @@ function Tutor() {
 				<div className="w-full md:w-2/5 flex flex-col items-center space-y-6">
 					<img
 						src={profileImage}
-						alt={fullName}
+						alt={fullName && fullName.toString()}
 						className="rounded-2xl shadow-md w-80 h-80 md:w-[500px] md:h-[500px] object-cover"
+						onError={(e) => {
+							e.target.src = DEFAULT_AVATAR_URL;
+						}}
 					/>
 					{/* blurb panel - only show on desktop */}
 					<div className="hidden md:block bg-white shadow-xl p-6 w-80 md:w-[500px] rounded-2xl">
 						<h3 className="text-xl font-semibold text-gray-800 mb-3 break-words">
-							About {tutor.fname}
+							About {tutor.fname && tutor.fname.toString()}
 						</h3>
 						<p className="text-gray-600 leading-relaxed break-words overflow-wrap-anywhere">
-							{tutor.blurb || "No description available."}
+							{(tutor.blurb && tutor.blurb.toString()) ||
+								"No description available."}
 						</p>
 					</div>
 				</div>
@@ -351,10 +358,10 @@ function Tutor() {
 					{/* tutor name, location and classes */}
 					<div className="mb-6">
 						<h2 className="text-3xl md:text-5xl font-semibold text-gray-800 font-sans py-5">
-							{fullName}
+							{fullName && fullName.toString()}
 						</h2>
 						<p className="text-xl text-gray-500 font-sans mb-3">
-							{location}
+							{location && location.toString()}
 						</p>
 						<div className="text-lg text-gray-600 font-sans">
 							<span className="font-bold text-left">
