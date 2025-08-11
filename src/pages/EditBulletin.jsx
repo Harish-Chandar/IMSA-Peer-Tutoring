@@ -55,7 +55,10 @@ function EditBulletin() {
 			const response = await fetch(`${baseUrl}/api/bulletin`);
 			const data = await response.json();
             for (let i = 0; i < data.length; i++) {
-                if(data[i].event_date < new Date().toISOString()) {
+                const eventDate = new Date(data[i].event_date);
+                eventDate.setDate(eventDate.getDate() + 1);
+                
+                if(eventDate < new Date()) {
                     const deletePost = await fetch(`${baseUrl}/api/bulletin/${data[i].id}`, {
                         method: 'DELETE',
                         headers: {

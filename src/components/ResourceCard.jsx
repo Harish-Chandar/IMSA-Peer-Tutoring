@@ -18,38 +18,32 @@ function ResourceCard({ course, teacher, department, url, type }) {
         "Computer Science" : "/ClassImages/computerscience.png",
         "Wellness" : "/ClassImages/wellness.png",
     }
-    const resourceImage2 = {
-        "English" : "/ClassImages/english2.png",
-        "Math" : "/ClassImages/math2.png",
-        "Science" : "/ClassImages/science2.png",
-        "World Languages" : "/ClassImages/worldlanguages2.png",
-        "Computer Science" : "/ClassImages/computerscience2.png",
-        "Wellness" : "/ClassImages/wellness2.png",
-    }
 
     console.log(department);
 
   return (
-    <div
-      className={`w-60 h-60 shadow-2xl rounded-lg m-5 relative hover:scale-105 duration-300`}
-    >
-      <img
-        className="self-end h-full w-full object-cover rounded-lg "
-        src={resourceImage[department]}
-        alt="placeholder"
-      />
-      <div
-        className={`bg-slate-50 shadow-2xl rounded-lg p-1 w-50 h-30 mx-auto relative bottom-10`}
-      >
-        <h3 className="font-sans text-neutral-600">
-          <b>{course}</b>
-        </h3>
-        <h3 className="font-sans text-neutral-600">{department}</h3>
-        <h3 className="font-sans text-neutral-600">
-          <b>Teacher:</b> {teacher}
-        </h3>
-      </div>
-    </div>
+
+    <div className="relative w-64 flex flex-col items-center">
+            {/* Image container */}
+            <div className="w-full h-64 overflow-hidden border-4 border-blue-300 hover:border-blue-500 shadow-lg rounded-b-none rounded-t-3xl z-0">
+                <img
+                    src={resourceImage[department]}
+                    className="w-full h-full object-cover object-top"
+                    style={{ aspectRatio: "600/600" }}
+                />
+            </div>
+
+            <div className="w-full bg-white -mt-12 z-10 rounded-2xl p-4 py-6 shadow-xl text-center flex-grow flex-col justify-center">
+                <h3 className="text-lg font-semibold font-sans">{course}</h3>
+                <p className="text-md text-gray-400 font-sans">
+                    {department}
+                </p>
+                <div className="text-md text-gray-700 font-sans mt-2  overflow-hidden">
+                    <span className="font-bold">Teacher: </span>
+                    <span>{teacher}</span>
+                </div>
+            </div>
+        </div>
   );
 }
 

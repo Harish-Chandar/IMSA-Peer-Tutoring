@@ -85,10 +85,11 @@ function FindResources() {
 	return (
 		<div className="bg-[#e4e5e3] min-h-screen">
 			<Navbar />
+
 			<ResourceHero />
 
 			<div className="p-2 sm:p-4 max-w-6xl mx-auto">
-				<div className="flex flex-col sm:flex-row items-stretch sm:items-center border-2 border-blue-500 rounded-lg overflow-hidden bg-white mb-4">
+				<div className="flex flex-row items-center border-2 border-blue-500 rounded-lg overflow-hidden bg-white mb-4">
 					<input
 						type="text"
 						placeholder="Search..."
@@ -101,7 +102,7 @@ function FindResources() {
 					/>
 					<button
 						onClick={handleSearch}
-						className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 text-xl sm:text-3xl w-full sm:w-auto pb-4"
+						className="bg-blue-500 text-white px-4 md:px-6 py-2 hover:bg-blue-600 text-3xl pb-4"
 					>
 						⌕
 					</button>
@@ -151,12 +152,13 @@ function FindResources() {
 				</div>
 
 				{/* Mobile-friendly resource grid */}
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 justify-center mb-10">
+				<div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 justify-items-center mb-10">
 					{resources.length > 0 ? (
 						resources.map((resource, index) => (
 							<Link
 								to={`/resources/${resource.resource_id}`}
 								key={index}
+								className="w-full flex justify-center"
 							>
 								<ResourceCard
 									course={resource.course}
