@@ -13,8 +13,11 @@ function CheckInTutors() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     useEffect(() => {
-        if (!token || isTokenExpired(token) || getTokenAccess(token) !== 1) {
+        if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
+        }
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 3 || getTokenAccess(token) === 2)) {
+            navigate('/adminDashboard');
         }
     }, [token, navigate]);
 
@@ -64,7 +67,6 @@ function CheckInTutors() {
         }
     };
 
-    // Helper to handle RC override modal and logic
     const handleEndSession = (tutor) => {
         if (!tutor.starttime) {
             setError("No start time for this tutor.");
@@ -77,7 +79,7 @@ function CheckInTutors() {
         setPendingElapsed(elapsedHours);
         setPendingHours(Number(elapsedHours.toFixed(2)));
         setAlertTitle("RC Override: End Session");
-        setAlertMessage(`Are you sure you want to end the session and approve the following number of hours for the tutor?`);
+        setAlertMessage(`The tutor has been active for ${elapsedHours.toFixed(2)} hours. Are you sure you want to end the session and approve the following number of hours for the tutor?`);
         setShowAlert(true);
     };
 
@@ -104,15 +106,13 @@ function CheckInTutors() {
             } catch (err) {
                 setError("Failed to approve hours and end session");
             }
-        } else {
-            await handleCheckOut(pendingTutor.id, true);
         }
+        // If accept is false (cancel), do nothing - tutor stays active
         setPendingTutor(null);
         setPendingElapsed(0);
         setPendingHours(0);
     };
 
-    // Modified handleCheckOut to optionally skip modal
     const handleCheckOut = async (id, skipModal = false) => {
         setError("");
         if (!skipModal) {
@@ -196,9 +196,6 @@ function CheckInTutors() {
                                                     <span className="text-lg font-bold text-gray-800">{tutor.fname} {tutor.lname}</span>
                                                     <span className="text-sm text-blue-600">{tutor.email}</span>
                                                     <span className="text-xs text-gray-500">Hall: {tutor.hall} | Wing: {String.fromCharCode(64 + Number(tutor.wing))}</span>
-                                                    {typeof tutor.starttime === 'number' && tutor.starttime !== null && (
-                                                        <span className="text-xs text-gray-500">Start Time: {new Date(tutor.starttime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                    )}
                                                     <span className="text-xs text-gray-500">Total Time: {(tutor.totaltime ? (tutor.totaltime / 3600000).toFixed(2) : "0.00")} hours</span>
                                                 </div>
                                                 <button
@@ -231,7 +228,6 @@ function CheckInTutors() {
                                                     {typeof tutor.starttime === 'number' && tutor.starttime !== null && (
                                                         <span className="text-xs text-gray-500">Start Time: {new Date(tutor.starttime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                     )}
-                                                    <span className="text-xs text-gray-500">Total Time: {(tutor.totaltime ? (tutor.totaltime / 3600000).toFixed(2) : "0.00")} hours</span>
                                                 </div>
                                                 <button
                                                     className="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md border-2 border-red-400 shadow font-sans font-semibold transition-colors duration-150"

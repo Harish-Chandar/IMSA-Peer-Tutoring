@@ -25,31 +25,31 @@ function Dashboard() {
         welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage tutors, courses, bulletin posts, and more.";
 		// For admins
         if (getTokenAccess(token) === 1) {
-			manageAccountsButton.style.display = "block";
-            manageTutorsButton.style.display = "block";
+            manageAccountsButton.style.display = "block";
+            editBulletinButton.style.display = "block";
             addCourseButton.style.display = "block";
             manageCoursesButton.style.display = "block";
-            editBulletinButton.style.display = "block";
+            manageTutorsButton.style.display = "block";
             checkinButton.style.display = "block";
             welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage tutors, courses, bulletin posts, and accounts! Your access level is: Administrator.";
 		} 
         // For teachers
         else if (getTokenAccess(token) === 2) {
             manageAccountsButton.style.display = "none";
-            manageTutorsButton.style.display = "none";
+            editBulletinButton.style.display = "none";
             addCourseButton.style.display = "block";
             manageCoursesButton.style.display = "block";
-            editBulletinButton.style.display = "none";
+            manageTutorsButton.style.display = "none";
             checkinButton.style.display = "none";
             welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage courses and resources! Your access level is: Teacher.";
         }
         // For RCs
         else if (getTokenAccess(token) === 3) {
             manageAccountsButton.style.display = "none";
-            manageTutorsButton.style.display = "block";
+            editBulletinButton.style.display = "none";
             addCourseButton.style.display = "none";
             manageCoursesButton.style.display = "none";
-            editBulletinButton.style.display = "none";
+            manageTutorsButton.style.display = "block";
             checkinButton.style.display = "block";
             welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage tutors and check-in/out! Your access level is: Resident Counselor.";
         }

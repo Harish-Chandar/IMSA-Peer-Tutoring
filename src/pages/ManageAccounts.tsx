@@ -16,7 +16,7 @@ export default function ManageAccounts() {
 			navigate("/login");
 		}
 		if ((token && !isTokenExpired(token) && getTokenAccess(token) != 1)) {
-			navigate("/dashboard");
+			navigate("/adminDashboard");
 		};
 	}, [token, navigate]);
 		
@@ -28,7 +28,7 @@ export default function ManageAccounts() {
         isOpen: boolean;
         title: string;
         message: string;
-        onConfirm: (() => void) | null;
+        onConfirm: ((result: boolean) => void) | null;
     }>({
         isOpen: false,
         title: "",
@@ -50,9 +50,13 @@ export default function ManageAccounts() {
 				isOpen: true,
 				title: "Authentication Error",
 				message: "No authentication token found. Please log in again.",
-				onConfirm: () => {
-					setAlertModal({ ...alertModal, isOpen: false });
-					navigate("/login");
+				onConfirm: (confirmed) => {
+					if (confirmed) {
+						setAlertModal({ ...alertModal, isOpen: false });
+						navigate("/login");
+					} else {
+						setAlertModal({ ...alertModal, isOpen: false });
+					}
 				},
 			});
 			return;
@@ -84,36 +88,40 @@ export default function ManageAccounts() {
 				isOpen: true,
 				title: "Account for " + newAdmin.firstName + " " + newAdmin.lastName,
 				message: "Account with Access Level " + newAdmin.role + " created successfully! \n Please contact " + newAdmin.email + " with their password: " + newAdmin.password + "",
-				onConfirm: () => {
-					setAlertModal({ ...alertModal, isOpen: false });
-					setNewAdmin({
-						firstName: "",
-						lastName: "",
-						email: "",
-						password: "",
-						role: "",
-					});
+				onConfirm: (confirmed) => {
+					if (confirmed) {
+						setAlertModal({ ...alertModal, isOpen: false });
+						setNewAdmin({
+							firstName: "",
+							lastName: "",
+							email: "",
+							password: "",
+							role: "",
+						});
 
-					// Refresh the list of admins after successful creation
-					fetch(`${baseUrl}/admins`, {
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`,
-						},
-					})
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error("Failed to fetch admin accounts");
-						}
-						return response.json();
-					})
-					.then((data) => {
-						setAdmins(data);
-					})
-					.catch((error) => {
-						console.error("Error fetching admin accounts:", error);
-					});
+						// Refresh the list of admins after successful creation
+						fetch(`${baseUrl}/admins`, {
+							method: "GET",
+							headers: {
+								"Content-Type": "application/json",
+								"Authorization": `Bearer ${token}`,
+							},
+						})
+						.then((response) => {
+							if (!response.ok) {
+								throw new Error("Failed to fetch admin accounts");
+							}
+							return response.json();
+						})
+						.then((data) => {
+							setAdmins(data);
+						})
+						.catch((error) => {
+							console.error("Error fetching admin accounts:", error);
+						});
+					} else {
+						setAlertModal({ ...alertModal, isOpen: false });
+					}
 				},
 			});
 		})
@@ -122,7 +130,9 @@ export default function ManageAccounts() {
 				isOpen: true,
 				title: "Account Creation Failed",
 				message: error.message || "An unexpected error occurred.",
-				onConfirm: () => setAlertModal({ ...alertModal, isOpen: false }),
+				onConfirm: (confirmed) => {
+					setAlertModal({ ...alertModal, isOpen: false });
+				},
 			});
 		})
 		.finally(() => {
@@ -136,7 +146,9 @@ export default function ManageAccounts() {
                 isOpen: true,
                 title: "Account Creation Failure",
                 message: "Please fill in email, password, and role fields.",
-                onConfirm: () => setAlertModal({ ...alertModal, isOpen: false }),
+                onConfirm: (confirmed) => {
+                    setAlertModal({ ...alertModal, isOpen: false });
+                },
             });
             return;
         }
@@ -149,9 +161,15 @@ export default function ManageAccounts() {
             isOpen: true,
             title: "Confirm Deletion",
             message: `Are you sure you want to delete admin account "${adminEmail}"? This action cannot be undone.`,
-            onConfirm: () => {
+            onConfirm: (confirmed) => {
                 setAlertModal({ ...alertModal, isOpen: false });
+                
+                if (!confirmed) {
+                    // User clicked Cancel, do nothing
+                    return;
+                }
 
+                // User clicked OK, proceed with deletion
                 fetch(`${baseUrl}/admins/${adminEmail}/delete`, {
                     method: "POST",
                     headers: {
@@ -173,10 +191,14 @@ export default function ManageAccounts() {
                         isOpen: true,
                         title: "Success",
                         message: `Admin account "${adminEmail}" has been deleted successfully.`,
-                        onConfirm: () => {
-                            setAlertModal({ ...alertModal, isOpen: false });
-                            // Refresh the admin list
-                            setAdmins(admins.filter(admin => admin.email !== adminEmail));
+                        onConfirm: (confirmed) => {
+                            if (confirmed) {
+                                setAlertModal({ ...alertModal, isOpen: false });
+                                // Refresh the admin list
+                                setAdmins(admins.filter(admin => admin.email !== adminEmail));
+                            } else {
+                                setAlertModal({ ...alertModal, isOpen: false });
+                            }
                         },
                     });
                 })
@@ -186,7 +208,9 @@ export default function ManageAccounts() {
                         isOpen: true,
                         title: "Deletion Failed",
                         message: error.message || "An unexpected error occurred while deleting the admin account.",
-                        onConfirm: () => setAlertModal({ ...alertModal, isOpen: false }),
+                        onConfirm: (confirmed) => {
+                            setAlertModal({ ...alertModal, isOpen: false });
+                        },
                     });
                 });
             },
@@ -410,6 +434,9 @@ export default function ManageAccounts() {
                 title={alertModal.title}
                 message={alertModal.message}
                 onConfirm={alertModal.onConfirm}
+                inputValue={undefined}
+                onInputChange={undefined}
+                inputLabel={undefined}
             />
 		</>
     );

@@ -1,3 +1,5 @@
+import sqlite3 from "sqlite3";
+
 export const sampleResources = [
     {
         teacher: "Mr. Pranav Gadde",
@@ -155,4 +157,49 @@ export function populateResources(db: any, sampleResources: any[], sampleLinks: 
             });
         });
     });
+}
+
+// execution block for running this file independently
+const isMainModule = process.argv[1] && process.argv[1].endsWith('populate-resource.ts');
+if (isMainModule) {
+    const db = new sqlite3.Database(
+        "./peertutoringdb.sqlite",
+        (err: Error | null) => {
+            if (err) {
+                console.error("Error opening database:", err.message);
+                process.exit(1);
+            } else {
+                console.log("Connected to SQLite database.");
+                
+                // Create resource_links table if it doesn't exist
+                const createResourceLinksTable = `
+                    CREATE TABLE IF NOT EXISTS resource_links (
+                        link_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        resource_id INTEGER NOT NULL,
+                        label TEXT NOT NULL,
+                        url TEXT NOT NULL,
+                        FOREIGN KEY (resource_id) REFERENCES resources(resource_id)
+                    );
+                `;
+                
+                db.run(createResourceLinksTable, (err) => {
+                    if (err) {
+                        console.error('Error creating "resource_links" table:', err.message);
+                    } else {
+                        console.log('Successfully created "resource_links" table.');
+                    }
+                    
+                    populateResources(db, sampleResources, sampleLinks, () => {
+                        db.close((err: Error | null) => {
+                            if (err) {
+                                console.error("Error closing database:", err.message);
+                            } else {
+                                console.log("Database population complete and connection closed.");
+                            }
+                        });
+                    });
+                });
+            }
+        }
+    );
 }

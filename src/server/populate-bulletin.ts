@@ -107,3 +107,30 @@ export function populateBulletin(db: any, callback: () => void) {
         });
     });
 }
+
+// execution block for running this file independently
+const isMainModule = process.argv[1] && process.argv[1].endsWith('populate-bulletin.ts');
+if (isMainModule) {
+    const db = new pkg.Database(
+        "./peertutoringdb.sqlite",
+        (err: Error | null) => {
+            if (err) {
+                console.error("Error opening database:", err.message);
+                process.exit(1);
+            } else {
+                console.log("Connected to SQLite database.");
+                ensureBulletinImageColumn(db, () => {
+                    populateBulletin(db, () => {
+                        db.close((err: Error | null) => {
+                            if (err) {
+                                console.error("Error closing database:", err.message);
+                            } else {
+                                console.log("Database population complete and connection closed.");
+                            }
+                        });
+                    });
+                });
+            }
+        }
+    );
+}

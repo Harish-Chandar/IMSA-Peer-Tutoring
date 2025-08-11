@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
 import AlertModal from "../components/AlertModal.jsx";
-import { isTokenExpired, classCategories } from "../util.ts";
+import { isTokenExpired, classCategories, getTokenAccess } from "../util.ts";
 import UploadWidget from "../components/UploadWidget.js";
 
 function EditTutor() {
@@ -15,6 +15,9 @@ function EditTutor() {
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
 		}
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 3 || getTokenAccess(token) === 2)) {
+            navigate('/adminDashboard');
+        }
 	}, [navigate]);
 
 	// no hardcoded localhosts!!!
@@ -466,14 +469,14 @@ function EditTutor() {
 				<button
 					onClick={() => {
 						window.scrollTo(0, 0);
-						navigate("/adminDashboard");
+						navigate("/addTutor");
 					}}
 					className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
 				>
-					Back to Dashboard
+					Back to Manage Tutors
 				</button>
 
-				<h1 className="text-4xl font-bold text-gray-700">Edit Tutor</h1>
+				<h1 className="text-4xl font-bold text-gray-700 ml-[-2rem]">Edit Tutor</h1>
 
 				<div className="w-40"></div>
 			</div>

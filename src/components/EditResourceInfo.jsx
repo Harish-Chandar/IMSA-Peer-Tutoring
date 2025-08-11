@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
 
-import { isTokenExpired } from "../util.ts";
+import { isTokenExpired, getTokenAccess } from "../util.ts";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -16,6 +16,9 @@ function EditResourceInfo() {
     useEffect(() => {
         if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
+        }
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 2)) {
+            navigate('/adminDashboard');
         }
     }, [token, navigate]);
 

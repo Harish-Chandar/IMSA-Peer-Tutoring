@@ -290,3 +290,28 @@ export function populateTutors(db: any, tutors: Tutor[], callback: () => void) {
         );
     });
 }
+
+// execution block for running this file independently
+const isMainModule = process.argv[1] && process.argv[1].endsWith('populate-tutors.ts');
+if (isMainModule) {
+    const db = new sqlite3.Database(
+        "./peertutoringdb.sqlite",
+        (err: Error | null) => {
+            if (err) {
+                console.error("Error opening database:", err.message);
+                process.exit(1);
+            } else {
+                console.log("Connected to SQLite database.");
+                populateTutors(db, tutors, () => {
+                    db.close((err: Error | null) => {
+                        if (err) {
+                            console.error("Error closing database:", err.message);
+                        } else {
+                            console.log("Database population complete and connection closed.");
+                        }
+                    });
+                });
+            }
+        }
+    );
+}

@@ -14,6 +14,15 @@ function ResourceDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const resourceImage = {
+        "English" : "/ClassImages/english.png",
+        "Math" : "/ClassImages/math.png",
+        "Science" : "/ClassImages/science.png",
+        "World Languages" : "/ClassImages/worldlanguages.png",
+        "Computer Science" : "/ClassImages/computerscience.png",
+        "Wellness" : "/ClassImages/wellness.png",
+    }
+
     useEffect(() => {
         const fetchResource = async () => {
             try {
@@ -85,9 +94,9 @@ function ResourceDetails() {
                 <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-8">
                     {/* Image Section - smaller on mobile */}
                     <div className="order-1 lg:order-1">
-                        <div className="h-48 sm:h-64 lg:h-[calc(100vh-10rem)]">
+                        <div className="h-48 md:h-64 lg:h-[calc(100vh-10rem)]">
                             <img
-                                src={testimage}
+                                src={resourceImage[resource.department]}
                                 alt="Resource"
                                 className="h-full w-full rounded-lg shadow-md object-cover"
                             />
@@ -95,7 +104,7 @@ function ResourceDetails() {
                     </div>
 
                     {/* Details Section */}
-                    <div className="order-2 lg:order-2 bg-white shadow-lg rounded-lg p-4 sm:p-6 w-full lg:h-[calc(100vh-10rem)] lg:overflow-y-auto">
+                    <div className="order-2 lg:order-2 bg-white shadow-lg rounded-lg p-6 w-full lg:h-[calc(100vh-10rem)] lg:overflow-y-auto">
                         {/* Course title - responsive text size */}
                         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-3 lg:mb-4">
                             {resource.course}

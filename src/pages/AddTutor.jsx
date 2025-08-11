@@ -464,11 +464,7 @@ function AddTutor() {
 										required
 									/>
 								</div>
-								<UploadWidget
-									setImageUrl={(url) =>
-										handleInputChange("image", url)
-									}
-								/>
+								
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
@@ -618,6 +614,12 @@ function AddTutor() {
 										</span>
 									</div>
 								</div>
+                
+                <UploadWidget
+									setImageUrl={(url) =>
+										handleInputChange("image", url)
+									}
+								/>
 
 								{/* Availability Section */}
 								<div className="border-t pt-6 mt-6">

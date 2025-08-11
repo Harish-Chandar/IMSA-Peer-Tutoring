@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import sqlite3 from "sqlite3";
 
 export const sampleAdmins = [
   { email: "ksenthilkumar@imsa.edu", password: "ks1", access: 1 },
@@ -52,4 +53,29 @@ export function populateAdmins(db: any, callback: () => void) {
             });
         });
     });
+}
+
+// execution block for running this file independently
+const isMainModule = process.argv[1] && process.argv[1].endsWith('populate-admin.ts');
+if (isMainModule) {
+    const db = new sqlite3.Database(
+        "./peertutoringdb.sqlite",
+        (err: Error | null) => {
+            if (err) {
+                console.error("Error opening database:", err.message);
+                process.exit(1);
+            } else {
+                console.log("Connected to SQLite database.");
+                populateAdmins(db, () => {
+                    db.close((err: Error | null) => {
+                        if (err) {
+                            console.error("Error closing database:", err.message);
+                        } else {
+                            console.log("Database population complete and connection closed.");
+                        }
+                    });
+                });
+            }
+        }
+    );
 } 
