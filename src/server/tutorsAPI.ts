@@ -1173,8 +1173,8 @@ app.post(
             result.end((req as any).file.buffer);
 
         } catch (err) {
-            console.error("Server error:", err);
-            res.status(500).json({ error: "Server error" });
+            console.error("Cloudinary failed:", err);
+            res.status(500).json({ error: "Cloudinary failed" });
         }
     }
 );
