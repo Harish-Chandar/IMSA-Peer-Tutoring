@@ -4,7 +4,7 @@ import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal.jsx";
 
-import { isTokenExpired, classCategories } from "../util.ts";
+import { isTokenExpired, classCategories, getTokenAccess } from "../util.ts";
 const token = localStorage.getItem("token");
 
 import UploadWidget from "../components/UploadWidget.js";
@@ -16,6 +16,9 @@ function AddTutor() {
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
 		}
+        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 3 || getTokenAccess(token) === 2)) {
+            navigate('/adminDashboard');
+        }
 	}, []);
 	// environment variables for API configuration
 	const DBPORT = process.env.REACT_APP_DBPORT;
