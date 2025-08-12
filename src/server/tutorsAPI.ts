@@ -6,6 +6,11 @@ import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
 
+import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
+
+
+
 dotenv.config();
 
 const app = express();
@@ -33,6 +38,16 @@ const db = new sqlite3.Database(
 		console.log("connected to the database");
 	}
 );
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+    api_key: process.env.CLOUDINARY_API_KEY!,
+    api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
+
+// Multer storage (in-memory so we can send directly to Cloudinary)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // api route for filtering through tutors by either name or hall
 app.get("/api/tutors/search", (req: Request, res: Response) => {
@@ -1127,4 +1142,39 @@ app.patch(
 			}
 		);
 	}
+);
+
+app.post(
+    "/api/upload-image",
+    authenticateAdmin,
+    upload.single("image"), // "image" must match the FormData field name
+    async (req: Request, res: Response) => {
+        try {
+            if (!(req as any).file) {
+                return res.status(400).json({ error: "No file uploaded" });
+            }
+
+            // Upload to Cloudinary
+            const result = await cloudinary.uploader.upload_stream(
+                {
+                    folder: "peer-tutoring", // optional folder
+                    resource_type: "image",
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error("Cloudinary upload error:", error);
+                        return res.status(500).json({ error: "Upload failed" });
+                    }
+                    res.json({ url: result?.secure_url });
+                }
+            );
+
+            // Write the file buffer to Cloudinary stream
+            result.end((req as any).file.buffer);
+
+        } catch (err) {
+            console.error("Server error:", err);
+            res.status(500).json({ error: "Server error" });
+        }
+    }
 );
