@@ -5,6 +5,8 @@ import Navbar from "../components/Navbar.jsx";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer.jsx";
 
+import { departments } from "../util.ts"; 
+
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 
@@ -17,14 +19,14 @@ function FindResources() {
 	const [filterDropdown, setFilterDropdown] = useState(false);
 
 	// Updated filter options to match actual database departments
-	const filterOptions = [
-		"Computer Science",
-		"Math",
-		"Science",
-		"English",
-		"Wellness",
-		"World Languages",
-	];
+	// const departments = [
+	// 	"Computer Science",
+	// 	"Math",
+	// 	"Science",
+	// 	"English",
+	// 	"Wellness",
+	// 	"World Languages",
+	// ];
 
 	// automatically fetch resources when loaded
 	useEffect(() => {
@@ -118,7 +120,7 @@ function FindResources() {
 						</button>
 						{filterDropdown && (
 							<div className="absolute mt-2 w-full sm:w-40 bg-white border border-gray-300 shadow-lg rounded-lg z-10 max-h-60 overflow-y-auto">
-								{filterOptions.map((filter, index) => (
+								{departments.map((filter, index) => (
 									<button
 										key={index}
 										className="w-full bg-white text-gray-700 text-left p-2 hover:bg-blue-100 text-sm sm:text-base"
