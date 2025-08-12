@@ -12,7 +12,7 @@ const UploadWidget = ({ setImageUrl }) => {
 	    const HOST = process.env.REACT_APP_HOST;
 	    const baseUrl = `http://${HOST}:${DBPORT}`;
 
-        const token = localStorage.getItem("adminToken"); // whatever you store after login
+        const token = localStorage.getItem("token"); // whatever you store after login
 
         try {
             const res = await fetch(`${baseUrl}/api/upload-image`, {
