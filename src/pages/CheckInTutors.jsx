@@ -39,6 +39,8 @@ function CheckInTutors() {
 	const [pendingHours, setPendingHours] = useState(0);
 
 	const fetchTutors = async () => {
+		// Capture scroll position to restore after data refresh (prevents jumps)
+		const scrollY = window.scrollY;
 		setLoading(true);
 		setError("");
 		try {
@@ -49,6 +51,8 @@ function CheckInTutors() {
 			setError("Failed to fetch tutors");
 		}
 		setLoading(false);
+		// Restore scroll position
+		window.scrollTo({ top: scrollY, behavior: "instant" });
 	};
 
 	useEffect(() => {
@@ -178,7 +182,7 @@ function CheckInTutors() {
 	const filteredInactiveTutors = filterTutors(inactiveTutors);
 
 	return (
-		<div className="p-6 bg-gray-100 pt-14 min-h-screen">
+		<div className="p-6 bg-gray-100 pt-14 min-h-screen overscroll-contain">
 			<div className="flex justify-between items-center mb-6 py-10">
 				<button
 					onClick={() => navigate("/adminDashboard")}
@@ -220,13 +224,13 @@ function CheckInTutors() {
 									filteredInactiveTutors.map((tutor) => (
 										<div
 											key={tutor.id}
-											className="flex items-center justify-between bg-gray-50 rounded-xl shadow border border-gray-200 px-6 py-4"
+											className="flex flex-col sm:flex-row sm:items-center items-start justify-between bg-gray-50 rounded-xl shadow border border-gray-200 px-6 py-4 gap-3"
 										>
-											<div className="flex flex-col items-start">
-												<span className="text-lg font-bold text-gray-800">
+											<div className="flex-1 min-w-0 flex flex-col items-start">
+												<span className="text-lg font-bold text-gray-800 break-words whitespace-normal">
 													{tutor.fname} {tutor.lname}
 												</span>
-												<span className="text-sm text-blue-600">
+												<span className="text-sm text-blue-600 break-all">
 													{tutor.email}
 												</span>
 												<span className="text-xs text-gray-500">
@@ -251,14 +255,19 @@ function CheckInTutors() {
 													hours
 												</span>
 											</div>
-											<button
-												className="ml-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md border-2 border-green-400 shadow font-sans font-semibold transition-colors duration-150"
-												onClick={() =>
-													handleCheckIn(tutor.id)
-												}
-											>
-												Start
-											</button>
+											<div className="sm:ml-4 sm:mt-0 mt-2 w-full sm:w-auto flex-shrink-0">
+												<button
+													type="button"
+													className="w-full sm:w-auto px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md border-2 border-green-400 shadow font-sans font-semibold transition-colors duration-150"
+													onClick={(e) => {
+														e.preventDefault();
+														e.stopPropagation();
+														handleCheckIn(tutor.id);
+													}}
+												>
+													Start
+												</button>
+											</div>
 										</div>
 									))
 								)}
@@ -281,13 +290,13 @@ function CheckInTutors() {
 									filteredActiveTutors.map((tutor) => (
 										<div
 											key={tutor.id}
-											className="flex items-center justify-between bg-gray-50 rounded-xl shadow border border-gray-200 px-6 py-4"
+											className="flex flex-col sm:flex-row sm:items-center items-start justify-between bg-gray-50 rounded-xl shadow border border-gray-200 px-6 py-4 gap-3"
 										>
-											<div className="flex flex-col items-start">
-												<span className="text-lg font-bold text-gray-800">
+											<div className="flex-1 min-w-0 flex flex-col items-start">
+												<span className="text-lg font-bold text-gray-800 break-words whitespace-normal">
 													{tutor.fname} {tutor.lname}
 												</span>
-												<span className="text-sm text-blue-600">
+												<span className="text-sm text-blue-600 break-all">
 													{tutor.email}
 												</span>
 												<span className="text-xs text-gray-500">
@@ -319,14 +328,21 @@ function CheckInTutors() {
 														</span>
 													)}
 											</div>
-											<button
-												className="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md border-2 border-red-400 shadow font-sans font-semibold transition-colors duration-150"
-												onClick={() =>
-													handleCheckOut(tutor.id)
-												}
-											>
-												End
-											</button>
+											<div className="sm:ml-4 sm:mt-0 mt-2 w-full sm:w-auto flex-shrink-0">
+												<button
+													type="button"
+													className="w-full sm:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md border-2 border-red-400 shadow font-sans font-semibold transition-colors duration-150"
+													onClick={(e) => {
+														e.preventDefault();
+														e.stopPropagation();
+														handleCheckOut(
+															tutor.id
+														);
+													}}
+												>
+													End
+												</button>
+											</div>
 										</div>
 									))
 								)}

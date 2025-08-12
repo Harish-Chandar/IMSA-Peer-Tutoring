@@ -18,6 +18,7 @@ function FindTutors() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedFilters, setSelectedFilters] = useState([]);
 	const [filterDropdown, setFilterDropdown] = useState(false);
+	const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
 	const filterOptions = [
 		"1501",
 		"1502",
@@ -36,7 +37,7 @@ function FindTutors() {
 	// automatically update search results when searchQuery or selectedFilters change
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, selectedFilters]);
+	}, [searchQuery, selectedFilters, showOnlyAvailable]);
 
 	const fetchTutors = async () => {
 		try {
@@ -55,6 +56,11 @@ function FindTutors() {
 			const lowerQuery = searchQuery.toLowerCase();
 
 			const filtered = data.filter((tutor) => {
+				// filter by availability if toggle is on
+				if (showOnlyAvailable && tutor.is_available !== 1) {
+					return false;
+				}
+
 				// build an array of class names by splitting the stored DB string
 				// replacing underscores with spaces, and trimming whitespace
 				const classArray = Object.keys(classCategories).reduce(
@@ -165,6 +171,39 @@ function FindTutors() {
 							</div>
 						)}
 					</div>
+
+					{/* Availability Toggle Switch */}
+					<div className="flex items-center gap-3 w-full sm:w-auto">
+						<span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+							Available Only
+						</span>
+						<label className="relative inline-flex items-center cursor-pointer">
+							<input
+								type="checkbox"
+								checked={showOnlyAvailable}
+								onChange={(e) =>
+									setShowOnlyAvailable(e.target.checked)
+								}
+								className="sr-only"
+							/>
+							<div
+								className={`w-11 h-6 rounded-full transition-colors duration-200 ${
+									showOnlyAvailable
+										? "bg-blue-500"
+										: "bg-gray-300"
+								}`}
+							>
+								<div
+									className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 ${
+										showOnlyAvailable
+											? "translate-x-5"
+											: "translate-x-0"
+									}`}
+								/>
+							</div>
+						</label>
+					</div>
+
 					<div className="flex flex-wrap gap-2">
 						{selectedFilters.map((filter, index) => (
 							<span
