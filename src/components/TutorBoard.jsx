@@ -82,13 +82,21 @@ function TutorBoard() {
                         .map(tutor => {
                             tutor.courses = getCourses(tutor);
                             return (
-                                <TutorNote
-                                    key={tutor.id}
-                                    id={tutor.id}
+                                <TutorCard
+                                    key={index}
                                     name={`${tutor.fname} ${tutor.lname}`}
-                                    hall={`${tutor.hall} ${assignWing(tutor.wing)}-Wing`}
-                                    classes={tutor.courses}
-                                    img={tutor.image}
+                                    wing={tutor.wing}
+                                    hall={tutor.hall}
+                                    routing_link={`/tutor/${tutor.id}`}
+                                    image={tutor.image}
+                                    physics={tutor.physics}
+                                    chem={tutor.chem}
+                                    biology={tutor.biology}
+                                    sciother={tutor.sciother}
+                                    mathother={tutor.mathother}
+                                    mathcore={tutor.mathcore}
+                                    cs={tutor.cs}
+                                    language={tutor.language}
                                 />
                             );
                         })}
