@@ -136,3 +136,5 @@ export const classCategories = {
 		"Mandarin Chinese III",
 	],
 };
+
+export const departments = [ "Computer Science", "Math", "Science", "English", "Wellness", "World Languages" ];

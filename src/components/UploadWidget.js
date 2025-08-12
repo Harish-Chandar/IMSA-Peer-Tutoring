@@ -1,35 +1,67 @@
 import {useEffect, useRef, useState } from 'react';
-
+import { AlertModal } from './AlertModal.jsx';
 
 const UploadWidget = ({ setImageUrl }) => {
-    const cloudinaryRef = useRef();
-    const widgetRef = useRef();
-    const [imageUrl, setImageUrls] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
+    const handleUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    useEffect(() => {
-        cloudinaryRef.current = window.cloudinary;
-        // console.log(cloudinaryRef.current);
-        widgetRef.current = cloudinaryRef.current.createUploadWidget({ // move everything after this (inside the parenthesis) into the server into a new route that handles the cloudinary upload, it can send back the URL 
-            cloudName: 'dvhuka1ue', // move this to dotenv
-            uploadPreset: 'peer-tutoring-preset'
-        }, function(error, result) {
-            if (!error && result && result.event === "success") {
-                console.log("Image uploaded:", result.info.secure_url);
-                setImageUrls(result.info.secure_url); 
-                setImageUrl(result.info.secure_url);
-            }
-        }); // so everything before this
-    }, [setImageUrl]);
-
-    return(
-        <div>
-            <button type="button" onClick={() => widgetRef.current.open()} className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition duration-300"> 
-                Upload Image
-            </button>
-        </div>
         
-    )
-}
+
+        const formData = new FormData();
+        formData.append("image", file);
+        const DBPORT = process.env.REACT_APP_DBPORT;
+	    const HOST = process.env.REACT_APP_HOST;
+	    const baseUrl = `http://${HOST}:${DBPORT}`;
+
+        const token = localStorage.getItem("token"); // whatever you store after login
+
+        try {
+            const res = await fetch(`${baseUrl}/api/upload-image`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            const data = await res.json();
+            if (data.url) {
+                setImageUrl(data.url);
+            } else {
+                setAlertTitle("Upload Failed");
+	            setAlertMessage("Upload failed. Please try again. Error: " + (data.error || "Unknown error"));
+	            setShowAlert(true);
+            }
+        } catch (err) {
+            setAlertTitle("Upload Failed");
+	        setAlertMessage("Upload failed. Please try again. Error: " + err.message);
+	        setShowAlert(true);
+        }
+    };
+
+    return (
+        <>
+            <AlertModal
+                isOpen={showAlert}
+                message={alertMessage}
+                onConfirm={(result) => {
+                    setShowAlert(false);
+                }}
+                title={alertTitle}
+            />
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleUpload}
+                className="border p-2"
+            />
+        </>
+    );
+};
 
 
 

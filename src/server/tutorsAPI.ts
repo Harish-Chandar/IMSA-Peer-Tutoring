@@ -6,6 +6,11 @@ import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
 
+import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
+
+
+
 dotenv.config();
 
 const app = express();
@@ -33,6 +38,16 @@ const db = new sqlite3.Database(
 		console.log("connected to the database");
 	}
 );
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+    api_key: process.env.CLOUDINARY_API_KEY!,
+    api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
+
+// Multer storage (in-memory so we can send directly to Cloudinary)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // api route for filtering through tutors by either name or hall
 app.get("/api/tutors/search", (req: Request, res: Response) => {
@@ -97,7 +112,7 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
 // app.post("/api/schedule", (req, res) => {
 // 	const { title, course, teachers, location, date, time } = req.body;
 //
-// 	const sql = `INSERT INTO schedule (title, course, teachers, location, date, time) 
+// 	const sql = `INSERT INTO schedule (title, course, teachers, location, date, time)
 // 	VALUES (?, ?, ?, ?, ?, ?)`;
 //
 // 	db.run(
@@ -192,10 +207,11 @@ app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 		language,
 	} = req.body;
 
+	// Explicitly set is_available to 0 on creation to avoid inconsistent active state
 	const sql = `INSERT INTO tutors 
 	(fname, lname, fbname, imsaid, email, blurb, hall, wing, image, availability, 
-	 physics, chem, biology, sciother, mathother, mathcore, cs, language, totaltime, approvedtime, starttime) 
-	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NULL)`;
+	 physics, chem, biology, sciother, mathother, mathcore, cs, language, totaltime, approvedtime, starttime, is_available) 
+	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NULL, 0)`;
 
 	db.run(
 		sql,
@@ -443,17 +459,23 @@ app.post(
 
 		// check if email already exists, return 400 error if it does
 		const checkEmailQuery = `SELECT * FROM admins WHERE email = ?`;
-		db.get(checkEmailQuery, [email], (err: Error | null, row: Admin | undefined) => {
-			if (err) {
-				console.error("Database error:", err);
-				return res.status(500).json({ error: "Error checking email" });
+		db.get(
+			checkEmailQuery,
+			[email],
+			(err: Error | null, row: Admin | undefined) => {
+				if (err) {
+					console.error("Database error:", err);
+					return res
+						.status(500)
+						.json({ error: "Error checking email" });
+				}
+				if (row) {
+					return res
+						.status(400)
+						.json({ error: "Email already exists" });
+				}
 			}
-			if (row) {
-				return res
-					.status(400)
-					.json({ error: "Email already exists" });
-			}
-		});
+		);
 
 		// Hash the password
 		bcrypt.hash(password, 10, (err: Error | undefined, hash: string) => {
@@ -563,34 +585,41 @@ app.get("/api/test", (req: Request, res: Response) => {
 
 // bulletin board api routes
 app.post("/api/bulletin", authenticateAdmin, (req: Request, res: Response) => {
-    const { title, content, event_date, author, contact_info, highpriority, image } =
-        req.body;
-    const creation_date = new Date().toISOString();
+	const {
+		title,
+		content,
+		event_date,
+		author,
+		contact_info,
+		highpriority,
+		image,
+	} = req.body;
+	const creation_date = new Date().toISOString();
 
-    const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority, image) 
+	const sql = `INSERT INTO bulletin (title, content, creation_date, event_date, author, contact_info, highpriority, image) 
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    db.run(
-        sql,
-        [
-            title || "",
-            content || "",
-            creation_date,
-            event_date || null,
-            author || "Admin",
-            contact_info || "",
-            highpriority || 0,
-            image || ""
-        ],
-        function (err) {
-            if (err) {
-                console.error("bulletin insert error:", err);
-                res.status(500).json({ error: err.message });
-                return;
-            }
-            res.json({ id: this.lastID, message: "post created successfully" });
-        }
-    );
+	db.run(
+		sql,
+		[
+			title || "",
+			content || "",
+			creation_date,
+			event_date || null,
+			author || "Admin",
+			contact_info || "",
+			highpriority || 0,
+			image || "",
+		],
+		function (err) {
+			if (err) {
+				console.error("bulletin insert error:", err);
+				res.status(500).json({ error: err.message });
+				return;
+			}
+			res.json({ id: this.lastID, message: "post created successfully" });
+		}
+	);
 });
 
 app.get("/api/bulletin", (req: Request, res: Response) => {
@@ -1051,40 +1080,101 @@ app.post(
 );
 
 // PATCH endpoint to approve hours for a tutor (RC override)
-app.patch("/api/tutors/:id/approvehours", authenticateAdmin, (req: Request, res: Response) => {
-    const tutorId = parseInt(req.params.id);
-    let { approvedtime } = req.body;
-    if (isNaN(tutorId) || tutorId < 0) {
-        return res.status(400).json({ error: "Invalid tutor ID" });
-    }
-    approvedtime = Number(approvedtime);
-    if (isNaN(approvedtime) || approvedtime < 0) {
-        return res.status(400).json({ error: "Invalid approvedtime value" });
-    }
-    // Get current approvedtime and totaltime
-    db.get("SELECT approvedtime, totaltime FROM tutors WHERE id = ?", [tutorId], (err, row: any) => {
-        if (err) {
-            console.error("Error fetching tutor for approve hours:", err);
-            return res.status(500).json({ error: "Error fetching tutor data" });
-        }
-        if (!row) {
-            return res.status(404).json({ error: "Tutor not found" });
-        }
-        const newApproved = (row.approvedtime || 0) + approvedtime;
-        const newTotal = (row.totaltime || 0) + approvedtime;
-        db.run(
-            "UPDATE tutors SET approvedtime = ?, totaltime = ? WHERE id = ?",
-            [newApproved, newTotal, tutorId],
-            function (err2) {
-                if (err2) {
-                    console.error("Error updating approved/totaltime:", err2);
-                    return res.status(500).json({ error: "Error updating tutor hours" });
-                }
-                if (this.changes === 0) {
-                    return res.status(404).json({ error: "Tutor not found" });
-                }
-                res.json({ message: "Tutor hours updated", approvedtime: newApproved, totaltime: newTotal });
+app.patch(
+	"/api/tutors/:id/approvehours",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		const tutorId = parseInt(req.params.id);
+		let { approvedtime } = req.body;
+		if (isNaN(tutorId) || tutorId < 0) {
+			return res.status(400).json({ error: "Invalid tutor ID" });
+		}
+		approvedtime = Number(approvedtime);
+		if (isNaN(approvedtime) || approvedtime < 0) {
+			return res
+				.status(400)
+				.json({ error: "Invalid approvedtime value" });
+		}
+		// Get current approvedtime and totaltime
+		db.get(
+			"SELECT approvedtime, totaltime FROM tutors WHERE id = ?",
+			[tutorId],
+			(err, row: any) => {
+				if (err) {
+					console.error(
+						"Error fetching tutor for approve hours:",
+						err
+					);
+					return res
+						.status(500)
+						.json({ error: "Error fetching tutor data" });
+				}
+				if (!row) {
+					return res.status(404).json({ error: "Tutor not found" });
+				}
+				const newApproved = (row.approvedtime || 0) + approvedtime;
+				const newTotal = (row.totaltime || 0) + approvedtime;
+				db.run(
+					"UPDATE tutors SET approvedtime = ?, totaltime = ? WHERE id = ?",
+					[newApproved, newTotal, tutorId],
+					function (err2) {
+						if (err2) {
+							console.error(
+								"Error updating approved/totaltime:",
+								err2
+							);
+							return res
+								.status(500)
+								.json({ error: "Error updating tutor hours" });
+						}
+						if (this.changes === 0) {
+							return res
+								.status(404)
+								.json({ error: "Tutor not found" });
+						}
+						res.json({
+							message: "Tutor hours updated",
+							approvedtime: newApproved,
+							totaltime: newTotal,
+						});
+					}
+				);
+			}
+		);
+	}
+);
+
+app.post(
+    "/api/upload-image",
+    authenticateAdmin,
+    upload.single("image"), // "image" must match the FormData field name
+    async (req: Request, res: Response) => {
+        try {
+            if (!(req as any).file) {
+                return res.status(400).json({ error: "No file uploaded" });
             }
-        );
-    });
-});
+
+            // Upload to Cloudinary
+            const result = await cloudinary.uploader.upload_stream(
+                {
+                    folder: "peer-tutoring", // optional folder
+                    resource_type: "image",
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error("Cloudinary upload error:", error);
+                        return res.status(500).json({ error: "Upload failed" });
+                    }
+                    res.json({ url: result?.secure_url });
+                }
+            );
+
+            // Write the file buffer to Cloudinary stream
+            result.end((req as any).file.buffer);
+
+        } catch (err) {
+            console.error("Cloudinary failed:", err);
+            res.status(500).json({ error: "Cloudinary failed" });
+        }
+    }
+);
