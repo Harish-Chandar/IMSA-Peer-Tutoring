@@ -180,6 +180,7 @@ function AddTutor() {
 
 	// handle creating a new tutor
 	const handleCreateTutor = async () => {
+		// Check for required fields
 		if (
 			!newTutor.fname ||
 			!newTutor.lname ||
@@ -191,7 +192,46 @@ function AddTutor() {
 			setAlertModal({
 				isOpen: true,
 				title: "Missing Information",
-				message: "Please fill in all fields.",
+				message:
+					"Please fill in all required fields: First Name, Last Name, Email, IMSA ID, Hall, and Wing.",
+				onConfirm: () =>
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					}),
+			});
+			return;
+		}
+
+		// Validate IMSA ID is numeric
+		const imsaId = parseInt(newTutor.imsaid);
+		if (isNaN(imsaId) || imsaId.toString() !== newTutor.imsaid.toString()) {
+			setAlertModal({
+				isOpen: true,
+				title: "Invalid IMSA ID",
+				message:
+					"IMSA ID must be a valid number with no letters or special characters.",
+				onConfirm: () =>
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					}),
+			});
+			return;
+		}
+
+		// Validate email format
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(newTutor.email)) {
+			setAlertModal({
+				isOpen: true,
+				title: "Invalid Email Format",
+				message:
+					"Please enter a valid email address (e.g., student@imsa.edu).",
 				onConfirm: () =>
 					setAlertModal({
 						isOpen: false,
@@ -210,6 +250,39 @@ function AddTutor() {
 				isOpen: true,
 				title: "Invalid Hall Number",
 				message: "Hall number must be between 1501 and 1507.",
+				onConfirm: () =>
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					}),
+			});
+			return;
+		}
+
+		// Validate availability times contain only valid time formats
+		const timeValidationErrors = [];
+		Object.entries(availability).forEach(([day, timeSlots]) => {
+			if (timeSlots && timeSlots.trim()) {
+				const formattedTime = formatTime(timeSlots);
+				if (formattedTime !== timeSlots.replace(/\s+/g, "")) {
+					timeValidationErrors.push(
+						`${
+							day.charAt(0).toUpperCase() + day.slice(1)
+						} contains invalid characters. Use only numbers, colons, commas, and dashes.`
+					);
+				}
+			}
+		});
+
+		if (timeValidationErrors.length > 0) {
+			setAlertModal({
+				isOpen: true,
+				title: "Invalid Schedule Format",
+				message: `Please fix the following schedule errors:\n\n${timeValidationErrors.join(
+					"\n"
+				)}\n\nUse format: "5:30-6:00, 6:00-6:30"`,
 				onConfirm: () =>
 					setAlertModal({
 						isOpen: false,
@@ -246,6 +319,8 @@ function AddTutor() {
 				wing: wingNumber,
 				availability: constructAvailabilityString(),
 				is_available: 0, // Set availability to 0 (false) for new tutors
+				starttime: null, // Initialize starttime to null
+				totaltime: 0, // Initialize totaltime to 0
 				...formattedClasses,
 			};
 
@@ -448,7 +523,7 @@ function AddTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										First Name
+										First Name *
 									</label>
 									<input
 										type="text"
@@ -464,11 +539,10 @@ function AddTutor() {
 										required
 									/>
 								</div>
-								
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										Last Name
+										Last Name *
 									</label>
 									<input
 										type="text"
@@ -487,7 +561,7 @@ function AddTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										Facebook Name (optional)
+										Facebook Name
 									</label>
 									<input
 										type="text"
@@ -505,11 +579,11 @@ function AddTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										Email
+										Email *
 									</label>
 									<input
 										type="email"
-										placeholder="Enter email..."
+										placeholder="Enter email (e.g., student@imsa.edu)..."
 										value={newTutor.email}
 										onChange={(e) =>
 											handleInputChange(
@@ -524,26 +598,29 @@ function AddTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										IMSA ID
+										IMSA ID *
 									</label>
 									<input
-										type="number"
-										placeholder="Enter IMSA ID..."
+										type="text"
+										placeholder="Enter IMSA ID (numbers only)..."
 										value={newTutor.imsaid}
-										onChange={(e) =>
-											handleInputChange(
-												"imsaid",
-												e.target.value
-											)
-										}
-										min={10}
+										onChange={(e) => {
+											// Only allow numeric input
+											const value =
+												e.target.value.replace(
+													/[^0-9]/g,
+													""
+												);
+											handleInputChange("imsaid", value);
+										}}
 										className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+										required
 									/>
 								</div>
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										Hall
+										Hall *
 									</label>
 									<input
 										type="number"
@@ -563,7 +640,7 @@ function AddTutor() {
 
 								<div className="flex flex-col">
 									<label className="text-gray-700 font-bold mb-2">
-										Wing
+										Wing *
 									</label>
 									<select
 										value={newTutor.wing}
@@ -614,8 +691,8 @@ function AddTutor() {
 										</span>
 									</div>
 								</div>
-                
-                <UploadWidget
+
+								<UploadWidget
 									setImageUrl={(url) =>
 										handleInputChange("image", url)
 									}
@@ -661,7 +738,7 @@ function AddTutor() {
 								{/* Class Selection Section */}
 								<div className="border-t pt-6 mt-6">
 									<h3 className="text-xl font-bold mb-4 text-gray-700">
-										Class Selection
+										Class Selection *
 									</h3>
 
 									{Object.keys(classCategories).length ===
