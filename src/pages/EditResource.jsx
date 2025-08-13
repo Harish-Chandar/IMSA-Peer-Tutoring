@@ -312,7 +312,7 @@ function EditResource() {
                                     value={newLink.url}
                                     onChange={(e) => handleNewLinkChange("url", e.target.value)}
                                     className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                                    placeholder="https://..."
+                                    placeholder="https://google.com..."
                                 />
                             </div>
 
