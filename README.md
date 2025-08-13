@@ -1,6 +1,6 @@
 # IMSA Peer Tutoring Web Portal 
 
-**Peer Tutors @ IMSA** was created to help students at [IMSA (The Illinois Mathematics and Science Academy](https://imsa.edu)) find peer tutors, academic resources, and see recent announcements related to the tutoring program. It also gives residence counslors and adinistrators a unified, digital platform to post annoucements and easier manage tutor profiles. 
+**Peer Tutors @ IMSA** was created to help students at [IMSA (The Illinois Mathematics and Science Academy)](https://imsa.edu) find peer tutors, academic resources, and see recent announcements related to the tutoring program. It also gives residence counslors, teachers, and adinistrators a unified, digital platform to post annoucements, create course resources, and manage tutors. 
 
 ## Getting Started
 
@@ -40,28 +40,17 @@
    CLOUDINARY_API_SECRET=your_api_secret_here
    ```
 
-2. **JWT_SECRET:**  
-    1. Enter the following command into some UNIX terminal (i.e. WSL, Git Bash, MinGW): `openssl rand -base64 32`
+2. **Hosts and Ports:**
+    Customize the different ports and hosts specific to your computer. You can find out which values to use by running `npm start` (see **How to Start the Website**).
+
+3. **JWT_SECRET:**  
+    1. Enter the following command into some UNIX terminal (i.e. WSL, Git Bash, MinGW, a normal Mac/Linux terminal, etc): `openssl rand -base64 32`
     2. Replace `your_jwt_secret_here` in the `.env` file with the first line of the generated string.
 
-3. **Cloudinary Configuration:**  
+4. **Cloudinary Configuration:**  
     1. Sign up for a [Cloudinary](https://cloudinary.com/) account.
     2. Create a new Cloudinary project and obtain your `CLOUD_NAME`, `API_KEY`, and `API_SECRET`.
     3. Replace the placeholders in the `.env` file with your actual Cloudinary credentials.
----
-
-## Pull Request Guidelines
-- **Title:** Use a clear, descriptive title for your PR.
-- **Description:** Provide a detailed description of what your PR does, including any relevant issue numbers.
-- **Review:** Ensure your code is well-tested and follows the project's coding standards.
-- **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
-- **Style:** Follow the project's coding style and conventions. 4-space tabs, intentation convention, etc.
-
-## Grounds for Pull Request Rejection
-- **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
-- **Poor Code Quality:** Code that does not adhere to the project's coding standards or is poorly documented.
-- **Unclear Use Cases:** PRs that do not clearly explain the use case or functionality being added. Inclusive of this is PRs that changes, especially to core systems, that are not well explained.
-- **Unnecessary Changes:** Changes that do not contribute to the project or are not relevant to the current scope.
 
 ## Folder Structure
 
@@ -107,6 +96,19 @@
 - Express (backend server)
 - Cloudinary (for image storage)
 
+## Pull Request Guidelines
+- **Title:** Use a clear, descriptive title for your PR.
+- **Description:** Provide a detailed description of what your PR does, including any relevant issue numbers.
+- **Review:** Ensure your code is well-tested and follows the project's coding standards.
+- **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
+- **Style:** Follow the project's coding style and conventions. 4-space tabs, intentation convention, etc.
+
+## Grounds for Pull Request Rejection
+- **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
+- **Poor Code Quality:** Code that does not adhere to the project's coding standards or is poorly documented.
+- **Unclear Use Cases:** PRs that do not clearly explain the use case or functionality being added. Inclusive of this is PRs that changes, especially to core systems, that are not well explained.
+- **Unnecessary Changes:** Changes that do not contribute to the project or are not relevant to the current scope.
+
 ## Last Remarks 
 - Make sure to run the database setup scripts before starting the backend server for the first time.
 - The frontend and backend run separately; both must be started for the app to work.
@@ -115,6 +117,7 @@
 - If you make any changes to the frontend code, the React app will automatically reload to reflect those changes.
 - For any questions, contact the project administrators.
 
-### Project Adminstrators
+### For any inquiries, contact:
 - [Harish Chandar](https://www.linkedin.com/in/harish-chandar) - harishschandar@gmail.com
 - [Aarav Shah](https://www.linkedin.com/in/aarav-shah-aba4a631b) - aaravshah820@gmail.com
+
