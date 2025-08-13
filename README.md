@@ -14,15 +14,15 @@
    In the root directory, run `npm i` to install all required packages. Follow the steps under "Setting up Your Environment" to set up environment variables and configurations.
 
 4. **No Branches Needed:**  
-   Please work directly on your forked repository. Branching is not required since each contributor works on their own fork.
+   Please work directly on your forked repository, all pull requests (PRs) will be merged into main.
 
 5. **Making Contributions:**  
    - Make your changes and commit them to your fork.
     - Use descriptive, meaningful commit messages to explain your changes.
-   - Push your changes: `git push origin main`
+   - Push your changes to GitHub.
    - Ensure your fork is up to date with the main repository by syncing the latest changes from the main branch before making a PR.
-   - Submit a Pull Request (PR) from your fork to the main repository.
-   - Add a summary of your changes in the PR description.
+   - Submit a PR from your fork to the main repository.
+   - Add a list of your changes in the PR description. Be sure to mention any dependencies, updates, or configurations that need to be set up for your changes to work.
 
 ## Setting up Your Environment
 1. **Environment Variables:**  
@@ -55,6 +55,13 @@
 - **Description:** Provide a detailed description of what your PR does, including any relevant issue numbers.
 - **Review:** Ensure your code is well-tested and follows the project's coding standards.
 - **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
+- **Style:** Follow the project's coding style and conventions. 4-space tabs, intentation convention, etc.
+
+## Grounds for Pull Request Rejection
+- **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
+- **Poor Code Quality:** Code that does not adhere to the project's coding standards or is poorly documented.
+- **Unclear Use Cases:** PRs that do not clearly explain the use case or functionality being added. Inclusive of this is PRs that changes, especially to core systems, that are not well explained.
+- **Unnecessary Changes:** Changes that do not contribute to the project or are not relevant to the current scope.
 
 ## Folder Structure
 
