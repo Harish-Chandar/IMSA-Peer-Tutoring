@@ -152,7 +152,7 @@ function FindTutors() {
 				<div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
 					<div className="relative w-full sm:w-auto">
 						<button
-							className="w-full sm:w-40 p-2 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100 text-sm sm:text-base"
+							className="w-full sm:w-48 p-3 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold bg-white hover:bg-blue-100 text-base sm:text-lg"
 							onClick={() => setFilterDropdown(!filterDropdown)}
 						>
 							+ Add Filter
