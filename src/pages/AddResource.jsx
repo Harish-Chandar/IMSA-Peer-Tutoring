@@ -222,7 +222,7 @@ function ResourceForm() {
                                             className="border rounded-md px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             value={link.url}
                                             onChange={(e) => handleLinkChange(index, "url", e.target.value)}
-                                            placeholder="https://..."
+                                            placeholder="https://google.com..."
                                             required
                                         />
                                     </div>
