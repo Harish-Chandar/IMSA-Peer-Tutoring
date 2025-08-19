@@ -82,7 +82,7 @@ function Note({
 						<img
 							src={image && image.toString()}
 							alt="Bulletin attachment"
-							className="rounded-2xl h-[90vh]  max-w-[80vw] w-auto object-cover shadow-2xl"
+							className="rounded-2xl max-w-[90vw] md:h-[90vh] md:max-w-[80vw] w-auto object-cover shadow-2xl"
 							onError={(e) => {
 								e.target.style.display = "none";
 							}}

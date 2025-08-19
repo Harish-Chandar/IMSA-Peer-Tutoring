@@ -44,10 +44,11 @@ function Navbar() {
 				<h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 my-2 md:hidden">
 					<a
 						href="/"
+						onClick={() => setIsMenuOpen(false)}
 						className={
 							"!font-bold" +
-							(location.pathname === "/" && location.hash === ""
-								? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
+							(location.pathname === "/" && (location.hash === "" || location.hash === "#")
+								? " !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
 								: "")
 						}
 					>
@@ -58,6 +59,8 @@ function Navbar() {
 					<Link
 						to="/#bulletinboard"
 						onClick={(e) => {
+							setIsMenuOpen(false);
+							
 							// if we're already on the home page, prevent default navigation and smooth scroll
 							if (location.pathname === "/") {
 								e.preventDefault();
@@ -69,13 +72,13 @@ function Navbar() {
 										block: "start",
 									});
 								}
+								window.history.pushState(null, null, "/#bulletinboard");
 							}
 						}}
 						className={
 							"!font-bold" +
-							(location.pathname === "/" &&
-							location.hash === "#bulletinboard"
-								? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
+							(location.pathname === "/" && location.hash === "#bulletinboard"
+								? " !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
 								: "")
 						}
 					>
@@ -85,10 +88,11 @@ function Navbar() {
 				<h3 className="!bg-slate-50 bg-blue-500 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0 hover:text-slate-700">
 					<a
 						href="/resources"
+						onClick={() => setIsMenuOpen(false)}
 						className={
 							"!font-bold" +
 							(location.pathname === "/resources"
-								? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
+								? " !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
 								: "")
 						}
 					>
@@ -98,10 +102,11 @@ function Navbar() {
 				<h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0 hover:text-slate-700">
 					<a
 						href="/findTutors"
+						onClick={() => setIsMenuOpen(false)}
 						className={
 							"!font-bold" +
 							(location.pathname === "/findTutors"
-								? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
+								? " !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
 								: "")
 						}
 					>
@@ -112,10 +117,11 @@ function Navbar() {
 					<h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0 hover:text-slate-700">
 						<a
 							href="/adminDashboard"
+							onClick={() => setIsMenuOpen(false)}
 							className={
 								"!font-bold" +
 								(location.pathname === "/adminDashboard"
-									? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
+									? " !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
 									: "")
 							}
 						>
@@ -127,10 +133,11 @@ function Navbar() {
 					<h3 className="!bg-slate-50 text-slate-500 text-lg font-bold ml-10 md:ml-3 my-2 md:my-0 hover:text-slate-700">
 						<a
 							href="/login"
+							onClick={() => setIsMenuOpen(false)}
 							className={
 								"!font-bold" +
 								(location.pathname === "/login"
-									? "underline !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
+									? " !bg-blue-500 rounded-2xl p-1 px-2 !text-slate-50"
 									: "")
 							}
 						>
