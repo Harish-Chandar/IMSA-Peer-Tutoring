@@ -27,38 +27,42 @@ function Note({
 			>
 				<div className="p-4 flex-1 flex flex-col justify-between">
 					<div>
-						<h3 className="text-black font-bold text-lg mb-1">
+						<h3 className="text-black font-bold text-lg mb-1 break-words">
 							{title && title.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1">
+						<h3 className="text-black text-sm mb-1 break-words">
 							{course && course.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1">
+						<h3 className="text-black text-sm mb-1 break-words">
 							<b>Author:</b> {teachers && teachers.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1">
+						<h3 className="text-black text-sm mb-1 break-words">
 							<b>Date:</b> {date && date.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1">
+						<h3 className="text-black text-sm mb-1 break-words">
 							<b>Contact:</b> {contact && contact.toString()}
 						</h3>
-						<h3 className="text-black text-sm">
+						<h3 className="text-black text-sm break-words">
 							<b>Description:</b>{" "}
 							{description && description.toString()}
 						</h3>
 					</div>
 				</div>
-				<div className="p-2 h-[50vh] overflow-hidden">
-					<img
-						className="h-full w-full object-cover rounded-2xl cursor-pointer"
-						src={image && image.toString()}
-						alt="Bulletin attachment"
-						onError={(e) => {
-							e.target.style.display = "none";
-						}}
-						onClick={() => setModalOpen(true)}
-					/>
-				</div>
+                {
+                    (title.length <= 27 && description.length <= 75) && (
+                        <div className="p-2 h-[50vh] overflow-hidden">
+                            <img
+                                className="h-full w-full object-cover rounded-2xl cursor-pointer"
+                                src={image && image.toString()}
+                                alt="Bulletin attachment"
+                                onError={(e) => {
+                                    e.target.style.display = "none";
+                                }}
+                                onClick={() => setModalOpen(true)}
+                            />
+                        </div>
+                    )
+                }
 			</div>
 			{modalOpen && (
 				<div

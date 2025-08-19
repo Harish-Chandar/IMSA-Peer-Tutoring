@@ -26,7 +26,8 @@ function Bulletin() {
             });
 
             for (let i = 0; i < sortedData.length; i++) {
-                if(sortedData[i].event_date < new Date().toISOString()) {
+                console.log(sortedData[i].event_date);
+                if(sortedData[i].event_date < new Date().getDay()) {
                     sortedData.splice(i, 1);
                     i--;
                 }
