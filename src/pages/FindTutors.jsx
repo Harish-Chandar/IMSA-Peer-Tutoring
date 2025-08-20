@@ -221,7 +221,7 @@ function FindTutors() {
 						))}
 					</div>
 				</div>
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-6">
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center items-stretch mt-6">
 					{tutors.map((tutor, index) => (
 						<TutorCard
 							key={index}

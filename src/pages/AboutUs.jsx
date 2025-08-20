@@ -14,18 +14,18 @@ function AboutUs() {
 					</h2>
 				</div>
 			</div>
-			<div className="flex flex-row flex-wrap justify-center gap-3 gap-y-20 w-5/6 mt-8 pb-5 self-center mx-auto bg-slate-100">
+			<div className="flex flex-row flex-wrap justify-center gap-5 gap-y-32 w-5/6 mt-8 pb-5 self-center mx-auto bg-slate-100">
 				{/*All the individual dev cards */}
 				<div
-					className={`w-60 h-60 shadow-2xl rounded-lg m-5 mb-20 relative hover:scale-105 duration-300`}
+					className={`w-60 shadow-2xl rounded-lg m-3 mb-20 relative hover:scale-105 duration-300`}
 				>
 					<img
-						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
+						className="h-60 w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
 						src="AboutUsImages/aarav.png"
 						alt="placeholder"
 					/>
 					<div
-						className={`bg-slate-50 shadow-2xl rounded-2xl p-2 md:px-5 w-50 relative bottom-10`}
+						className={`bg-slate-50 shadow-2xl rounded-2xl p-2 md:px-5 w-full relative -mt-10 z-10`}
 					>
 						<h3 className="text-black text-xl">
 							<b>Aarav Shah</b>
@@ -43,15 +43,15 @@ function AboutUs() {
 					</div>
 				</div>
 				<div
-					className={`w-60 h-60 shadow-2xl rounded-lg m-5 mb-20 relative hover:scale-105 duration-300`}
+					className={`w-60 shadow-2xl rounded-lg m-3 mb-20 relative hover:scale-105 duration-300`}
 				>
 					<img
-						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
+						className="h-60 w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
 						src="AboutUsImages/harish.png"
 						alt="placeholder"
 					/>
 					<div
-						className={`bg-slate-50 shadow-2xl rounded-2xl p-2 md:px-5 w-50 relative bottom-10`}
+						className={`bg-slate-50 shadow-2xl rounded-2xl p-2 md:px-5 w-full relative -mt-10 z-10`}
 					>
 						<h3 className="text-black text-xl">
 							<b>Harish Chandar</b>
@@ -69,15 +69,15 @@ function AboutUs() {
 					</div>
 				</div>
 				<div
-					className={`w-60 h-60 shadow-2xl rounded-lg m-5 mb-20 relative hover:scale-105 duration-300`}
+					className={`w-60 shadow-2xl rounded-lg m-3 mb-20 relative hover:scale-105 duration-300`}
 				>
 					<img
-						className="self-end h-full w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
+						className="h-60 w-full object-cover rounded-2xl border-4 border-blue-300 hover:border-blue-500"
 						src="AboutUsImages/vishnu.png"
 						alt="placeholder"
 					/>
 					<div
-						className={`bg-slate-50 shadow-2xl rounded-2xl p-2 md:px-5 w-50 relative bottom-10`}
+						className={`bg-slate-50 shadow-2xl rounded-2xl p-2 md:px-5 w-full relative -mt-10 z-10`}
 					>
 						<h3 className="text-black text-xl">
 							<b>Vishnu Vijay</b>
@@ -114,9 +114,14 @@ function AboutUs() {
 							</i>
 						</h3>
 						<h3 className="text-gray-700 text-sm">
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
+							Hi! My name is Atharv, and I am junior I'm from
+							Naperville and currently live in 1504. In my free
+							time, I love listening to music, hanging out with my
+							friends around campus, lifting, or coding something
+							new. I'm involved in a couple of STEM activities
+							across campus like Qubit, Epoch, ACSL, and Math
+							Team. Feel free to reach out if you want to talk
+							about anything!
 						</h3>
 					</div>
 				</div>

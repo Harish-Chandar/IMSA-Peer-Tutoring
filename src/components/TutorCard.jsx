@@ -112,7 +112,7 @@ function TutorCard({
 	}
 
 	return (
-		<div className="relative w-64 flex flex-col items-center border-4 border-blue-300 hover:border-blue-500 shadow-lg rounded-3xl transition-colors duration-200">
+		<div className="relative w-64 h-full flex flex-col items-center border-4 border-blue-300 hover:border-blue-500 shadow-lg rounded-3xl transition-colors duration-200">
 			{/* Image container */}
 			<div className="w-full h-64 overflow-hidden rounded-b-none rounded-t-3xl z-0">
 				<img
@@ -126,20 +126,22 @@ function TutorCard({
 				/>
 			</div>
 
-			<div className="w-full bg-white -mt-12 z-10 rounded-2xl p-4 py-6 shadow-xl text-center flex-grow flex-col justify-center">
-				<h3 className="text-lg font-semibold font-sans">
-					{name && name.toString()}
-				</h3>
-				<p className="text-md text-gray-400 font-sans">
-					{hall && hall.toString()}, {assignWing(wing)} wing
-				</p>
-				<div className="text-md text-gray-700 font-sans mt-2 overflow-hidden">
-					<span className="font-bold">Classes: </span>
-					<span>{displayText && displayText.toString()}</span>
+			<div className="w-full bg-white -mt-12 z-10 rounded-2xl p-4 py-6 shadow-xl text-center flex flex-col justify-between flex-grow">
+				<div className="flex-grow">
+					<h3 className="text-lg font-semibold font-sans break-words">
+						{name && name.toString()}
+					</h3>
+					<p className="text-md text-gray-400 font-sans">
+						{hall && hall.toString()}, {assignWing(wing)} wing
+					</p>
+					<div className="text-md text-gray-700 font-sans mt-2 overflow-hidden">
+						<span className="font-bold">Classes: </span>
+						<span>{displayText && displayText.toString()}</span>
+					</div>
 				</div>
 				<a
 					href={routing_link && routing_link.toString()}
-					className="text-blue-500 font-medium mt-auto pt-2 block"
+					className="text-blue-500 font-medium pt-2 block mt-auto"
 				>
 					View Profile →
 				</a>

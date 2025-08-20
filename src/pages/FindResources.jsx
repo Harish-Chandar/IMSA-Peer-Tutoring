@@ -119,7 +119,7 @@ function FindResources() {
 							+ Add Filter
 						</button>
 						{filterDropdown && (
-							<div className="absolute mt-2 w-full sm:w-40 bg-white border border-gray-300 shadow-lg rounded-lg z-10 max-h-60 overflow-y-auto">
+							<div className="absolute mt-2 w-full sm:w-40 bg-white border border-gray-300 shadow-lg rounded-lg z-50 max-h-60 overflow-y-auto">
 								{departments.map((filter, index) => (
 									<button
 										key={index}
