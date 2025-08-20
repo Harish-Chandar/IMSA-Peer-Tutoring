@@ -49,7 +49,7 @@ function Note({
 					</div>
 				</div>
                 {
-                    (title.length <= 27 && description.length <= 75) && (
+                    (title.length <= 27 || description.length <= 75) && (
                         <div className="p-2 h-[50vh] overflow-hidden">
                             <img
                                 className="h-full w-full object-cover rounded-2xl cursor-pointer"
