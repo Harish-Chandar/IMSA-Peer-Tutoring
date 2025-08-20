@@ -325,52 +325,71 @@ app.put("/api/tutors/:id", authenticateAdmin, (req: Request, res: Response) => {
 		language,
 	} = req.body;
 
-	const sql = `UPDATE tutors SET 
-        fname = ?, lname = ?, fbname = ?, imsaid = ?, email = ?, blurb = ?, 
-        hall = ?, wing = ?, image = ?, availability = ?, 
-        physics = ?, chem = ?, biology = ?, sciother = ?, 
-        mathother = ?, mathcore = ?, cs = ?, language = ?
-        WHERE id = ?`;
+	db.get("SELECT image FROM tutors WHERE id = ?", [tutorId], (err, row: any) => {
+		if (err) return res.status(500).json({ error: err.message });
+		if (!row) return res.status(404).json({ error: "Tutor not found" });
 
-	db.run(
-		sql,
-		[
-			fname || "",
-			lname || "",
-			fbname || "",
-			imsaid || null,
-			email || "",
-			blurb || "",
-			hall || null,
-			wing || null,
-			image || "",
-			availability || "",
-			physics || "",
-			chem || "",
-			biology || "",
-			sciother || "",
-			mathother || "",
-			mathcore || "",
-			cs || "",
-			language || "",
-			tutorId,
-		],
-		function (err) {
-			if (err) {
-				console.error("tutor update error:", err);
-				res.status(500).json({ error: err.message });
-				return;
+		const oldImage = row.image;
+		const sql = `UPDATE tutors SET 
+			fname = ?, lname = ?, fbname = ?, imsaid = ?, email = ?, blurb = ?, 
+			hall = ?, wing = ?, image = ?, availability = ?, 
+			physics = ?, chem = ?, biology = ?, sciother = ?, 
+			mathother = ?, mathcore = ?, cs = ?, language = ?
+			WHERE id = ?`;
+
+		db.run(
+			sql,
+			[
+				fname || "",
+				lname || "",
+				fbname || "",
+				imsaid || null,
+				email || "",
+				blurb || "",
+				hall || null,
+				wing || null,
+				image || "",
+				availability || "",
+				physics || "",
+				chem || "",
+				biology || "",
+				sciother || "",
+				mathother || "",
+				mathcore || "",
+				cs || "",
+				language || "",
+				tutorId,
+			],
+			function (err) {
+				if (err) {
+					console.error("tutor update error:", err);
+					res.status(500).json({ error: err.message });
+					return;
+				}
+
+				if (this.changes === 0) {
+					return res.status(404).json({ error: "tutor not found" });
+				}
+
+				if (image && oldImage && oldImage !== image) {
+					const url = oldImage;
+					const parts = url.split("/");
+					const filename = parts[parts.length - 2] + "/" + parts[parts.length - 1];
+					const publicId = filename.split(".")[0];
+					console.log("Deleting old Cloudinary image:", publicId);
+
+					cloudinary.uploader.destroy(publicId, (error, result) => {
+						if (error) console.error("Error deleting image:", error);
+						else console.log("Cloudinary delete result:", result);
+					});
+				}
+
+				res.json({ message: "tutor updated successfully" });
 			}
-
-			// check if any rows were actually updated
-			if (this.changes === 0) {
-				return res.status(404).json({ error: "tutor not found" });
-			}
-
-			res.json({ message: "tutor updated successfully" });
-		}
-	);
+		);
+	});
 });
+
 
 // api route for retrieving parseable string of classes for a given tutor based on ID
 app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
