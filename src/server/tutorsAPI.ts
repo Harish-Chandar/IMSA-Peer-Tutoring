@@ -260,6 +260,21 @@ app.delete(
 		if (isNaN(tutorId) || tutorId < 0) {
 			return res.status(400).json({ error: "invalid tutor id" });
 		}
+		// Deletes the image from Cloudinary
+		db.get("SELECT image FROM tutors WHERE id = ?", [tutorId], (err, row: any) => {
+			if (err) return res.status(500).json({ error: err.message });
+			if (!row) return res.status(404).json({ error: "Tutor not found" });
+			console.log("Deleting image:", row.image);
+			const url = row.image; 
+			const parts = url.split("/");
+			const filename = parts[parts.length -2] + "/" + parts[parts.length - 1];
+			const publicId = filename.split(".")[0];  
+			// A long way to get public id from the full URL haha
+			console.log("Derived publicId:", publicId);
+			cloudinary.uploader.destroy(publicId, (error, result) => {
+				if (error) console.error("Error deleting image:", error);
+			});
+		});
 
 		const sql = "DELETE FROM tutors WHERE id = ?";
 
