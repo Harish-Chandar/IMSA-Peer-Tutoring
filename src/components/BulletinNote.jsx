@@ -27,42 +27,38 @@ function Note({
 			>
 				<div className="p-4 flex-1 flex flex-col justify-between">
 					<div>
-						<h3 className="text-black font-bold text-lg mb-1 break-words">
+						<h3 className="text-black font-bold text-lg mb-1">
 							{title && title.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1 break-words">
+						<h3 className="text-black text-sm mb-1">
 							{course && course.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1 break-words">
+						<h3 className="text-black text-sm mb-1">
 							<b>Author:</b> {teachers && teachers.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1 break-words">
+						<h3 className="text-black text-sm mb-1">
 							<b>Date:</b> {date && date.toString()}
 						</h3>
-						<h3 className="text-black text-sm mb-1 break-words">
+						<h3 className="text-black text-sm mb-1">
 							<b>Contact:</b> {contact && contact.toString()}
 						</h3>
-						<h3 className="text-black text-sm break-words">
+						<h3 className="text-black text-sm">
 							<b>Description:</b>{" "}
 							{description && description.toString()}
 						</h3>
 					</div>
 				</div>
-                {
-                    (title.length <= 27 || description.length <= 75) && (
-                        <div className="p-2 h-[50vh] overflow-hidden">
-                            <img
-                                className="h-full w-full object-cover rounded-2xl cursor-pointer"
-                                src={image && image.toString()}
-                                alt="Bulletin attachment"
-                                onError={(e) => {
-                                    e.target.style.display = "none";
-                                }}
-                                onClick={() => setModalOpen(true)}
-                            />
-                        </div>
-                    )
-                }
+                <div className="p-2 h-[50vh] overflow-hidden">
+					<img
+						className="h-full w-full object-cover rounded-2xl cursor-pointer"
+						src={image && image.toString()}
+						alt="Bulletin attachment"
+						onError={(e) => {
+							e.target.style.display = "none";
+						}}
+						onClick={() => setModalOpen(true)}
+					/>
+				</div>
 			</div>
 			{modalOpen && (
 				<div
