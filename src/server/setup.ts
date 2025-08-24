@@ -100,7 +100,17 @@ function mapHeaderToField(header: string): string | null {
 	if (header.includes("computer science")) return "cs";
 	if (header.includes("world language") || header === "language")
 		return "language";
-	// ignored: availability/courses if not present
+
+	// New availability fields
+	if (header.includes("sunday availability")) return "sunday_avail";
+	if (header.includes("monday availability")) return "monday_avail";
+	if (header.includes("tuesday availability")) return "tuesday_avail";
+	if (header.includes("wednesday availability")) return "wednesday_avail";
+	if (header.includes("thursday availability")) return "thursday_avail";
+	if (header.includes("friday availability")) return "friday_avail";
+	if (header.includes("saturday availability")) return "saturday_avail";
+
+	// ignored: timestamp, school day location, additional help, and other fields not needed in database
 	return null;
 }
 
@@ -114,6 +124,57 @@ function truncateBlurb(b: string): string {
 	if (!b) return "";
 	if (b.length <= max) return b;
 	return b.slice(0, max);
+}
+
+// Convert new CSV availability format to database format
+function convertAvailabilityToDbFormat(tutorData: CsvTutorRow): string {
+	const dayMap = {
+		sunday: tutorData.sunday_avail || "",
+		monday: tutorData.monday_avail || "",
+		tuesday: tutorData.tuesday_avail || "",
+		wednesday: tutorData.wednesday_avail || "",
+		thursday: tutorData.thursday_avail || "",
+		friday: tutorData.friday_avail || "",
+		saturday: tutorData.saturday_avail || "",
+	};
+
+	const availabilityParts: string[] = [];
+
+	Object.entries(dayMap).forEach(([day, times]) => {
+		if (times && times.trim()) {
+			// Clean up the times format and convert to expected format
+			const cleanTimes = times
+				.trim()
+				.split(",")
+				.map((time) => time.trim())
+				.filter((time) => time.length > 0)
+				.join(",");
+
+			if (cleanTimes) {
+				availabilityParts.push(`${day},${cleanTimes}`);
+			}
+		}
+	});
+
+	return availabilityParts.join(";");
+}
+
+// Handle Google Drive image URLs
+function processImageUrl(imageUrl: string): string {
+	if (!imageUrl || imageUrl.trim() === "") {
+		return "";
+	}
+
+	// Convert Google Drive URLs to direct image URLs
+	if (imageUrl.includes("drive.google.com") && imageUrl.includes("id=")) {
+		const fileIdMatch = imageUrl.match(/id=([a-zA-Z0-9_-]+)/);
+		if (fileIdMatch) {
+			const fileId = fileIdMatch[1];
+			return `https://drive.google.com/uc?export=view&id=${fileId}`;
+		}
+	}
+
+	return imageUrl;
 }
 
 // Upload image URL to Cloudinary and return the new URL
@@ -171,6 +232,13 @@ export interface CsvTutorRow {
 	mathother?: string;
 	cs?: string;
 	language?: string;
+	sunday_avail?: string;
+	monday_avail?: string;
+	tuesday_avail?: string;
+	wednesday_avail?: string;
+	thursday_avail?: string;
+	friday_avail?: string;
+	saturday_avail?: string;
 }
 
 function parseCsvToTutors(csvPath: string): CsvTutorRow[] {
@@ -197,7 +265,7 @@ function parseCsvToTutors(csvPath: string): CsvTutorRow[] {
 			blurb: truncateBlurb(get("blurb")),
 			hall: toIntOrNull(get("hall")),
 			wing: toIntOrNull(get("wing")),
-			image: get("image"),
+			image: processImageUrl(get("image")),
 			physics: get("physics"),
 			chem: get("chem"),
 			biology: get("biology"),
@@ -206,6 +274,13 @@ function parseCsvToTutors(csvPath: string): CsvTutorRow[] {
 			mathother: get("mathother"),
 			cs: get("cs"),
 			language: get("language"),
+			sunday_avail: get("sunday_avail"),
+			monday_avail: get("monday_avail"),
+			tuesday_avail: get("tuesday_avail"),
+			wednesday_avail: get("wednesday_avail"),
+			thursday_avail: get("thursday_avail"),
+			friday_avail: get("friday_avail"),
+			saturday_avail: get("saturday_avail"),
 		};
 
 		// basic validation
@@ -280,6 +355,9 @@ function insertTutors(
 		db.serialize(() => {
 			const stmt = db.prepare(sql);
 			tutors.forEach((t, i) => {
+				// Convert availability format
+				const availabilityString = convertAvailabilityToDbFormat(t);
+
 				stmt.run(
 					t.fname ?? "",
 					t.lname ?? "",
@@ -294,7 +372,7 @@ function insertTutors(
 					0, // approvedtime
 					null, // starttime
 					0, // is_available
-					"", // availability
+					availabilityString, // availability
 					"", // courses
 					t.physics ?? "",
 					t.chem ?? "",
@@ -313,6 +391,9 @@ function insertTutors(
 							);
 						} else {
 							ok++;
+							console.log(
+								`✓ Inserted: ${t.fname} ${t.lname} (${t.email})`
+							);
 						}
 					}
 				);
@@ -345,7 +426,6 @@ async function main() {
 		process.exit(1);
 	}
 
-	console.log("=== IMSA Peer Tutoring Setup ===");
 	console.log("Parsing CSV and uploading images to Cloudinary...");
 
 	const tutors = parseCsvToTutors(csvPath);
