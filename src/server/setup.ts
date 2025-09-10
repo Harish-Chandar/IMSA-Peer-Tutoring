@@ -83,7 +83,8 @@ function mapHeaderToField(header: string): string | null {
 		return "email";
 	if (header.includes("short blurb") || header === "blurb") return "blurb";
 	if (header === "hall" || header.includes("hall")) return "hall";
-	if (header === "wing" || header.includes("wing")) return "wing";
+	// Only map the actual "Wing" column, not other columns that contain "wing"
+	if (header === "wing") return "wing";
 	if (
 		header.includes("upload an image") ||
 		header === "image" ||
@@ -117,6 +118,25 @@ function mapHeaderToField(header: string): string | null {
 function toIntOrNull(val: string): number | null {
 	const n = parseInt(val, 10);
 	return Number.isFinite(n) ? n : null;
+}
+
+function parseWing(val: string): number | null {
+	if (!val || val.trim() === "") return null;
+	
+	const trimmed = val.trim().toUpperCase();
+	
+	// If it's a single letter, convert to number (A=1, B=2, C=3, D=4)
+	if (/^[A-D]$/.test(trimmed)) {
+		return trimmed.charCodeAt(0) - 64; // A=65, so 65-64=1
+	}
+	
+	// If it's already a number between 1-4, return it
+	const num = parseInt(trimmed, 10);
+	if (Number.isFinite(num) && num >= 1 && num <= 4) {
+		return num;
+	}
+	
+	return null;
 }
 
 function truncateBlurb(b: string): string {
@@ -264,7 +284,7 @@ function parseCsvToTutors(csvPath: string): CsvTutorRow[] {
 			email: get("email"),
 			blurb: truncateBlurb(get("blurb")),
 			hall: toIntOrNull(get("hall")),
-			wing: toIntOrNull(get("wing")),
+			wing: parseWing(get("wing")),
 			image: processImageUrl(get("image")),
 			physics: get("physics"),
 			chem: get("chem"),

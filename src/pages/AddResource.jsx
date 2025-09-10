@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import { isTokenExpired, getTokenAccess, departments } from "../util.ts";
-import UploadWidget from "../components/UploadWidget.js";
 import AlertModal from "../components/AlertModal.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
@@ -384,13 +383,6 @@ function ResourceForm() {
 								+ Add Another Link
 							</button>
 						</div>
-
-						{/* Upload Widget */}
-						<UploadWidget
-							setImageUrl={(url) =>
-								handleLinkChange(0, "url", url)
-							}
-						/>
 
 						{/* Submit Button */}
 						<button
