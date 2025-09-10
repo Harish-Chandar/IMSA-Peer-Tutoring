@@ -126,7 +126,7 @@ function TutorCard({
 				/>
 			</div>
 
-			<div className="w-full bg-white -mt-12 z-10 rounded-2xl p-4 py-6 shadow-xl text-center flex flex-col justify-between flex-grow">
+			<div className="w-full bg-white z-10 rounded-b-3xl p-4 py-6 shadow-xl text-center flex flex-col justify-between flex-grow">
 				<div className="flex-grow">
 					<h3 className="text-lg font-semibold font-sans break-words">
 						{name && name.toString()}
