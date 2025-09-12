@@ -62,9 +62,10 @@ function AboutUs() {
 							</i>
 						</h3>
 						<h3 className="text-gray-700 text-sm">
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
+							Hi! I'm Harish Chandar, a current senior in 1505.
+                            I'm extremely interested in computer science and AI.
+                            I love computer science and programming, and am also a senior developer on the Learning Enrichment Engine.
+                            I'm also involved in Congressional Debate, and enjoy math and biology as well. 
 						</h3>
 					</div>
 				</div>
