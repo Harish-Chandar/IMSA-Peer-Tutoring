@@ -21,12 +21,13 @@
     - Use descriptive, meaningful commit messages to explain your changes.
    - Push your changes to GitHub.
    - Ensure your fork is up to date with the main repository by syncing the latest changes from the main branch before making a PR.
-   - Submit a PR from your fork to the main repository.
+   - Submit a Pull Request (PR) from your fork to the main repository.
    - Add a list of your changes in the PR description. Be sure to mention any dependencies, updates, or configurations that need to be set up for your changes to work.
+      - If changes not mentioned in the PR description are made to the code, the PR will be rejected.
 
 ## Setting up Your Environment
 1. **Environment Variables:**  
-   Create a `.env` file in the root directory with the following content:
+   Create a `.env` file in the root directory and the `src/server/` directory with the following content:
    ```keyvalue
    DBHOST=5000
    REACT_APP_HOST=localhost
@@ -38,6 +39,11 @@
    CLOUDINARY_CLOUD_NAME=your_cloud_name_here
    CLOUDINARY_API_KEY=your_api_key_here
    CLOUDINARY_API_SECRET=your_api_secret_here
+
+   # Ubuntu-specific settings to fix React Refresh issues
+   # FAST_REFRESH=false
+   # WDS_SOCKET_HOST=localhost
+   # CHOKIDAR_USEPOLLING=true
    ```
 
 2. **Hosts and Ports:**
@@ -52,6 +58,9 @@
     2. Create a new Cloudinary project and obtain your `CLOUD_NAME`, `API_KEY`, and `API_SECRET`.
     3. Replace the placeholders in the `.env` file with your actual Cloudinary credentials.
 
+5. **Finishing Setup**
+   * Copy this `.env` file to `src/server/.env` 
+
 ## Folder Structure
 
 - **root directory**: Contains frontend code, configuration files, and static assets.
@@ -62,10 +71,10 @@
 
 ## How to Start the Website
 
-1. **Terminal 1 (Frontend):**
+1. **Terminal 1 (ReactJS Client):**
    - Run `npm start` in the root directory to start the React frontend.
 
-2. **Terminal 2 (Backend):**
+2. **Terminal 2 (ExpressJS Server):**
    - Run `cd src/server` then `npm start` to start the Express backend server.
 
 ## How to Create and Populate the Database
@@ -101,7 +110,7 @@
 - **Description:** Provide a detailed description of what your PR does, including any relevant issue numbers.
 - **Review:** Ensure your code is well-tested and follows the project's coding standards.
 - **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
-- **Style:** Follow the project's coding style and conventions. 4-space tabs, intentation convention, etc.
+- **Style:** Follow the project's coding style and conventions. 4-space tabs, indentation convention, etc.
 
 ## Grounds for Pull Request Rejection
 - **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
