@@ -37,8 +37,8 @@ function AboutUs() {
 							<i>
 								<b>Lead Developer</b>
 							</i>
-						</h3>
-						<h3 className="text-gray-700 text-sm">
+						</p>
+						<h3 className="text-md text-gray-700 font-sans mt-2 overflow-hidden">
 							Hi! I'm Aarav Shah, a current senior at IMSA. I love computer science, and hope to go into the industry someday! I'm involved with many other organizations on campus too, including Learning Enrichment Engine, IMSA.ai, TEDxIMSA, and Mu Alpha Theta. In my free time, I love to play chess and read! Feel free to visit ashah80.github.io to learn more about me, or reach out!
 						</h3>
 					</div>
@@ -216,9 +216,12 @@ function AboutUs() {
 							</i>
 						</p>
 						<div className="text-md text-gray-700 font-sans mt-2 overflow-hidden">
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
+							Hi, my name is Krithik. I am currently a junior living in 1504 A wing. 
+                            My interests include Engineering and Computer Science. 
+                            Whenever I am not at school, I like to play tennis and listen to music. 
+                            Some clubs I am involved in are FRC, Epoch, and TAS. 
+                            My favorite subjects are Physics and Chemistry. 
+                            If you have any questions let me know!
 						</div>
 					</div>
 				</div>
