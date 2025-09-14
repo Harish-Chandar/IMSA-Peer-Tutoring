@@ -218,9 +218,12 @@ function AboutUs() {
 							</i>
 						</p>
 						<div className="text-md text-gray-700 font-sans mt-2 overflow-hidden">
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
+							Hi, my name is Krithik. I am currently a junior living in 1504 A wing. 
+                            My interests include Engineering and Computer Science. 
+                            Whenever I am not at school, I like to play tennis and listen to music. 
+                            Some clubs I am involved in are FRC, Epoch, and TAS. 
+                            My favorite subjects are Physics and Chemistry. 
+                            If you have any questions let me know!
 						</div>
 					</div>
 				</div>
