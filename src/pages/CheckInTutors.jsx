@@ -35,8 +35,7 @@ function CheckInTutors() {
 	const [alertMessage, setAlertMessage] = useState("");
 	const [alertTitle, setAlertTitle] = useState("");
 	const [pendingTutor, setPendingTutor] = useState(null);
-	const [pendingElapsed, setPendingElapsed] = useState(0);
-	const [pendingHours, setPendingHours] = useState(0);
+	const [inputHours, setInputHours] = useState(0);
 
 	const fetchTutors = async () => {
 		// Capture scroll position to restore after data refresh (prevents jumps)
@@ -85,79 +84,58 @@ function CheckInTutors() {
 			setError("No start time for this tutor.");
 			return;
 		}
+		
 		const now = Date.now();
 		const elapsedMs = now - tutor.starttime;
 		const elapsedHours = elapsedMs / 3600000;
+		
 		setPendingTutor(tutor);
-		setPendingElapsed(elapsedHours);
-		setPendingHours(Number(elapsedHours.toFixed(2)));
-		setAlertTitle("RC Override: End Session");
+		setInputHours(Number(elapsedHours.toFixed(2)));
+		setAlertTitle("End Session - Add Hours");
 		setAlertMessage(
-			`The tutor has been active for ${elapsedHours.toFixed(
-				2
-			)} hours. Are you sure you want to end the session and approve the following number of hours for the tutor?`
+			`The tutor has been active for ${elapsedHours.toFixed(2)} hours. Enter the number of hours to add to their total time:`
 		);
 		setShowAlert(true);
 	};
 
-	// Called when RC accepts/declines in modal
 	const handleAlertConfirm = async (accept) => {
 		setShowAlert(false);
-		if (!pendingTutor) return;
-		if (accept) {
-			try {
-				const token = localStorage.getItem("token");
-				// Convert hours to ms for backend
-				const msToAdd = Number(pendingHours) * 3600000;
-				await fetch(
-					`${baseUrl}/api/tutors/${pendingTutor.id}/approvehours`,
-					{
-						method: "PATCH",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
-						body: JSON.stringify({
-							approvedtime: msToAdd,
-						}),
-					}
-				);
-				await handleCheckOut(pendingTutor.id, true);
-			} catch (err) {
-				setError("Failed to approve hours and end session");
-			}
+		if (!pendingTutor || !accept) {
+			setPendingTutor(null);
+			setInputHours(0);
+			return;
 		}
-		// If accept is false (cancel), do nothing - tutor stays active
-		setPendingTutor(null);
-		setPendingElapsed(0);
-		setPendingHours(0);
-	};
 
-	const handleCheckOut = async (id, skipModal = false) => {
-		setError("");
-		if (!skipModal) {
-			const tutor = tutors.find((t) => t.id === id);
-			if (tutor) {
-				handleEndSession(tutor);
-				return;
-			}
-		}
 		try {
 			const token = localStorage.getItem("token");
 			const response = await fetch(
-				`${baseUrl}/api/tutors/${id}/checkout`,
+				`${baseUrl}/api/tutors/${pendingTutor.id}/checkout`,
 				{
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
 					},
+					body: JSON.stringify({
+						hoursToAdd: inputHours,
+					}),
 				}
 			);
+			
 			if (!response.ok) throw new Error("Check-out failed");
 			await fetchTutors();
 		} catch (err) {
-			setError("Check-out failed");
+			setError("Failed to end session");
+		}
+		
+		setPendingTutor(null);
+		setInputHours(0);
+	};
+
+	const handleCheckOut = (id) => {
+		const tutor = tutors.find((t) => t.id === id);
+		if (tutor) {
+			handleEndSession(tutor);
 		}
 	};
 
@@ -335,9 +313,7 @@ function CheckInTutors() {
 													onClick={(e) => {
 														e.preventDefault();
 														e.stopPropagation();
-														handleCheckOut(
-															tutor.id
-														);
+														handleCheckOut(tutor.id);
 													}}
 												>
 													End
@@ -361,9 +337,9 @@ function CheckInTutors() {
 				message={alertMessage}
 				onConfirm={handleAlertConfirm}
 				title={alertTitle}
-				inputValue={pendingHours}
-				onInputChange={(val) => setPendingHours(val)}
-				inputLabel={"Hours to approve"}
+				inputValue={inputHours}
+				onInputChange={(val) => setInputHours(Number(val) || 0)}
+				inputLabel={"Hours to add to total time"}
 			/>
 			<Footer />
 		</div>
