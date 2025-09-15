@@ -36,8 +36,6 @@ function ResourceDetails() {
                 // Handle links data
                 if (data.links && Array.isArray(data.links) && data.links.length > 0) {
                     setLinks(data.links);
-                } else if (data.url) {
-                    setLinks([{ link_id: 0, label: "Main Resource", url: data.url }]);
                 } else {
                     setLinks([]);
                 }
