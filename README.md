@@ -100,9 +100,9 @@
 
 ## Core Dependencies 
 - Node.js 
-- React (frontend)
+- React JS (frontend)
 - SQLite3 (database is created automatically by scripts)
-- Express (backend server)
+- Express JS (backend server)
 - Cloudinary (for image storage)
 
 ## Pull Request Guidelines
@@ -124,6 +124,7 @@
 - If you encounter any issues, check the console for error messages and ensure your environment variables are set correctly.
 - If you make any changes to the server code, restart the backend server to apply the changes.
 - If you make any changes to the frontend code, the React app will automatically reload to reflect those changes.
+- If your pull request gets approved, please let the Peer Tutor Coordinator know so that they may contact ITS and update the website.
 - For any questions, contact the project administrators.
 
 ### For any inquiries, contact:
