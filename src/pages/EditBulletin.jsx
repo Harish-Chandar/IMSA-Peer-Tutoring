@@ -97,8 +97,8 @@ function EditBulletin() {
 			const today = new Date();
 			const eventDate = new Date(newPost.event_date);
 
-			// If eventDate is before today, show AlertModal
-            if (eventDate < today.setHours(0, 0, 0, 0)) {
+			// Added 1 so a post can be made for the same day
+			if (eventDate.getDay() + 1 < today.getDay()) {
 				const inputMonth = eventDate.getMonth();
 				const inputDate = eventDate.getDate();
 				const thisYear = today.getFullYear();
@@ -142,7 +142,7 @@ function EditBulletin() {
 						author: newPost.author || "Admin",
 						contact_info: newPost.contact_info,
 						highpriority: newPost.highpriority,
-                        image:  newPost.image,
+                        image:  newPost.image || "/BulletinImages/imsa.jpg",
 					}),
 				});
 
