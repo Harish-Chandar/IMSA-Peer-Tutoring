@@ -159,9 +159,10 @@ function AboutUs() {
 							</i>
 						</p>
 						<div className="text-md text-gray-700 font-sans mt-2 overflow-hidden">
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
+							Hi, I'm Ian! I'm in the IMSA class of 2027, and some of my academic interests are mathematics and computer science. 
+                            In my free time, I like to play and watch soccer. 
+                            Some other things that I'm involved in around campus include the Learning Enrichment Engine, ASIA, MAO, and The Acronym. 
+                            Check out my website ianwa09.github.io to learn more about me!
 						</div>
 					</div>
 				</div>
