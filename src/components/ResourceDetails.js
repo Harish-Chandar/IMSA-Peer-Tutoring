@@ -75,7 +75,7 @@ function ResourceDetails() {
             <div className="bg-[#F1F1F1] min-h-screen pt-16">
                 <Navbar />
                 <div className="flex justify-center items-center h-64">
-                    <div className="text-lg text-gray-600">No resource found</div>
+                    <div className="text-lg text-gray-600">No class found</div>
                 </div>
             </div>
         );
