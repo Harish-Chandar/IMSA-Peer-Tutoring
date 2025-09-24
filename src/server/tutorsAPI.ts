@@ -210,8 +210,8 @@ app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 	// Explicitly set is_available to 0 on creation to avoid inconsistent active state
 	const sql = `INSERT INTO tutors 
 	(fname, lname, fbname, imsaid, email, blurb, hall, wing, image, availability, 
-	 physics, chem, biology, sciother, mathother, mathcore, cs, language, totaltime, approvedtime, starttime, is_available) 
-	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NULL, 0)`;
+	 physics, chem, biology, sciother, mathother, mathcore, cs, language, totaltime, starttime, is_available) 
+	 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NULL, 0)`;
 
 	db.run(
 		sql,
@@ -1052,39 +1052,40 @@ app.post(
 	}
 );
 
-// Check-out a tutor (end session)
+// Check-out a tutor (end session with override hours)
 app.post(
 	"/api/tutors/:id/checkout",
 	authenticateAdmin,
 	(req: Request, res: Response) => {
 		const tutorId = parseInt(req.params.id);
+		const { hoursToAdd } = req.body;
+		
 		if (isNaN(tutorId) || tutorId < 0) {
 			return res.status(400).json({ error: "Invalid tutor ID" });
 		}
+		
+		const hoursNum = Number(hoursToAdd);
+		if (isNaN(hoursNum) || hoursNum < 0) {
+			return res.status(400).json({ error: "Invalid hours value" });
+		}
+		
 		// Get current starttime and totaltime
 		db.get(
 			"SELECT starttime, totaltime FROM tutors WHERE id = ?",
 			[tutorId],
-			(
-				err: Error | null,
-				row:
-					| { starttime: number | null; totaltime: number | null }
-					| undefined
-			) => {
+			(err: Error | null, row: { starttime: number | null; totaltime: number | null } | undefined) => {
 				if (err) {
 					console.error("Check-out fetch error:", err);
-					return res
-						.status(500)
-						.json({ error: "Error fetching tutor data" });
+					return res.status(500).json({ error: "Error fetching tutor data" });
 				}
 				if (!row || row.starttime == null) {
-					return res
-						.status(400)
-						.json({ error: "Tutor is not checked in" });
+					return res.status(400).json({ error: "Tutor is not checked in" });
 				}
-				const now = Date.now();
-				const elapsed = now - row.starttime;
-				const newTotal = (row.totaltime || 0) + elapsed;
+				
+				// Convert hours to milliseconds and add to totaltime
+				const hoursInMs = hoursNum * 3600000;
+				const newTotal = (row.totaltime || 0) + hoursInMs;
+				
 				// Set starttime to null, update totaltime, set is_available=0 (inactive)
 				db.run(
 					"UPDATE tutors SET starttime = NULL, totaltime = ?, is_available = 0 WHERE id = ?",
@@ -1092,19 +1093,15 @@ app.post(
 					function (err2) {
 						if (err2) {
 							console.error("Check-out update error:", err2);
-							return res
-								.status(500)
-								.json({ error: "Error checking out tutor" });
+							return res.status(500).json({ error: "Error checking out tutor" });
 						}
 						if (this.changes === 0) {
-							return res
-								.status(404)
-								.json({ error: "Tutor not found" });
+							return res.status(404).json({ error: "Tutor not found" });
 						}
 						res.json({
-							message: "Tutor checked out",
-							elapsed,
+							message: "Tutor checked out successfully",
 							totaltime: newTotal,
+							hoursAdded: hoursNum
 						});
 					}
 				);
@@ -1113,70 +1110,7 @@ app.post(
 	}
 );
 
-// PATCH endpoint to approve hours for a tutor (RC override)
-app.patch(
-	"/api/tutors/:id/approvehours",
-	authenticateAdmin,
-	(req: Request, res: Response) => {
-		const tutorId = parseInt(req.params.id);
-		let { approvedtime } = req.body;
-		if (isNaN(tutorId) || tutorId < 0) {
-			return res.status(400).json({ error: "Invalid tutor ID" });
-		}
-		approvedtime = Number(approvedtime);
-		if (isNaN(approvedtime) || approvedtime < 0) {
-			return res
-				.status(400)
-				.json({ error: "Invalid approvedtime value" });
-		}
-		// Get current approvedtime and totaltime
-		db.get(
-			"SELECT approvedtime, totaltime FROM tutors WHERE id = ?",
-			[tutorId],
-			(err, row: any) => {
-				if (err) {
-					console.error(
-						"Error fetching tutor for approve hours:",
-						err
-					);
-					return res
-						.status(500)
-						.json({ error: "Error fetching tutor data" });
-				}
-				if (!row) {
-					return res.status(404).json({ error: "Tutor not found" });
-				}
-				const newApproved = (row.approvedtime || 0) + approvedtime;
-				const newTotal = (row.totaltime || 0) + approvedtime;
-				db.run(
-					"UPDATE tutors SET approvedtime = ?, totaltime = ? WHERE id = ?",
-					[newApproved, newTotal, tutorId],
-					function (err2) {
-						if (err2) {
-							console.error(
-								"Error updating approved/totaltime:",
-								err2
-							);
-							return res
-								.status(500)
-								.json({ error: "Error updating tutor hours" });
-						}
-						if (this.changes === 0) {
-							return res
-								.status(404)
-								.json({ error: "Tutor not found" });
-						}
-						res.json({
-							message: "Tutor hours updated",
-							approvedtime: newApproved,
-							totaltime: newTotal,
-						});
-					}
-				);
-			}
-		);
-	}
-);
+
 
 app.post(
     "/api/upload-image",

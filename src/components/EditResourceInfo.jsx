@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
 
-import { isTokenExpired, departments, getTokenAccess } from "../util.ts";
+import { isTokenExpired, getTokenAccess, departments } from "../util.ts";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
@@ -32,8 +32,6 @@ function EditResourceInfo() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    
 
     // Fetch resource data
     useEffect(() => {

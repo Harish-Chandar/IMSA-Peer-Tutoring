@@ -115,15 +115,15 @@ function FindTutors() {
 			{/* Hero Section */}
 			<div className="w-full h-16 pt-16"></div>
 			<div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
-				<div className="self-start flex flex-col text-left h-full justify-center py-8">
-					<h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
-						Find <span className="text-blue-500">tutors</span>{" "}
-						below!
-					</h1>
-					<h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
-						Sort by hall or subject!
-					</h2>
-				</div>
+		       <div className="flex flex-col items-center text-center h-full justify-center py-8 w-full">
+			       <h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
+				       Find <span className="text-blue-500">tutors</span>{" "}
+				       below!
+			       </h1>
+			       <h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
+				       Sort by hall or subject!
+			       </h2>
+		       </div>
 				<img
 					src="GeneralImages/smartguy.png"
 					alt="Tutor Hero"
