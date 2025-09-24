@@ -6,67 +6,62 @@ export const sampleResources = [
         email: "pgadde@imsa.edu",
         course: "Object Oriented Programming",
         department: "Computer Science",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Atharv Kanchi",
         email: "akanchi2@imsa.edu",
         course: "Advanced Programming",
         department: "Computer Science",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Krithik",
         email: "ksenthilkumar@imsa.edu",
         course: "SI Physics",
         department: "Science",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Ian Wang",
         email: "iwang@imsa.edu",
         course: "BC 1",
         department: "Math",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Harish Chandar",
         email: "hchandar@imsa.edu",
         course: "Foundations of Healthy Living",
         department: "Wellness",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Vishnu Vijay",
         email: "vvijay@imsa.edu",
         course: "Creative Writing",
         department: "English",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Aarav Shah",
         email: "ashah@imsa.edu",
         course: "BC 2",
         department: "Math",
-        url: "https://khanacademy.org/"
     },
     {
         teacher: "Ms. Zuidema",
         email: "mzuidema@imsa.edu",
         course: "Spanish IV",
         department: "World Languages",
-        url: "https://conjuguemos.com/"
     },
 ];
 
 export const sampleLinks = [
-    { resource_id: 1, label: "Integration Techniques", url: "https://khanacademy.org/integration" },
-    { resource_id: 2, label: "Differential Equations", url: "https://khanacademy.org/diffeq" },
-    { resource_id: 2, label: "Periodic Table", url: "https://chemguide.co.uk/periodictable" },
-    { resource_id: 3, label: "Reaction Mechanisms", url: "https://chemguide.co.uk/mechanisms" }
+    { resourceIndex: 0, label: "Khan Academy Tutorials", url: "https://khanacademy.org/cs" },
+    { resourceIndex: 1, label: "Advanced Programming Guide", url: "https://khanacademy.org/ap" },
+    { resourceIndex: 1, label: "GitHub Code Examples", url: "https://github.com/examples/ap" },
+    { resourceIndex: 2, label: "Physics Formulas", url: "https://physicsformulas.com" },
+    { resourceIndex: 3, label: "Calculus Reference", url: "https://mathreference.com/calculus" },
+    { resourceIndex: 7, label: "Spanish Conjugation Practice", url: "https://conjuguemos.com/practice" }
 ];
 
 export function populateResources(db: any, sampleResources: any[], sampleLinks: any[], callback: () => void) {
+
     db.run("DELETE FROM resource_links", (err: Error | null) => {
         if (err) {
             console.error("Error clearing resource_links table:", err.message);
@@ -79,7 +74,7 @@ export function populateResources(db: any, sampleResources: any[], sampleLinks: 
                 callback();
                 return;
             }
-            const insertResource = `INSERT INTO resources (teacher, email, course, department, url, search_field) VALUES (?, ?, ?, ?, ?, ?)`;
+            const insertResource = `INSERT INTO resources (teacher, email, course, department, search_field) VALUES (?, ?, ?, ?, ?)`;
             let completed = 0;
             if (sampleResources.length === 0) {
                 callback();
@@ -94,7 +89,6 @@ export function populateResources(db: any, sampleResources: any[], sampleLinks: 
                         resource.email,
                         resource.course,
                         resource.department,
-                        resource.url,
                         searchField,
                     ],
                     function (err: Error | null) {
@@ -110,7 +104,7 @@ export function populateResources(db: any, sampleResources: any[], sampleLinks: 
                             const resourceId = this.lastID;
                             const insertLink = `INSERT INTO resource_links (resource_id, label, url) VALUES (?, ?, ?)`;
                             const linksForThisResource = sampleLinks.filter(
-                                (link) => link.resource_id === index + 1
+                                (link) => link.resourceIndex === index
                             );
                             linksForThisResource.forEach((link) => {
                                 db.run(

@@ -137,4 +137,4 @@ export const classCategories = {
 	],
 };
 
-export const departments = [ "Computer Science", "Math", "Science", "English", "Wellness", "World Languages" ];
+export const departments = [ "Computer Science", "Math", "Science", "English", "Wellness", "World Languages", "Fine Arts" ];
