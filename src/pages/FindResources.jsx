@@ -166,8 +166,7 @@ function FindResources() {
 									course={resource.course}
 									teacher={resource.teacher}
 									department={resource.department}
-									url={resource.url}
-									type={resource.type}
+                                    resource_id={resource.resource_id}
 								/>
 							</Link>
 						))
