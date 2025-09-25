@@ -541,6 +541,38 @@ app.post(
 	}
 );
 
+app.patch("/api/admins/:email/passwd", authenticateAdmin, (req: Request, res: Response) => {
+	const adminEmail = req.params.email;
+	const { newPassword } = req.body;
+
+	if (!newPassword) {
+		return res.status(400).json({ error: "New password is required" });
+	}
+
+	bcrypt.hash(newPassword, 10, (err: Error | undefined, hash: string) => {
+		if (err) {
+			console.error("Hashing error:", err);
+			return res
+				.status(500)
+				.json({ error: "Error updating admin password" });
+		}
+
+		const sql = "UPDATE admins SET pwd = ? WHERE email = ?";
+		db.run(sql, [hash, adminEmail], function (err) {
+			if (err) {
+				console.error("Database error:", err);
+				return res
+					.status(500)
+					.json({ error: "Error updating admin password" });
+			}
+			if (this.changes === 0) {
+				return res.status(404).json({ error: "Admin " + adminEmail + " not found" });
+			}
+			res.status(200).json({ message: "Admin password updated successfully" });
+		});
+	});
+}
+
 app.get("/api/admins", authenticateAdmin, (req: Request, res: Response) => {
 	const sql = "SELECT * FROM admins";
 
