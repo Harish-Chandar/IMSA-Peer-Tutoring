@@ -55,7 +55,41 @@ function FindTutors() {
 			const data = await response.json();
 			const lowerQuery = searchQuery.toLowerCase();
 
+			// Course abbreviation to full name mapping
+			const courseMapping = {
+				"MI III":
+					"Mathematical Investigations III Mathematical Investigations 3",
+				"MI IV":
+					"Mathematical Investigations IV Mathematical Investigations 4",
+				CSI: "Computer Science Inquiry",
+				"SI Physics":
+					"Scientific Inquiries Physics Scientific Inquiries: Physics",
+				"SI Chemistry":
+					"Scientific Inquiries Chemistry Scientific Inquiries: Chemistry",
+				MSI: "Methods in Scientific Inquiries Methods of Scientific Inquiries",
+				"MI II":
+					"Mathematical Investigations II Mathematical Investigations 2",
+				"MI I/II":
+					"Mathematical Investigations I/II Mathematical Investigations 1/2 Mathematical Investigations 1",
+				"BC I": "BC Calculus I BC Calculus 1 BC 1 Calculus Calc",
+				"BC II": "BC Calculus II BC Calculus 2 BC 2 Calculus Calc",
+				"BC III": "BC Calculus III BC Calculus 3 BC 3 Calculus Calc",
+				"BC I/II": "BC Calculus I/II BC Calculus 1/2 Calculus Calc",
+				"BC II/III": "BC Calculus II/III BC Calculus 2/3 Calculus Calc",
+				"AB I": "AB Calculus I AB Calculus 1 AB 1 Calculus Calc",
+				"AB II": "AB Calculus II AB Calculus 2 AB 2 Calculus Calc",
+				OOP: "Object Oriented Programming",
+				"Multi-Variable Calculus": "MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
+				"Advanced Programming": "Adpro",
+			};
+
 			const filtered = data.filter((tutor) => {
+				// Debug: Log the first tutor to see structure
+				if (tutor.id === data[0]?.id) {
+					console.log("Sample tutor data:", tutor);
+					console.log("Available fields:", Object.keys(tutor));
+				}
+
 				// filter by availability if toggle is on
 				if (showOnlyAvailable && tutor.is_available !== 1) {
 					return false;
@@ -69,17 +103,59 @@ function FindTutors() {
 						const items = dbVals
 							.split(";")
 							.map((c) => c.replace(/_/g, " ").trim())
+							.filter((c) => c.length > 0)
+							.flatMap((item) =>
+								// Also split by commas to handle "CSI, OOP" format
+								item.split(",").map((subItem) => subItem.trim())
+							)
 							.filter((c) => c.length > 0);
 						return arr.concat(items);
 					},
 					[]
 				);
-				// join the class names into a single string for searching
-				const classString = classArray.join(" ");
+
+				// Expand each course name to include full names for better searchability
+				const expandedClassArray = classArray.reduce(
+					(expanded, className) => {
+						// Add the original course name
+						expanded.push(className);
+
+						// Add full name if mapping exists for this specific course
+						if (courseMapping[className]) {
+							expanded.push(courseMapping[className]);
+						}
+
+						return expanded;
+					},
+					[]
+				);
+
+				// Debug: Log the final arrays for OOP search
+				if (
+					lowerQuery === "oop" ||
+					lowerQuery === "object oriented programming"
+				) {
+					console.log(`\nTutor ${tutor.fname} ${tutor.lname}:`);
+					console.log(`Original classes:`, classArray);
+					console.log(`Expanded classes:`, expandedClassArray);
+				}
+
+				// join the expanded class names into a single string for searching
+				const classString = expandedClassArray.join(" ");
 
 				// make big string to search against
 				const source =
 					`${tutor.fname} ${tutor.lname} ${tutor.hall} ${classString}`.toLowerCase();
+
+				// Debug: Log search details for first few tutors
+				if (lowerQuery && tutor.id <= 3) {
+					console.log(`\nTutor ${tutor.fname} ${tutor.lname}:`);
+					console.log(`Search query: "${lowerQuery}"`);
+					console.log(`Search source: "${source}"`);
+					console.log(
+						`Includes query: ${source.includes(lowerQuery)}`
+					);
+				}
 
 				// skip tutors with incorrect hall if there's a filter
 				if (
@@ -115,15 +191,15 @@ function FindTutors() {
 			{/* Hero Section */}
 			<div className="w-full h-16 pt-16"></div>
 			<div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
-		       <div className="flex flex-col items-center text-center h-full justify-center py-8 w-full">
-			       <h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
-				       Find <span className="text-blue-500">tutors</span>{" "}
-				       below!
-			       </h1>
-			       <h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
-				       Sort by hall or subject!
-			       </h2>
-		       </div>
+				<div className="flex flex-col items-center text-center h-full justify-center py-8 w-full">
+					<h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
+						Find <span className="text-blue-500">tutors</span>{" "}
+						below!
+					</h1>
+					<h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
+						Sort by hall or subject!
+					</h2>
+				</div>
 				<img
 					src="GeneralImages/smartguy.png"
 					alt="Tutor Hero"

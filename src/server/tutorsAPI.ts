@@ -829,19 +829,22 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 				"Scientific Inquiries Physics Scientific Inquiries: Physics",
 			"SI Chemistry":
 				"Scientific Inquiries Chemistry Scientific Inquiries: Chemistry",
-			MSI: "Methods in Scientific Inquiries",
+			MSI: "Methods in Scientific Inquiries Methods of Scientific Inquiries",
 			"MI II":
 				"Mathematical Investigations II Mathematical Investigations 2",
 			"MI I/II":
 				"Mathematical Investigations I/II Mathematical Investigations 1/2 Mathematical Investigations 1",
-			"BC I": "BC Calculus I BC Calculus 1 BC 1",
-			"BC II": "BC Calculus II BC Calculus 2 BC 2",
-			"BC III": "BC Calculus III BC Calculus 3 BC 3",
-			"BC I/II": "BC Calculus I/II BC Calculus 1/2",
-			"BC II/III": "BC Calculus II/III BC Calculus 2/3",
-			"AB I": "AB Calculus I AB Calculus 1 AB 1",
-			"AB II": "AB Calculus II AB Calculus 2 AB 2",
+			"BC I": "BC Calculus I BC Calculus 1 BC 1 Calculus Calc",
+			"BC II": "BC Calculus II BC Calculus 2 BC 2 Calculus Calc",
+			"BC III": "BC Calculus III BC Calculus 3 BC 3 Calculus Calc",
+			"BC I/II": "BC Calculus I/II BC Calculus 1/2 Calculus Calc",
+			"BC II/III": "BC Calculus II/III BC Calculus 2/3 Calculus Calc",
+			"AB I": "AB Calculus I AB Calculus 1 AB 1 Calculus Calc",
+			"AB II": "AB Calculus II AB Calculus 2 AB 2 Calculus Calc",
 			OOP: "Object Oriented Programming",
+			"Multi-Variable Calculus":
+				"MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
+			"Advanced Programming": "Adpro",
 		};
 
 		// Build an array of search terms including original query and expansions
