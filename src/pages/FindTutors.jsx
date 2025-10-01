@@ -79,8 +79,11 @@ function FindTutors() {
 				"AB I": "AB Calculus I AB Calculus 1 AB 1 Calculus Calc",
 				"AB II": "AB Calculus II AB Calculus 2 AB 2 Calculus Calc",
 				OOP: "Object Oriented Programming",
-				"Multi-Variable Calculus": "MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
+				"Multi-Variable Calculus":
+					"MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
 				"Advanced Programming": "Adpro",
+				BMC: "Biology: Molecular & Cellular",
+				BEE: "Biology: Evolution & Environment",
 			};
 
 			const filtered = data.filter((tutor) => {

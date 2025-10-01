@@ -845,6 +845,8 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 			"Multi-Variable Calculus":
 				"MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
 			"Advanced Programming": "Adpro",
+			"BMC": "Biology: Molecular & Cellular",
+			"BEE": "Biology: Evolution & Environment"
 		};
 
 		// Build an array of search terms including original query and expansions
