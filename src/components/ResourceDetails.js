@@ -115,7 +115,7 @@ function ResourceDetails() {
                                 <strong>Department:</strong> {resource.department}
                             </p>
                             <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                                <strong>Teacher:</strong> {resource.teacher}
+                                <strong>Teachers:</strong> {resource.teacher}
                             </p>
                             {resource.email && (
                                 <p className="text-sm sm:text-base lg:text-lg text-gray-700">

@@ -148,7 +148,7 @@ function EditResourceInfo() {
                 <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-bold mb-2">Teacher Name</label>
+                            <label className="text-gray-700 font-bold mb-2">Teachers Names</label>
                             <input
                                 className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                 name="teacher"
