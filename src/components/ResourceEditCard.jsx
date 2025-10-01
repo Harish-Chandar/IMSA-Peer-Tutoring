@@ -10,7 +10,7 @@ function ResourceEditCard({ result }) {
         <div className="bg-white p-4 rounded shadow mb-4">
             <div className="block mb-2">
                 <h3 className="text-xl font-bold text-gray-700">{result.course}</h3>
-                <p className="text-gray-600">Teacher: {result.teacher}</p>
+                <p className="text-gray-600">Teachers: {result.teacher}</p>
                 <p className="text-gray-600">Department: {result.department}</p>
             </div>
 

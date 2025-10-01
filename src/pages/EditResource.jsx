@@ -243,7 +243,7 @@ function EditResource() {
                                 <span className="font-semibold">Department:</span> {resource.department}
                             </p>
                             <p className="text-gray-700">
-                                <span className="font-semibold">Teacher:</span> {resource.teacher}
+                                <span className="font-semibold">Teachers:</span> {resource.teacher}
                             </p>
                             <p className="text-gray-700">
                                 <span className="font-semibold">Email:</span> {resource.email}
