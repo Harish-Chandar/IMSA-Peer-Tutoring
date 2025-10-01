@@ -18,7 +18,7 @@ function EditBulletin() {
 		if (!token || isTokenExpired(token)) {
 			navigate('/login');
 		}
-        if ((token && !isTokenExpired(token) && getTokenAccess(token) != 1)) {
+        if ((token && !isTokenExpired(token) && (getTokenAccess(token) != 1 && getTokenAccess(token) != 2))) {
             navigate('/adminDashboard');
         }
 	}, [token, navigate]);

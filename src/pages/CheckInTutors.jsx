@@ -20,8 +20,7 @@ function CheckInTutors() {
 			token &&
 			!isTokenExpired(token) &&
 			(getTokenAccess(token) < 1 ||
-				getTokenAccess(token) > 3 ||
-				getTokenAccess(token) === 2)
+				getTokenAccess(token) > 3)
 		) {
 			navigate("/adminDashboard");
 		}

@@ -36,12 +36,12 @@ function Dashboard() {
         // For teachers
         else if (getTokenAccess(token) === 2) {
             manageAccountsButton.style.display = "none";
-            editBulletinButton.style.display = "none";
+            editBulletinButton.style.display = "block";
             addCourseButton.style.display = "block";
             manageCoursesButton.style.display = "block";
             manageTutorsButton.style.display = "none";
-            checkinButton.style.display = "none";
-            welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage courses and resources! Your access level is: Teacher.";
+            checkinButton.style.display = "block";
+            welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage courses, resources, and check in tutors! Your access level is: Teacher.";
         }
         // For RCs
         else if (getTokenAccess(token) === 3) {
