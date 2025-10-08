@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
+import AlertModal from "../components/AlertModal.jsx";
 
 import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 function EditResource() {
+    const [showAlert, setShowAlert] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertTitle, setAlertTitle] = useState('');
+
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     useEffect(() => {
@@ -76,7 +81,9 @@ function EditResource() {
     const addNewLink = async () => {
         // Validate input
         if (!newLink.label.trim() || !newLink.url.trim()) {
-            alert("Please provide both a label and URL for the new link");
+            setAlertTitle("Input Error");
+            setAlertMessage("Please provide both a label and URL for the new link");
+            setShowAlert(true);
             return;
         }
 
@@ -113,7 +120,9 @@ function EditResource() {
             // Reset new link form
             setNewLink({ label: "", url: "" });
         } catch (err) {
-            alert(`Error adding link: ${err.message}`);
+            setAlertTitle("Error Adding Link");
+            setAlertMessage(`Error adding link: ${err.message}`);
+            setShowAlert(true);
         } finally {
             setIsSubmitting(false);
         }
@@ -159,7 +168,9 @@ function EditResource() {
                 updatedLinks.splice(index, 1);
                 setLinks(updatedLinks);
             } catch (err) {
-                alert(`Error removing link: ${err.message}`);
+                setAlertTitle("Error Removing Link");
+                setAlertMessage(`Error removing link: ${err.message}`);
+                setShowAlert(true);
             } finally {
                 setIsSubmitting(false);
             }
@@ -207,6 +218,15 @@ function EditResource() {
 
     return (
         <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+            <AlertModal
+                isOpen={showAlert}
+                message={alertMessage}
+                onConfirm={(result) => {
+                    // true for OK, false for Cancel
+                    setShowAlert(false);
+                }}
+                title={alertTitle}
+            />
             <div className="flex justify-between items-center mb-6 py-10">
                 <button
                     onClick={() => navigate("/resources/modify")}

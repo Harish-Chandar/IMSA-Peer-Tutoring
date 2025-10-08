@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
+import AlertModal from "./AlertModal";
 
 import { isTokenExpired, getTokenAccess, departments } from "../util.ts";
 
@@ -8,6 +9,10 @@ const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 
 function EditResourceInfo() {
+    const [showAlert, setShowAlert] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertTitle, setAlertTitle] = useState('');
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -86,11 +91,14 @@ function EditResourceInfo() {
                 throw new Error("Failed to update resource");
             }
 
-            alert("Resource updated successfully!");
-            navigate(`/resources/modify`); // Navigate back to modify page
+            setAlertTitle("Resource Updated!");
+            setAlertMessage("Resource information was updated successfully!");
+            setShowAlert(true);
         } catch (err) {
             setError(err.message);
-            alert(`Error updating resource: ${err.message}`);
+            setAlertTitle("Error updating resource!");
+            setAlertMessage(`Error updating resource: ${err.message}`);
+            setShowAlert(true);
         }
     };
 
@@ -118,6 +126,15 @@ function EditResourceInfo() {
 
     return (
         <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+            <AlertModal
+                isOpen={showAlert}
+                message={alertMessage}
+                onConfirm={(result) => {
+                    // true for OK, false for Cancel
+                    setShowAlert(false);
+                }}
+                title={alertTitle}
+            />
             <div className="flex justify-between items-center mb-6 py-10">
                 <button
                     onClick={() => navigate('/resources/modify')}
