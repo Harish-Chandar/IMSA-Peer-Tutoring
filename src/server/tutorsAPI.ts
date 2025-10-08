@@ -571,7 +571,7 @@ app.patch("/api/admins/:email/passwd", authenticateAdmin, (req: Request, res: Re
 			res.status(200).json({ message: "Admin password updated successfully" });
 		});
 	});
-}
+});
 
 app.get("/api/admins", authenticateAdmin, (req: Request, res: Response) => {
 	const sql = "SELECT * FROM admins";
