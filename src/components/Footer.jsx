@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import AlertModal from './AlertModal';
 
 function Footer() {
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
+
+    const handleContactUs = () => {
+        setAlertTitle("Contact Us");
+        setAlertMessage("For questions, support, or to become a peer tutor, please email us at: ashah2@imsa.edu, hchandar@imsa.edu, akeck@imsa.edu, cschlesser@imsa.edu");
+        setShowAlert(true);
+    };
+
     return (
         <footer className="bg-slate-100 border-t border-slate-200 mt-20">
             <div className="max-w-6xl mx-auto px-4 py-8">
@@ -55,13 +66,11 @@ function Footer() {
                         <p className="text-gray-600 text-sm mb-4">
                             Want to become a peer tutor or need help with the platform?
                         </p>
-                        <button className="bg-blue-500 text-white py-2 px-4 rounded text-sm font-semibold hover:bg-blue-600 transition-colors mb-3">
-                            <a
-                                href="mailto:ashah2@imsa.edu,hchandar@imsa.edu,akeck@imsa.edu,cschlesser@imsa.edu"
-                                className="text-white"
-                            >
-                                Contact Us
-                            </a>
+                        <button 
+                            onClick={handleContactUs}
+                            className="bg-blue-500 text-white py-2 px-4 rounded text-sm font-semibold hover:bg-blue-600 transition-colors mb-3"
+                        >
+                            Contact Us
                         </button>
                         <p className="text-gray-500 text-xs">
                             Contact your hall's resident counselor for more information.
@@ -83,6 +92,15 @@ function Footer() {
                     </div>
                 </div>
             </div>
+
+            <AlertModal
+                isOpen={showAlert}
+                message={alertMessage}
+                onConfirm={(result) => {
+                    setShowAlert(false);
+                }}
+                title={alertTitle}
+            />
         </footer>
     );
 }
