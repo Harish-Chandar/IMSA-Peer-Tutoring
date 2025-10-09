@@ -47,6 +47,10 @@ function EditBulletin() {
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertTitle, setAlertTitle] = useState('');
 
+	// Add state for confirmation modal
+	const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+	const [pendingDelete, setPendingDelete] = useState(null);
+
 	// fetch posts when page loads
 	useEffect(() => {
 		fetchPosts();
@@ -163,43 +167,67 @@ function EditBulletin() {
 
 					window.location.reload(); // Refresh the page after successful post creation to reset the react state
 				} else {
-					alert("error creating post. please try again.");
+					setAlertTitle("Error Creating Post");
+					setAlertMessage("Error creating post. Please try again.");
+					setShowAlert(true);
 				}
 			} catch (error) {
 				console.error("error creating post:", error);
-				alert("error creating post. please try again.");
+				setAlertTitle("Error Creating Post");
+				setAlertMessage("Error creating post. Please try again.");
+				setShowAlert(true);
 			}
 		} else {
-			alert("please fill in at least the event title and date.");
+			setAlertTitle("Missing Information");
+			setAlertMessage("Please fill in at least the event title and date.");
+			setShowAlert(true);
 		}
 	};
 
 	// delete a post with confirmation popup - remove from database
-	const handleDeletePost = async (postId) => {
+	const handleDeletePost = (postId) => {
         const postToDelete = posts.find((post) => post.id === postId);
-		const confirmDelete = window.confirm(
-			`Are you sure you want to delete the event "${postToDelete.title}"? This action cannot be undone.`
-		);
+		// Store the deletion details and show confirmation modal
+		setPendingDelete({ postId, postTitle: postToDelete.title });
+		setAlertTitle("Confirm Deletion");
+		setAlertMessage(`Are you sure you want to delete the event "${postToDelete.title}"? This action cannot be undone.`);
+		setShowConfirmDelete(true);
+	};
 
-		if (confirmDelete) {
-			try {
-				const response = await fetch(`${baseUrl}/api/bulletin/${postId}`, {
-					method: "DELETE",
-					headers: {
-						"Authorization": `Bearer ${token}`,
-					},
-				});
+	// Handle the actual deletion after confirmation
+	const handleDeleteConfirm = async (confirmed) => {
+		setShowConfirmDelete(false);
+		
+		if (!confirmed || !pendingDelete) {
+			setPendingDelete(null);
+			return;
+		}
 
-				if (response.ok) {
-					// refresh posts from database
-					fetchPosts();
-				} else {
-					alert("error deleting post. please try again.");
-				}
-			} catch (error) {
-				console.error("error deleting post:", error);
-				alert("error deleting post. please try again.");
+		const { postId } = pendingDelete;
+
+		try {
+			const response = await fetch(`${baseUrl}/api/bulletin/${postId}`, {
+				method: "DELETE",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+				},
+			});
+
+			if (response.ok) {
+				// refresh posts from database
+				fetchPosts();
+			} else {
+				setAlertTitle("Error Deleting Post");
+				setAlertMessage("Error deleting post. Please try again.");
+				setShowAlert(true);
 			}
+		} catch (error) {
+			console.error("error deleting post:", error);
+			setAlertTitle("Error Deleting Post");
+			setAlertMessage("Error deleting post. Please try again.");
+			setShowAlert(true);
+		} finally {
+			setPendingDelete(null);
 		}
 	};
 
@@ -417,6 +445,13 @@ function EditBulletin() {
 						setTimeout(() => handleCreatePost(), 0);
 					}
 				}}
+				title={alertTitle}
+			/>
+
+			<AlertModal
+				isOpen={showConfirmDelete}
+				message={alertMessage}
+				onConfirm={handleDeleteConfirm}
 				title={alertTitle}
 			/>
 

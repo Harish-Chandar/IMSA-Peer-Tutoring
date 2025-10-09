@@ -10,6 +10,10 @@ function EditResource() {
     const [showAlert, setShowAlert] = useState(false);
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertTitle, setAlertTitle] = useState('');
+    
+    // Add state for confirmation modal
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [pendingDelete, setPendingDelete] = useState(null);
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
@@ -128,52 +132,68 @@ function EditResource() {
         }
     };
 
-    const removeLink = async (linkId, index) => {
-        if (window.confirm("Are you sure you want to remove this link?")) {
-            setIsSubmitting(true);
+    const removeLink = (linkId, index) => {
+        // Store the deletion details and show confirmation modal
+        setPendingDelete({ linkId, index });
+        setAlertTitle("Confirm Deletion");
+        setAlertMessage("Are you sure you want to remove this link?");
+        setShowConfirmDelete(true);
+    };
 
-            try {
-                // For legacy links that don't have an ID in the database
-                if (links[index].isLegacy) {
-                    // Special handling for legacy links - update the main resource URL
-                    const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
-                    await fetch(`${baseUrl}/api/resources/${id}`, {
-                        method: "PATCH",
+    // Handle the actual deletion after confirmation
+    const handleDeleteConfirm = async (confirmed) => {
+        setShowConfirmDelete(false);
+        
+        if (!confirmed || !pendingDelete) {
+            setPendingDelete(null);
+            return;
+        }
+
+        const { linkId, index } = pendingDelete;
+        setIsSubmitting(true);
+
+        try {
+            // For legacy links that don't have an ID in the database
+            if (links[index].isLegacy) {
+                // Special handling for legacy links - update the main resource URL
+                const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+                await fetch(`${baseUrl}/api/resources/${id}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ url: "" }),
+                });
+            } else {
+                // Normal link deletion
+                const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+                const response = await fetch(
+                    `${baseUrl}/api/resources/${id}/links/${linkId}`,
+                    {
+                        method: "DELETE",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
                         },
-                        body: JSON.stringify({ url: "" }),
-                    });
-                } else {
-                    // Normal link deletion
-                    const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
-                    const response = await fetch(
-                        `${baseUrl}/api/resources/${id}/links/${linkId}`,
-                        {
-                            method: "DELETE",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`,
-                            },
-                        }
-                    );
-
-                    if (!response.ok) {
-                        throw new Error("Failed to delete link");
                     }
-                }
+                );
 
-                // Remove the link from the UI
-                const updatedLinks = [...links];
-                updatedLinks.splice(index, 1);
-                setLinks(updatedLinks);
-            } catch (err) {
-                setAlertTitle("Error Removing Link");
-                setAlertMessage(`Error removing link: ${err.message}`);
-                setShowAlert(true);
-            } finally {
-                setIsSubmitting(false);
+                if (!response.ok) {
+                    throw new Error("Failed to delete link");
+                }
             }
+
+            // Remove the link from the UI
+            const updatedLinks = [...links];
+            updatedLinks.splice(index, 1);
+            setLinks(updatedLinks);
+        } catch (err) {
+            setAlertTitle("Error Removing Link");
+            setAlertMessage(`Error removing link: ${err.message}`);
+            setShowAlert(true);
+        } finally {
+            setIsSubmitting(false);
+            setPendingDelete(null);
         }
     };
 
@@ -227,6 +247,14 @@ function EditResource() {
                 }}
                 title={alertTitle}
             />
+            
+            <AlertModal
+                isOpen={showConfirmDelete}
+                message={alertMessage}
+                onConfirm={handleDeleteConfirm}
+                title={alertTitle}
+            />
+            
             <div className="flex justify-between items-center mb-6 py-10">
                 <button
                     onClick={() => navigate("/resources/modify")}
