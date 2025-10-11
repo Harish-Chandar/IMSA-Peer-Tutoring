@@ -541,34 +541,60 @@ app.post(
 	}
 );
 
-app.patch("/api/admins/:email/passwd", authenticateAdmin, (req: Request, res: Response) => {
+app.patch("/api/admins/:email/passwordchange", authenticateAdmin, (req: Request, res: Response) => {
 	const adminEmail = req.params.email;
-	const { newPassword } = req.body;
+	const { currentPassword, newPassword } = req.body;
 
 	if (!newPassword) {
 		return res.status(400).json({ error: "New password is required" });
 	}
 
-	bcrypt.hash(newPassword, 10, (err: Error | undefined, hash: string) => {
+	if (!currentPassword) {
+		return res.status(400).json({ error: "Current password is required" });
+	}
+
+	// Get the current admin record to validate the current password
+	const query = `SELECT * FROM admins WHERE email = ?`;
+	db.get<Admin>(query, [adminEmail], (err, row) => {
 		if (err) {
-			console.error("Hashing error:", err);
-			return res
-				.status(500)
-				.json({ error: "Error updating admin password" });
+			console.error("Database error:", err);
+			return res.status(500).json({ error: "Error accessing database" });
+		}
+		
+		if (!row) {
+			return res.status(404).json({ error: "Admin not found" });
 		}
 
-		const sql = "UPDATE admins SET pwd = ? WHERE email = ?";
-		db.run(sql, [hash, adminEmail], function (err) {
+		// Validate current password
+		bcrypt.compare(currentPassword, row.pwd, (err: Error | undefined, result: boolean) => {
 			if (err) {
-				console.error("Database error:", err);
-				return res
-					.status(500)
-					.json({ error: "Error updating admin password" });
+				console.error("Password comparison error:", err);
+				return res.status(500).json({ error: "Error validating current password" });
 			}
-			if (this.changes === 0) {
-				return res.status(404).json({ error: "Admin " + adminEmail + " not found" });
+
+			if (!result) {
+				return res.status(401).json({ error: "Current password is incorrect" });
 			}
-			res.status(200).json({ message: "Admin password updated successfully" });
+
+			// Hash the new password
+			bcrypt.hash(newPassword, 10, (err: Error | undefined, hash: string) => {
+				if (err) {
+					console.error("Hashing error:", err);
+					return res.status(500).json({ error: "Error updating admin password" });
+				}
+
+				const sql = "UPDATE admins SET pwd = ? WHERE email = ?";
+				db.run(sql, [hash, adminEmail], function (err) {
+					if (err) {
+						console.error("Database error:", err);
+						return res.status(500).json({ error: "Error updating admin password" });
+					}
+					if (this.changes === 0) {
+						return res.status(404).json({ error: "Admin " + adminEmail + " not found" });
+					}
+					res.status(200).json({ message: "Password updated successfully" });
+				});
+			});
 		});
 	});
 });

@@ -22,6 +22,7 @@ import ManageAccounts from "./pages/ManageAccounts.tsx";
 
 import AboutUs from "./pages/AboutUs.jsx";
 import CheckInTutors from "./pages/CheckInTutors.jsx";
+import ChangePassword from "./pages/ChangePassword.jsx";
 
 export default function App() {
     return (
@@ -48,6 +49,7 @@ export default function App() {
                 <Route path="/tutor/:id" element={<Tutor />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/checkin" element={<CheckInTutors />} />
+                <Route path="/changePassword" element={<ChangePassword/>}/>
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Router>
