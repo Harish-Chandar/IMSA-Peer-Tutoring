@@ -1080,6 +1080,50 @@ app.patch(
 	}
 );
 
+app.delete(
+	"/api/resources/:id",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		const resourceId = parseInt(req.params.id);
+
+		if (isNaN(resourceId) || resourceId < 0) {
+			return res.status(400).json({ error: "Invalid resource ID" });
+		}
+
+		db.run(
+			"DELETE FROM resource_links WHERE resource_id = ?",
+			[resourceId],
+			(err: Error | null) => {
+				if (err) {
+					console.error("Error deleting resource links:", err);
+					return res
+						.status(500)
+						.json({ error: "Error deleting resource links" });
+				}
+
+				db.run(
+					"DELETE FROM resources WHERE resource_id = ?",
+					[resourceId],
+					function (this: any, err: Error | null) {
+						if (err) {
+							console.error("Error deleting resource:", err);
+							return res
+								.status(500)
+								.json({ error: "Error deleting resource" });
+						}
+
+						if (this.changes === 0) {
+							return res.status(404).json({ error: "Resource not found" });
+						}
+
+						res.json({ message: "Resource deleted successfully" });
+					}
+				);
+			}
+		);
+	}
+);
+
 // Check-in a tutor (start session)
 app.post(
 	"/api/tutors/:id/checkin",

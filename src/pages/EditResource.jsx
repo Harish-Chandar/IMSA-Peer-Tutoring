@@ -10,6 +10,7 @@ function EditResource() {
     const [showAlert, setShowAlert] = useState(false);
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertTitle, setAlertTitle] = useState('');
+	const [showDeleteCourseAlert, setShowDeleteCourseAlert] = useState(false);
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
@@ -177,6 +178,45 @@ function EditResource() {
         }
     };
 
+    const deleteCourse = async () => {
+        setIsSubmitting(true);
+
+        try {
+            const DBPORT = process.env.REACT_APP_DBPORT;
+            const HOST = process.env.REACT_APP_HOST;
+            const baseUrl = `http://${HOST}:${DBPORT}`;
+            
+            const response = await fetch(`${baseUrl}/api/resources/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete course: ${response.status}`);
+            }
+
+            setAlertTitle("Success");
+            setAlertMessage(`Course ${resource?.course} has been successfully deleted.`);
+            setShowAlert(true);
+        } catch (err) {
+            setAlertTitle("Error Deleting Course");
+            setAlertMessage(`Error deleting course: ${err.message}`);
+            setShowAlert(true);
+        } finally {
+            setIsSubmitting(false);
+            setShowDeleteCourseAlert(false);
+        }
+    };
+
+    const handleDeleteCourse = () => {
+        setAlertTitle("Delete Course");
+        setAlertMessage(`Are you sure you want to delete the course ${resource?.course} and all its associated links? This action cannot be undone.`);
+        setShowDeleteCourseAlert(true);
+    };
+
     if (isLoading) return (
         <div className="p-6 bg-gray-100 pt-14 min-h-screen">
             <div className="flex justify-center">
@@ -224,9 +264,27 @@ function EditResource() {
                 onConfirm={(result) => {
                     // true for OK, false for Cancel
                     setShowAlert(false);
+                    if (alertTitle === "Success") {
+                        navigate("/resources/modify");
+                    }
                 }}
                 title={alertTitle}
             />
+            
+            <AlertModal
+                isOpen={showDeleteCourseAlert}
+                message={alertMessage}
+                onConfirm={(result) => {
+                    if (result) {
+                        deleteCourse();
+                    } else {
+                        setShowDeleteCourseAlert(false);
+                    }
+                }}
+                title={alertTitle}
+                showCancel={true}
+            />
+
             <div className="flex justify-between items-center mb-6 py-10">
                 <button
                     onClick={() => navigate("/resources/modify")}
@@ -239,12 +297,37 @@ function EditResource() {
                     Edit {resource.course}
                 </h1>
 
-                <button
-                    onClick={() => navigate(`/resources/${id}`)}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-                >
-                    Course Preview
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => navigate(`/resources/${id}`)}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                    >
+                        Course Preview
+                    </button>
+                    
+                    <button
+                        onClick={handleDeleteCourse}
+                        disabled={isSubmitting}
+                        className="w-10 h-10 flex items-center justify-center text-white bg-red-600 hover:bg-red-700 rounded-md transition-all duration-200 text-sm font-bold"
+                        title="Delete Course"
+                    >
+                        {/* used the trash icon from add tutor page */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <div className="flex justify-center">
