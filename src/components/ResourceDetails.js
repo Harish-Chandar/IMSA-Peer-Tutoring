@@ -25,7 +25,7 @@ function ResourceDetails() {
     useEffect(() => {
         const fetchResource = async () => {
             try {
-                const baseUrl = `http://${HOST}:${DBPORT}`;
+                const baseUrl = `https://${HOST}:${DBPORT}`;
                 const response = await fetch(`${baseUrl}/api/resources/${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

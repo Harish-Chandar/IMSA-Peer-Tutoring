@@ -23,7 +23,7 @@ function EditTutor() {
 	// no hardcoded localhosts!!!
 	const DBPORT = process.env.REACT_APP_DBPORT;
 	const HOST = process.env.REACT_APP_HOST;
-	const baseUrl = `http://${HOST}:${DBPORT}`;
+	const baseUrl = `https://${HOST}:${DBPORT}`;
 
 	// state for the tutor being edited
 	const [tutorData, setTutorData] = useState({

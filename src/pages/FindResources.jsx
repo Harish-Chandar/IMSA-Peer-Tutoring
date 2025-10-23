@@ -11,7 +11,7 @@ const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 
 function FindResources() {
-	const baseUrl = `http://${HOST}:${DBPORT}`;
+	const baseUrl = `https://${HOST}:${DBPORT}`;
 
 	const [resources, setResources] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");

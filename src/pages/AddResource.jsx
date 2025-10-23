@@ -152,7 +152,7 @@ function ResourceForm() {
 			links: normalizedLinks,
 		};
 
-		const baseUrl = `http://${HOST}:${DBPORT}`;
+		const baseUrl = `https://${HOST}:${DBPORT}`;
 		try {
 			const response = await fetch(`${baseUrl}/api/resources`, {
 				method: "POST",

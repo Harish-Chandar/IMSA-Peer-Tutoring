@@ -6,7 +6,7 @@ const DBPORT = process.env.REACT_APP_DBPORT || "5000";
 const HOST = process.env.REACT_APP_HOST || "localhost";
 
 // Base URL for API calls
-const API_BASE_URL = `http://${HOST}:${DBPORT}`;
+const API_BASE_URL = `https://${HOST}:${DBPORT}`;
 
 // default placeholder image URL from environment variable
 const DEFAULT_AVATAR_URL =

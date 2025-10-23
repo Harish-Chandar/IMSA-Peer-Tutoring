@@ -49,7 +49,7 @@ function EditResourceInfo() {
         const fetchResource = async () => {
             try {
                 const response = await fetch(
-                    `http://${HOST}:${DBPORT}/api/resources/${id}`
+                    `https://${HOST}:${DBPORT}/api/resources/${id}`
                 );
                 if (!response.ok) {
                     throw new Error("Failed to fetch resource");
@@ -82,7 +82,7 @@ function EditResourceInfo() {
 
         try {
             const response = await fetch(
-                `http://${HOST}:${DBPORT}/api/resources/${id}/info`,
+                `https://${HOST}:${DBPORT}/api/resources/${id}/info`,
                 {
                     method: "PATCH",
                     headers: {

@@ -7,7 +7,7 @@ import AlertModal from "../components/AlertModal";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
-const baseUrl = `http://${HOST}:${DBPORT}`;
+const baseUrl = `https://${HOST}:${DBPORT}`;
 
 function CheckInTutors() {
 	const navigate = useNavigate();

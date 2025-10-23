@@ -28,7 +28,7 @@ function ModifyResources() {
     useEffect(() => {
         const fetchDepartments = async () => {
             try {
-                const url = `http://${HOST}:${DBPORT}/api/resources/departments`;
+                const url = `https://${HOST}:${DBPORT}/api/resources/departments`;
                 console.log("Fetching departments from:", url);
 
                 const response = await fetch(url);
@@ -97,7 +97,7 @@ function ModifyResources() {
 
             console.log("Search params:", params.toString()); // Debug
 
-            const url = `http://${HOST}:${DBPORT}/api/resources/search?${params.toString()}`;
+            const url = `https://${HOST}:${DBPORT}/api/resources/search?${params.toString()}`;
             console.log("Fetching from:", url); // Debug
 
             const response = await fetch(url);

@@ -7,7 +7,7 @@ export function Login() {
     // environment variables for API configuration
     const DBPORT = process.env.REACT_APP_DBPORT;
     const HOST = process.env.REACT_APP_HOST;
-    const baseUrl = `http://${HOST}:${DBPORT}`;
+    const baseUrl = `https://${HOST}:${DBPORT}`;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

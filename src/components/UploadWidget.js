@@ -15,7 +15,7 @@ const UploadWidget = ({ setImageUrl }) => {
         formData.append("image", file);
         const DBPORT = process.env.REACT_APP_DBPORT;
 	    const HOST = process.env.REACT_APP_HOST;
-	    const baseUrl = `http://${HOST}:${DBPORT}`;
+	    const baseUrl = `https://${HOST}:${DBPORT}`;
 
         const token = localStorage.getItem("token"); // whatever you store after login
 
