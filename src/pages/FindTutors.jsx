@@ -193,20 +193,20 @@ function FindTutors() {
 		<div className="bg-[#e4e5e3] min-h-screen">
 			{/* Hero Section */}
 			<div className="w-full h-16 pt-16"></div>
-			<div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 px-4">
-				<div className="flex flex-col items-center text-center h-full justify-center py-8 w-full">
-					<h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
-						Find <span className="text-blue-500">tutors</span>{" "}
-						below!
-					</h1>
-					<h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
-						Sort by hall or subject!
-					</h2>
-				</div>
+			<div className="flex flex-col md:flex-row justify-around w-full h-auto md:h-80 bg-slate-100 md:px-40">
+		       <div className="flex flex-col md:items-start h-full justify-center py-8 w-full">
+			       <h1 className="text-gray-700 text-3xl md:text-4xl font-bold mb-5 md:mb-0">
+				       Find <span className="text-blue-500">tutors</span>{" "}
+				       below!
+			       </h1>
+			       <h2 className="text-gray-400 text-xl md:text-2xl font-normal mb-3">
+				       Sort by hall or subject!
+			       </h2>
+		       </div>
 				<img
-					src="GeneralImages/smartguy.png"
+					src="GeneralImages/tutorImage.png"
 					alt="Tutor Hero"
-					className="w-full md:w-auto max-w-xs h-64 object-contain mx-auto md:mx-0"
+					className="w-full md:w-auto max-w-xs object-contain mx-auto md:mx-0"
 				/>
 			</div>
 
