@@ -488,7 +488,7 @@ app.post("/api/login", (req: Request, res: Response) => {
 				const token = jwt.sign(
 					{ email: row.email, access: row.access },
 					process.env.JWT_SECRET!,
-					{ expiresIn: "1h" }
+					{ expiresIn: "3h" }
 				);
 
 				res.json({
