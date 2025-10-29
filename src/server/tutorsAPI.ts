@@ -9,8 +9,6 @@ import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 
-
-
 dotenv.config();
 
 const app = express();
@@ -40,9 +38,9 @@ const db = new sqlite3.Database(
 );
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-    api_key: process.env.CLOUDINARY_API_KEY!,
-    api_secret: process.env.CLOUDINARY_API_SECRET!,
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+	api_key: process.env.CLOUDINARY_API_KEY!,
+	api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
 // Multer storage (in-memory so we can send directly to Cloudinary)
@@ -261,20 +259,26 @@ app.delete(
 			return res.status(400).json({ error: "invalid tutor id" });
 		}
 		// Deletes the image from Cloudinary
-		db.get("SELECT image FROM tutors WHERE id = ?", [tutorId], (err, row: any) => {
-			if (err) return res.status(500).json({ error: err.message });
-			if (!row) return res.status(404).json({ error: "Tutor not found" });
-			console.log("Deleting image:", row.image);
-			const url = row.image; 
-			const parts = url.split("/");
-			const filename = parts[parts.length -2] + "/" + parts[parts.length - 1];
-			const publicId = filename.split(".")[0];  
-			// A long way to get public id from the full URL haha
-			console.log("Derived publicId:", publicId);
-			cloudinary.uploader.destroy(publicId, (error, result) => {
-				if (error) console.error("Error deleting image:", error);
-			});
-		});
+		db.get(
+			"SELECT image FROM tutors WHERE id = ?",
+			[tutorId],
+			(err, row: any) => {
+				if (err) return res.status(500).json({ error: err.message });
+				if (!row)
+					return res.status(404).json({ error: "Tutor not found" });
+				console.log("Deleting image:", row.image);
+				const url = row.image;
+				const parts = url.split("/");
+				const filename =
+					parts[parts.length - 2] + "/" + parts[parts.length - 1];
+				const publicId = filename.split(".")[0];
+				// A long way to get public id from the full URL haha
+				console.log("Derived publicId:", publicId);
+				cloudinary.uploader.destroy(publicId, (error, result) => {
+					if (error) console.error("Error deleting image:", error);
+				});
+			}
+		);
 
 		const sql = "DELETE FROM tutors WHERE id = ?";
 
@@ -325,71 +329,90 @@ app.put("/api/tutors/:id", authenticateAdmin, (req: Request, res: Response) => {
 		language,
 	} = req.body;
 
-	db.get("SELECT image FROM tutors WHERE id = ?", [tutorId], (err, row: any) => {
-		if (err) return res.status(500).json({ error: err.message });
-		if (!row) return res.status(404).json({ error: "Tutor not found" });
+	db.get(
+		"SELECT image FROM tutors WHERE id = ?",
+		[tutorId],
+		(err, row: any) => {
+			if (err) return res.status(500).json({ error: err.message });
+			if (!row) return res.status(404).json({ error: "Tutor not found" });
 
-		const oldImage = row.image;
-		const sql = `UPDATE tutors SET 
+			const oldImage = row.image;
+			const sql = `UPDATE tutors SET 
 			fname = ?, lname = ?, fbname = ?, imsaid = ?, email = ?, blurb = ?, 
 			hall = ?, wing = ?, image = ?, availability = ?, 
 			physics = ?, chem = ?, biology = ?, sciother = ?, 
 			mathother = ?, mathcore = ?, cs = ?, language = ?
 			WHERE id = ?`;
 
-		db.run(
-			sql,
-			[
-				fname || "",
-				lname || "",
-				fbname || "",
-				imsaid || null,
-				email || "",
-				blurb || "",
-				hall || null,
-				wing || null,
-				image || "",
-				availability || "",
-				physics || "",
-				chem || "",
-				biology || "",
-				sciother || "",
-				mathother || "",
-				mathcore || "",
-				cs || "",
-				language || "",
-				tutorId,
-			],
-			function (err) {
-				if (err) {
-					console.error("tutor update error:", err);
-					res.status(500).json({ error: err.message });
-					return;
+			db.run(
+				sql,
+				[
+					fname || "",
+					lname || "",
+					fbname || "",
+					imsaid || null,
+					email || "",
+					blurb || "",
+					hall || null,
+					wing || null,
+					image || "",
+					availability || "",
+					physics || "",
+					chem || "",
+					biology || "",
+					sciother || "",
+					mathother || "",
+					mathcore || "",
+					cs || "",
+					language || "",
+					tutorId,
+				],
+				function (err) {
+					if (err) {
+						console.error("tutor update error:", err);
+						res.status(500).json({ error: err.message });
+						return;
+					}
+
+					if (this.changes === 0) {
+						return res
+							.status(404)
+							.json({ error: "tutor not found" });
+					}
+
+					if (image && oldImage && oldImage !== image) {
+						const url = oldImage;
+						const parts = url.split("/");
+						const filename =
+							parts[parts.length - 2] +
+							"/" +
+							parts[parts.length - 1];
+						const publicId = filename.split(".")[0];
+						console.log("Deleting old Cloudinary image:", publicId);
+
+						cloudinary.uploader.destroy(
+							publicId,
+							(error, result) => {
+								if (error)
+									console.error(
+										"Error deleting image:",
+										error
+									);
+								else
+									console.log(
+										"Cloudinary delete result:",
+										result
+									);
+							}
+						);
+					}
+
+					res.json({ message: "tutor updated successfully" });
 				}
-
-				if (this.changes === 0) {
-					return res.status(404).json({ error: "tutor not found" });
-				}
-
-				if (image && oldImage && oldImage !== image) {
-					const url = oldImage;
-					const parts = url.split("/");
-					const filename = parts[parts.length - 2] + "/" + parts[parts.length - 1];
-					const publicId = filename.split(".")[0];
-					console.log("Deleting old Cloudinary image:", publicId);
-
-					cloudinary.uploader.destroy(publicId, (error, result) => {
-						if (error) console.error("Error deleting image:", error);
-						else console.log("Cloudinary delete result:", result);
-					});
-				}
-
-				res.json({ message: "tutor updated successfully" });
-			}
-		);
-	});
+			);
+		}
+	);
 });
-
 
 // api route for retrieving parseable string of classes for a given tutor based on ID
 app.get("/api/tutors/:id/classes", (req: Request, res: Response) => {
@@ -465,7 +488,7 @@ app.post("/api/login", (req: Request, res: Response) => {
 				const token = jwt.sign(
 					{ email: row.email, access: row.access },
 					process.env.JWT_SECRET!,
-					{ expiresIn: "1h" }
+					{ expiresIn: "3h" }
 				);
 
 				res.json({
@@ -853,11 +876,89 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 	const params: (string | number)[] = [];
 
 	if (searchQuery) {
-		// search for searchQuery in search_field column
-		//trim so there is no whitespace
-		const trimmedCourse = searchQuery.trim();
-		query += " AND LOWER(search_field) LIKE LOWER(?)";
-		params.push(`%${trimmedCourse}%`);
+		// Course abbreviation to full name mapping (same as FindTutors)
+		const courseMapping: { [key: string]: string } = {
+			"MI III":
+				"Mathematical Investigations III Mathematical Investigations 3",
+			"MI IV":
+				"Mathematical Investigations IV Mathematical Investigations 4",
+			CSI: "Computer Science Inquiry",
+			"SI Physics":
+				"Scientific Inquiries Physics Scientific Inquiries: Physics",
+			"SI Chemistry":
+				"Scientific Inquiries Chemistry Scientific Inquiries: Chemistry",
+			MSI: "Methods in Scientific Inquiries Methods of Scientific Inquiries",
+			"MI II":
+				"Mathematical Investigations II Mathematical Investigations 2",
+			"MI I/II":
+				"Mathematical Investigations I/II Mathematical Investigations 1/2 Mathematical Investigations 1",
+			"BC I": "BC Calculus I BC Calculus 1 BC 1 Calculus Calc",
+			"BC II": "BC Calculus II BC Calculus 2 BC 2 Calculus Calc",
+			"BC III": "BC Calculus III BC Calculus 3 BC 3 Calculus Calc",
+			"BC I/II": "BC Calculus I/II BC Calculus 1/2 Calculus Calc",
+			"BC II/III": "BC Calculus II/III BC Calculus 2/3 Calculus Calc",
+			"AB I": "AB Calculus I AB Calculus 1 AB 1 Calculus Calc",
+			"AB II": "AB Calculus II AB Calculus 2 AB 2 Calculus Calc",
+			OOP: "Object Oriented Programming",
+			"Multi-Variable Calculus":
+				"MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
+			"Advanced Programming": "Adpro",
+			"BMC": "Biology: Molecular & Cellular",
+			"BEE": "Biology: Evolution & Environment"
+		};
+
+		// Build an array of search terms including original query and expansions
+		const searchTerms = [searchQuery.trim()];
+
+		// Check if the search query contains any of our abbreviations and add expansions
+		Object.keys(courseMapping).forEach((abbreviation) => {
+			if (
+				searchQuery.toLowerCase().includes(abbreviation.toLowerCase())
+			) {
+				// Add the full course name as a separate search term
+				searchTerms.push(courseMapping[abbreviation]);
+			}
+		});
+
+		// Also check if the search query contains words from the full course names
+		// and add the corresponding abbreviations
+		Object.keys(courseMapping).forEach((abbreviation) => {
+			const fullCourseName = courseMapping[abbreviation];
+			const searchLower = searchQuery.toLowerCase();
+			const courseWords = fullCourseName.toLowerCase().split(" ");
+
+			// Check if any significant words from the search query match course name words
+			const searchWords = searchLower
+				.split(" ")
+				.filter((word) => word.length > 2); // ignore small words
+			const hasMatchingWords = searchWords.some((searchWord) =>
+				courseWords.some(
+					(courseWord) =>
+						courseWord.includes(searchWord) ||
+						searchWord.includes(courseWord)
+				)
+			);
+
+			if (hasMatchingWords && !searchTerms.includes(abbreviation)) {
+				searchTerms.push(abbreviation);
+				searchTerms.push(fullCourseName);
+			}
+		});
+
+		// Build OR conditions for each search term across multiple fields
+		const conditions = [];
+		for (let i = 0; i < searchTerms.length; i++) {
+			conditions.push(
+				"(LOWER(search_field) LIKE LOWER(?) OR LOWER(course) LIKE LOWER(?) OR LOWER(teacher) LIKE LOWER(?))"
+			);
+			const searchPattern = `%${searchTerms[i]}%`;
+			params.push(searchPattern, searchPattern, searchPattern);
+		}
+
+		query += ` AND (${conditions.join(" OR ")})`;
+
+		console.log("Original search query:", searchQuery); // Debug
+		console.log("Search terms:", searchTerms); // Debug
 	}
 	if (departmentParam) {
 		// the frontend sends back a comma list for multiple departments, so handle that
@@ -1161,33 +1262,42 @@ app.post(
 	(req: Request, res: Response) => {
 		const tutorId = parseInt(req.params.id);
 		const { hoursToAdd } = req.body;
-		
+
 		if (isNaN(tutorId) || tutorId < 0) {
 			return res.status(400).json({ error: "Invalid tutor ID" });
 		}
-		
+
 		const hoursNum = Number(hoursToAdd);
 		if (isNaN(hoursNum) || hoursNum < 0) {
 			return res.status(400).json({ error: "Invalid hours value" });
 		}
-		
+
 		// Get current starttime and totaltime
 		db.get(
 			"SELECT starttime, totaltime FROM tutors WHERE id = ?",
 			[tutorId],
-			(err: Error | null, row: { starttime: number | null; totaltime: number | null } | undefined) => {
+			(
+				err: Error | null,
+				row:
+					| { starttime: number | null; totaltime: number | null }
+					| undefined
+			) => {
 				if (err) {
 					console.error("Check-out fetch error:", err);
-					return res.status(500).json({ error: "Error fetching tutor data" });
+					return res
+						.status(500)
+						.json({ error: "Error fetching tutor data" });
 				}
 				if (!row || row.starttime == null) {
-					return res.status(400).json({ error: "Tutor is not checked in" });
+					return res
+						.status(400)
+						.json({ error: "Tutor is not checked in" });
 				}
-				
+
 				// Convert hours to milliseconds and add to totaltime
 				const hoursInMs = hoursNum * 3600000;
 				const newTotal = (row.totaltime || 0) + hoursInMs;
-				
+
 				// Set starttime to null, update totaltime, set is_available=0 (inactive)
 				db.run(
 					"UPDATE tutors SET starttime = NULL, totaltime = ?, is_available = 0 WHERE id = ?",
@@ -1195,15 +1305,19 @@ app.post(
 					function (err2) {
 						if (err2) {
 							console.error("Check-out update error:", err2);
-							return res.status(500).json({ error: "Error checking out tutor" });
+							return res
+								.status(500)
+								.json({ error: "Error checking out tutor" });
 						}
 						if (this.changes === 0) {
-							return res.status(404).json({ error: "Tutor not found" });
+							return res
+								.status(404)
+								.json({ error: "Tutor not found" });
 						}
 						res.json({
 							message: "Tutor checked out successfully",
 							totaltime: newTotal,
-							hoursAdded: hoursNum
+							hoursAdded: hoursNum,
 						});
 					}
 				);
@@ -1212,39 +1326,36 @@ app.post(
 	}
 );
 
-
-
 app.post(
-    "/api/upload-image",
-    authenticateAdmin,
-    upload.single("image"), // "image" must match the FormData field name
-    async (req: Request, res: Response) => {
-        try {
-            if (!(req as any).file) {
-                return res.status(400).json({ error: "No file uploaded" });
-            }
+	"/api/upload-image",
+	authenticateAdmin,
+	upload.single("image"), // "image" must match the FormData field name
+	async (req: Request, res: Response) => {
+		try {
+			if (!(req as any).file) {
+				return res.status(400).json({ error: "No file uploaded" });
+			}
 
-            // Upload to Cloudinary
-            const result = await cloudinary.uploader.upload_stream(
-                {
-                    folder: "peer-tutoring", // optional folder
-                    resource_type: "image",
-                },
-                (error, result) => {
-                    if (error) {
-                        console.error("Cloudinary upload error:", error);
-                        return res.status(500).json({ error: "Upload failed" });
-                    }
-                    res.json({ url: result?.secure_url });
-                }
-            );
+			// Upload to Cloudinary
+			const result = await cloudinary.uploader.upload_stream(
+				{
+					folder: "peer-tutoring", // optional folder
+					resource_type: "image",
+				},
+				(error, result) => {
+					if (error) {
+						console.error("Cloudinary upload error:", error);
+						return res.status(500).json({ error: "Upload failed" });
+					}
+					res.json({ url: result?.secure_url });
+				}
+			);
 
-            // Write the file buffer to Cloudinary stream
-            result.end((req as any).file.buffer);
-
-        } catch (err) {
-            console.error("Cloudinary failed:", err);
-            res.status(500).json({ error: "Cloudinary failed" });
-        }
-    }
+			// Write the file buffer to Cloudinary stream
+			result.end((req as any).file.buffer);
+		} catch (err) {
+			console.error("Cloudinary failed:", err);
+			res.status(500).json({ error: "Cloudinary failed" });
+		}
+	}
 );
