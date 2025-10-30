@@ -1,11 +1,32 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import sqlite3 from "sqlite3";
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
 import { populateAdmins } from "./populate-admin";
 
-// Import the main function from setup.ts
-import("./setup").then(async (setupModule) => {
-	console.log("Starting production database setup...\n");
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables
+dotenv.config();
+
+// Configure Cloudinary
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+	api_key: process.env.CLOUDINARY_API_KEY!,
+	api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
+
+/**
+ * Main execution function
+ */
+async function main() {
+	console.log("╔═══════════════════════════════════════════════════════╗");
+	console.log("║   PRODUCTION DATABASE SETUP                           ║");
+	console.log("╚═══════════════════════════════════════════════════════╝\n");
 
 	const dbPath = path.resolve("./peertutoringdb.sqlite");
 	const csvPath = process.argv[2];
@@ -31,22 +52,36 @@ import("./setup").then(async (setupModule) => {
 			console.log("Database not found. Creating new database...");
 			await runCreateDb();
 		} else {
-			console.log("Database already exists, skipping creation.");
+			console.log("✓ Database already exists, skipping creation.\n");
 		}
 
 		// Step 2: Populate admin accounts
-		console.log("\nStep 2: Setting up admin accounts...");
+		console.log("Step 2: Setting up admin accounts...");
 		await runPopulateAdmins();
+		console.log("✓ Admin accounts setup complete.\n");
 
-		// Step 3: Import tutor data
-		console.log("\nStep 3: Importing tutor data...");
+		// Step 3: Import tutor data from CSV
+		console.log("Step 3: Importing tutor data from CSV...");
+		console.log(`CSV file: ${resolvedCsvPath}\n`);
 		await runSetup(resolvedCsvPath);
 
-		console.log("\nProduction database setup completed successfully!");
+		console.log(
+			"\n╔═══════════════════════════════════════════════════════╗"
+		);
+		console.log("║   ✓ PRODUCTION DATABASE SETUP COMPLETE!              ║");
+		console.log(
+			"╚═══════════════════════════════════════════════════════╝"
+		);
 	} catch (error) {
-		console.error("Production setup failed:", error);
+		console.error("\n✗ Production setup failed:", error);
 		process.exit(1);
 	}
+}
+
+// Run the main function
+main().catch((error) => {
+	console.error("Fatal error:", error);
+	process.exit(1);
 });
 
 // Function to run create-db.ts logic
@@ -54,11 +89,11 @@ function runCreateDb(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const db = new sqlite3.Database("./peertutoringdb.sqlite", (err) => {
 			if (err) {
-				console.error("Error creating database:", err.message);
+				console.error("✗ Error creating database:", err.message);
 				reject(err);
 				return;
 			}
-			console.log("Connected to SQLite database.");
+			console.log("✓ Connected to SQLite database.");
 		});
 
 		const tables = [
@@ -175,14 +210,16 @@ function runCreateDb(): Promise<void> {
 			db.run(table.sql, (err) => {
 				if (err && !hasError) {
 					console.error(
-						`Error creating "${table.name}" table:`,
+						`✗ Error creating "${table.name}" table:`,
 						err.message
 					);
 					hasError = true;
 					reject(err);
 					return;
 				} else if (!hasError) {
-					console.log(`Successfully created "${table.name}" table.`);
+					console.log(
+						`✓ Successfully created "${table.name}" table.`
+					);
 				}
 
 				completed++;
@@ -190,13 +227,13 @@ function runCreateDb(): Promise<void> {
 					db.close((closeErr) => {
 						if (closeErr) {
 							console.error(
-								"Error closing database:",
+								"✗ Error closing database:",
 								closeErr.message
 							);
 							reject(closeErr);
 						} else {
 							console.log(
-								"Database tables created successfully."
+								"✓ Database tables created successfully.\n"
 							);
 							resolve();
 						}
@@ -212,20 +249,23 @@ function runPopulateAdmins(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const db = new sqlite3.Database("./peertutoringdb.sqlite", (err) => {
 			if (err) {
-				console.error("Error opening database:", err.message);
+				console.error("✗ Error opening database:", err.message);
 				reject(err);
 				return;
 			}
-			console.log("Connected to database for admin setup.");
+			console.log("✓ Connected to database for admin setup.");
 		});
 
 		populateAdmins(db, () => {
 			db.close((closeErr) => {
 				if (closeErr) {
-					console.error("Error closing database:", closeErr.message);
+					console.error(
+						"✗ Error closing database:",
+						closeErr.message
+					);
 					reject(closeErr);
 				} else {
-					console.log("Admin accounts populated successfully.");
+					console.log("✓ Admin accounts populated successfully.");
 					resolve();
 				}
 			});
@@ -233,33 +273,43 @@ function runPopulateAdmins(): Promise<void> {
 	});
 }
 
-// Function to run setup.ts logic
-function runSetup(csvPath: string): Promise<void> {
-	return new Promise((resolve, reject) => {
-		// Temporarily override process.argv to pass the CSV path to setup.ts
-		const originalArgv = process.argv;
-		process.argv = [process.argv[0], "setup.ts", csvPath];
+// Function to run setup.ts logic - properly execute setup.ts as a subprocess
+async function runSetup(csvPath: string): Promise<void> {
+	return new Promise(async (resolve, reject) => {
+		try {
+			// Execute setup.ts as a subprocess with the CSV path
+			const { spawn } = await import("child_process");
 
-		// Import and run the setup module
-		import("./setup")
-			.then(async (setupModule) => {
-				try {
-					// The setup module will run automatically when imported since it has the execution block
-					// We need to wait for it to complete
-					setTimeout(() => {
-						// Restore original argv
-						process.argv = originalArgv;
-						console.log("Tutor data imported successfully.");
-						resolve();
-					}, 1000); // Give it time to complete
-				} catch (error) {
-					process.argv = originalArgv;
-					reject(error);
+			console.log("Spawning setup.ts process...");
+
+			// Use npx tsx to ensure tsx is found
+			const isWindows = process.platform === "win32";
+			const command = isWindows ? "npx.cmd" : "npx";
+
+			const setupProcess = spawn(command, ["tsx", "setup.ts", csvPath], {
+				cwd: __dirname, // Use current directory
+				stdio: "inherit", // Show output in real-time
+				shell: true, // Use shell to resolve npx
+			});
+
+			setupProcess.on("close", (code) => {
+				if (code === 0) {
+					console.log(
+						"\n✓ Tutor data import completed successfully."
+					);
+					resolve();
+				} else {
+					reject(new Error(`Setup process exited with code ${code}`));
 				}
-			})
-			.catch((error) => {
-				process.argv = originalArgv;
+			});
+
+			setupProcess.on("error", (error) => {
+				console.error("✗ Error spawning setup process:", error);
 				reject(error);
 			});
+		} catch (error) {
+			console.error("✗ Error in runSetup:", error);
+			reject(error);
+		}
 	});
 }
