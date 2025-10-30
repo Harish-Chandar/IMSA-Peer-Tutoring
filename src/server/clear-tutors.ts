@@ -1,5 +1,5 @@
 //usage: tsx clear-tutors.ts for only deleting images
-//usage: tsx clear-tutors.ts bulk to clear all images from the cloudinary peer-tutoring folder 
+//usage: tsx clear-tutors.ts bulk to clear all images from the cloudinary peer-tutoring folder
 import sqlite3 from "sqlite3";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
@@ -55,32 +55,32 @@ async function deleteImageFromCloudinary(
 
 	if (!publicId) {
 		console.log(
-			`⚠️  Skipping ${tutorName}: No valid Cloudinary public_id found`
+			`Skipping ${tutorName}: No valid Cloudinary public_id found`
 		);
 		return false;
 	}
 
 	try {
-		console.log(`🗑️  Deleting image for ${tutorName}: ${publicId}`);
+		console.log(`Deleting image for ${tutorName}: ${publicId}`);
 		const result = await cloudinary.uploader.destroy(publicId);
 
 		if (result.result === "ok") {
-			console.log(`✓ Successfully deleted image for ${tutorName}`);
+			console.log(`Successfully deleted image for ${tutorName}`);
 			return true;
 		} else if (result.result === "not found") {
 			console.log(
-				`⚠️  Image not found for ${tutorName} (may already be deleted)`
+				`Image not found for ${tutorName} (may already be deleted)`
 			);
-			return true; // Consider this a success since the image is gone
+			return true;
 		} else {
 			console.error(
-				`✗ Failed to delete image for ${tutorName}:`,
+				`Failed to delete image for ${tutorName}:`,
 				result.result
 			);
 			return false;
 		}
 	} catch (error) {
-		console.error(`✗ Error deleting image for ${tutorName}:`, error);
+		console.error(`Error deleting image for ${tutorName}:`, error);
 		return false;
 	}
 }
@@ -89,7 +89,7 @@ async function deleteImageFromCloudinary(
  * Delete all images from the peer-tutoring folder in Cloudinary
  */
 async function deleteAllCloudinaryImages(): Promise<number> {
-	console.log("\n🧹 Cleaning up ALL images from Cloudinary folder...");
+	console.log("Cleaning up ALL images from Cloudinary folder...");
 
 	try {
 		let deletedCount = 0;
@@ -97,10 +97,9 @@ async function deleteAllCloudinaryImages(): Promise<number> {
 		let nextCursor: string | undefined = undefined;
 
 		while (hasMore) {
-			// List resources in the peer-tutoring folder
 			const result = await cloudinary.api.resources({
 				type: "upload",
-				prefix: "peer-tutoring/", // Only images in this folder
+				prefix: "peer-tutoring/",
 				max_results: 500,
 				next_cursor: nextCursor,
 			});
@@ -110,12 +109,10 @@ async function deleteAllCloudinaryImages(): Promise<number> {
 					`Found ${result.resources.length} images to delete...`
 				);
 
-				// Delete in batches
 				const publicIds = result.resources.map(
 					(resource: any) => resource.public_id
 				);
 
-				// Cloudinary allows bulk deletion of up to 100 resources at a time
 				for (let i = 0; i < publicIds.length; i += 100) {
 					const batch = publicIds.slice(i, i + 100);
 					try {
@@ -125,26 +122,23 @@ async function deleteAllCloudinaryImages(): Promise<number> {
 							deleteResult.deleted
 						).filter((status) => status === "deleted").length;
 						deletedCount += successCount;
-						console.log(
-							`✓ Deleted batch of ${successCount} images`
-						);
+						console.log(`Deleted batch of ${successCount} images`);
 					} catch (error) {
-						console.error("✗ Error deleting batch:", error);
+						console.error("Error deleting batch:", error);
 					}
 				}
 			}
 
-			// Check if there are more resources
 			nextCursor = result.next_cursor;
 			hasMore = !!nextCursor;
 		}
 
 		console.log(
-			`\n✓ Cleanup complete! Deleted ${deletedCount} images from Cloudinary`
+			`Cleanup complete! Deleted ${deletedCount} images from Cloudinary`
 		);
 		return deletedCount;
 	} catch (error) {
-		console.error("✗ Error listing Cloudinary resources:", error);
+		console.error("Error listing Cloudinary resources:", error);
 		return 0;
 	}
 }
@@ -205,59 +199,48 @@ function resetAutoIncrement(db: sqlite3.Database): Promise<void> {
  * Main execution function
  */
 async function main() {
-	console.log("╔═══════════════════════════════════════════════════════╗");
-	console.log("║   CLEAR TUTORS & CLOUDINARY IMAGES                    ║");
-	console.log("╚═══════════════════════════════════════════════════════╝\n");
+	console.log("CLEAR TUTORS & CLOUDINARY IMAGES");
 
 	const dbPath = path.resolve("./peertutoringdb.sqlite");
 
-	// Check cleanup mode
 	const args = process.argv.slice(2);
-	const cleanupMode = args[0] || "individual"; // 'individual' or 'bulk'
+	const cleanupMode = args[0] || "individual";
 
 	console.log(
-		`Cleanup mode: ${
-			cleanupMode === "bulk"
-				? "BULK (delete all images in folder)"
-				: "INDIVIDUAL (delete only tutor images)"
-		}\n`
+		`Cleanup mode: ${cleanupMode === "bulk" ? "BULK" : "INDIVIDUAL"}`
 	);
 
-	// Open database connection
 	const db = new sqlite3.Database(dbPath, (err) => {
 		if (err) {
-			console.error("✗ Error opening database:", err.message);
+			console.error("Error opening database:", err.message);
 			process.exit(1);
 		} else {
-			console.log("✓ Connected to SQLite database.\n");
+			console.log("Connected to SQLite database.");
 		}
 	});
 
 	try {
 		if (cleanupMode === "bulk") {
-			// Bulk deletion mode - delete all images from Cloudinary folder
 			console.log(
-				"⚠️  WARNING: This will delete ALL images from the peer-tutoring folder in Cloudinary!"
+				"WARNING: This will delete ALL images from the peer-tutoring folder in Cloudinary!"
 			);
 			console.log(
-				"⚠️  This includes any images that might not be associated with current tutors.\n"
+				"This includes any images that might not be associated with current tutors."
 			);
 
 			const deletedCount = await deleteAllCloudinaryImages();
-			console.log(`\nCloudinary cleanup: ${deletedCount} images deleted`);
+			console.log(`Cloudinary cleanup: ${deletedCount} images deleted`);
 		} else {
-			// Individual deletion mode - delete only images associated with tutors
-			console.log("Step 1: Retrieving all tutors from database...");
+			console.log("Retrieving all tutors from database...");
 			const tutors = await getAllTutors(db);
-			console.log(`✓ Found ${tutors.length} tutors\n`);
+			console.log(`Found ${tutors.length} tutors`);
 
 			if (tutors.length === 0) {
 				console.log(
 					"No tutors found in database. Nothing to clean up."
 				);
 			} else {
-				// Step 2: Delete images from Cloudinary
-				console.log("Step 2: Deleting tutor images from Cloudinary...");
+				console.log("Deleting tutor images from Cloudinary...");
 				let successCount = 0;
 				let skippedCount = 0;
 
@@ -271,45 +254,34 @@ async function main() {
 						if (success) successCount++;
 					} else {
 						skippedCount++;
-						console.log(`⚠️  Skipping ${tutorName}: No image URL`);
+						console.log(`Skipping ${tutorName}: No image URL`);
 					}
 				}
 
-				console.log(`\n✓ Cloudinary cleanup complete:`);
+				console.log(`Cloudinary cleanup complete:`);
 				console.log(`  - Successfully deleted: ${successCount} images`);
-				console.log(`  - Skipped (no image): ${skippedCount} tutors\n`);
+				console.log(`  - Skipped (no image): ${skippedCount} tutors`);
 			}
 		}
 
-		// Step 3: Delete all tutors from database
-		console.log("Step 3: Deleting all tutors from database...");
+		console.log("Deleting all tutors from database...");
 		const deletedRows = await deleteAllTutors(db);
-		console.log(`✓ Deleted ${deletedRows} tutors from database\n`);
+		console.log(`Deleted ${deletedRows} tutors from database`);
 
-		// Step 4: Reset auto-increment counter
-		console.log("Step 4: Resetting auto-increment counter...");
+		console.log("Resetting auto-increment counter...");
 		await resetAutoIncrement(db);
-		console.log("✓ Auto-increment counter reset\n");
+		console.log("Auto-increment counter reset");
 
-		console.log(
-			"╔═══════════════════════════════════════════════════════╗"
-		);
-		console.log(
-			"║   ✓ CLEANUP COMPLETE!                                 ║"
-		);
-		console.log(
-			"╚═══════════════════════════════════════════════════════╝"
-		);
+		console.log("CLEANUP COMPLETE!");
 	} catch (error) {
-		console.error("\n✗ Error during cleanup:", error);
+		console.error("Error during cleanup:", error);
 		process.exit(1);
 	} finally {
-		// Close database connection
 		db.close((err) => {
 			if (err) {
-				console.error("✗ Error closing database:", err.message);
+				console.error("Error closing database:", err.message);
 			} else {
-				console.log("\n✓ Database connection closed.");
+				console.log("Database connection closed.");
 			}
 		});
 	}

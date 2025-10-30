@@ -20,25 +20,18 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-/**
- * Main execution function
- */
 async function main() {
-	console.log("╔═══════════════════════════════════════════════════════╗");
-	console.log("║   PRODUCTION DATABASE SETUP                           ║");
-	console.log("╚═══════════════════════════════════════════════════════╝\n");
+	console.log("PRODUCTION DATABASE SETUP");
 
 	const dbPath = path.resolve("./peertutoringdb.sqlite");
 	const csvPath = process.argv[2];
 
-	// Check if CSV file path is provided
 	if (!csvPath) {
 		console.error("Error: Please provide the path to the tutors CSV file");
 		console.error("Usage: tsx create-db-prod.ts <path-to-tutors.csv>");
 		process.exit(1);
 	}
 
-	// Check if CSV file exists
 	const resolvedCsvPath = path.resolve(csvPath);
 	if (!fs.existsSync(resolvedCsvPath)) {
 		console.error(`Error: CSV file not found: ${resolvedCsvPath}`);
@@ -46,34 +39,25 @@ async function main() {
 	}
 
 	try {
-		// Step 1: Check if database exists, create if not
-		console.log("Step 1: Checking database...");
+		console.log("Checking database...");
 		if (!fs.existsSync(dbPath)) {
 			console.log("Database not found. Creating new database...");
 			await runCreateDb();
 		} else {
-			console.log("✓ Database already exists, skipping creation.\n");
+			console.log("Database already exists, skipping creation.");
 		}
 
-		// Step 2: Populate admin accounts
-		console.log("Step 2: Setting up admin accounts...");
+		console.log("Setting up admin accounts...");
 		await runPopulateAdmins();
-		console.log("✓ Admin accounts setup complete.\n");
+		console.log("Admin accounts setup complete.");
 
-		// Step 3: Import tutor data from CSV
-		console.log("Step 3: Importing tutor data from CSV...");
-		console.log(`CSV file: ${resolvedCsvPath}\n`);
+		console.log("Importing tutor data from CSV...");
+		console.log(`CSV file: ${resolvedCsvPath}`);
 		await runSetup(resolvedCsvPath);
 
-		console.log(
-			"\n╔═══════════════════════════════════════════════════════╗"
-		);
-		console.log("║   ✓ PRODUCTION DATABASE SETUP COMPLETE!              ║");
-		console.log(
-			"╚═══════════════════════════════════════════════════════╝"
-		);
+		console.log("PRODUCTION DATABASE SETUP COMPLETE!");
 	} catch (error) {
-		console.error("\n✗ Production setup failed:", error);
+		console.error("Production setup failed:", error);
 		process.exit(1);
 	}
 }
@@ -89,11 +73,11 @@ function runCreateDb(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const db = new sqlite3.Database("./peertutoringdb.sqlite", (err) => {
 			if (err) {
-				console.error("✗ Error creating database:", err.message);
+				console.error("Error creating database:", err.message);
 				reject(err);
 				return;
 			}
-			console.log("✓ Connected to SQLite database.");
+			console.log("Connected to SQLite database.");
 		});
 
 		const tables = [
@@ -210,16 +194,14 @@ function runCreateDb(): Promise<void> {
 			db.run(table.sql, (err) => {
 				if (err && !hasError) {
 					console.error(
-						`✗ Error creating "${table.name}" table:`,
+						`Error creating "${table.name}" table:`,
 						err.message
 					);
 					hasError = true;
 					reject(err);
 					return;
 				} else if (!hasError) {
-					console.log(
-						`✓ Successfully created "${table.name}" table.`
-					);
+					console.log(`Successfully created "${table.name}" table.`);
 				}
 
 				completed++;
@@ -227,13 +209,13 @@ function runCreateDb(): Promise<void> {
 					db.close((closeErr) => {
 						if (closeErr) {
 							console.error(
-								"✗ Error closing database:",
+								"Error closing database:",
 								closeErr.message
 							);
 							reject(closeErr);
 						} else {
 							console.log(
-								"✓ Database tables created successfully.\n"
+								"Database tables created successfully."
 							);
 							resolve();
 						}
@@ -249,23 +231,20 @@ function runPopulateAdmins(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const db = new sqlite3.Database("./peertutoringdb.sqlite", (err) => {
 			if (err) {
-				console.error("✗ Error opening database:", err.message);
+				console.error("Error opening database:", err.message);
 				reject(err);
 				return;
 			}
-			console.log("✓ Connected to database for admin setup.");
+			console.log("Connected to database for admin setup.");
 		});
 
 		populateAdmins(db, () => {
 			db.close((closeErr) => {
 				if (closeErr) {
-					console.error(
-						"✗ Error closing database:",
-						closeErr.message
-					);
+					console.error("Error closing database:", closeErr.message);
 					reject(closeErr);
 				} else {
-					console.log("✓ Admin accounts populated successfully.");
+					console.log("Admin accounts populated successfully.");
 					resolve();
 				}
 			});
@@ -277,26 +256,22 @@ function runPopulateAdmins(): Promise<void> {
 async function runSetup(csvPath: string): Promise<void> {
 	return new Promise(async (resolve, reject) => {
 		try {
-			// Execute setup.ts as a subprocess with the CSV path
 			const { spawn } = await import("child_process");
 
 			console.log("Spawning setup.ts process...");
 
-			// Use npx tsx to ensure tsx is found
 			const isWindows = process.platform === "win32";
 			const command = isWindows ? "npx.cmd" : "npx";
 
 			const setupProcess = spawn(command, ["tsx", "setup.ts", csvPath], {
-				cwd: __dirname, // Use current directory
-				stdio: "inherit", // Show output in real-time
-				shell: true, // Use shell to resolve npx
+				cwd: __dirname,
+				stdio: "inherit",
+				shell: true,
 			});
 
 			setupProcess.on("close", (code) => {
 				if (code === 0) {
-					console.log(
-						"\n✓ Tutor data import completed successfully."
-					);
+					console.log("Tutor data import completed successfully.");
 					resolve();
 				} else {
 					reject(new Error(`Setup process exited with code ${code}`));
@@ -304,11 +279,11 @@ async function runSetup(csvPath: string): Promise<void> {
 			});
 
 			setupProcess.on("error", (error) => {
-				console.error("✗ Error spawning setup process:", error);
+				console.error("Error spawning setup process:", error);
 				reject(error);
 			});
 		} catch (error) {
-			console.error("✗ Error in runSetup:", error);
+			console.error("Error in runSetup:", error);
 			reject(error);
 		}
 	});
