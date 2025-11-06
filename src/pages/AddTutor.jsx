@@ -403,7 +403,7 @@ function AddTutor() {
 			setAlertModal({
 				isOpen: true,
 				title: "Error",
-				message: "Error creating tutor. Please try again.",
+				message: "Unexpected error creating tutor. Please try again.",
 				onConfirm: () =>
 					setAlertModal({
 						isOpen: false,
