@@ -3,6 +3,7 @@ import "./custom.css";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal.jsx";
+import BulkTutorImport from "../components/BulkTutorImport.jsx";
 
 import { isTokenExpired, classCategories, getTokenAccess } from "../util.ts";
 const token = localStorage.getItem("token");
@@ -16,9 +17,15 @@ function AddTutor() {
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
 		}
-        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 3 || getTokenAccess(token) === 2)) {
-            navigate('/adminDashboard');
-        }
+		if (
+			token &&
+			!isTokenExpired(token) &&
+			(getTokenAccess(token) < 1 ||
+				getTokenAccess(token) > 3 ||
+				getTokenAccess(token) === 2)
+		) {
+			navigate("/adminDashboard");
+		}
 	}, []);
 	// environment variables for API configuration
 	const DBPORT = process.env.REACT_APP_DBPORT;
@@ -517,9 +524,22 @@ function AddTutor() {
 			<div className="flex justify-center">
 				<div className="max-w-2xl md:max-w-4xl lg:max-w-6xl w-full">
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-						{/* Left card - Add tutor form */}
+						{/* Left card - Add tutor form and bulk import */}
 						<div className="rounded-2xl shadow-md p-8 bg-white border">
 							<div className="space-y-6">
+								{/* Bulk Import Section */}
+								<div className="border-b pb-6 mb-6">
+									<h3 className="text-2xl font-bold text-gray-700 mb-4">
+										Bulk Import Tutors
+									</h3>
+									<BulkTutorImport
+										onImportComplete={fetchTutors}
+										baseUrl={baseUrl}
+										token={token}
+									/>
+								</div>
+
+								{/* Individual Add Tutor Section */}
 								<h3 className="text-2xl font-bold text-gray-700 mb-6">
 									Add New Tutor
 								</h3>
