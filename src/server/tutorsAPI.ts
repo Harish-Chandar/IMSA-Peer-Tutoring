@@ -271,6 +271,37 @@ app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 	);
 });
 
+
+// accept tutor hours
+app.patch(
+    "/api/tutors/:id/accept-hours",
+    authenticateAdmin,
+    (req: Request, res: Response) => {
+        const tutorId = parseInt(req.params.id);
+        if (isNaN(tutorId) || tutorId < 0) {
+            return res.status(400).json({ error: "Invalid tutor ID" });
+        }
+
+        // get hours information
+        db.run(
+            "UPDATE tutors SET approvedtime = totaltime WHERE id = ?",
+            [tutorId],
+            function (err: Error | null) {
+                if (err) {
+                    console.error("Error updating tutor hours:", err);
+                    return res.status(500).json({ error: "Error updating tutor hours" });
+                }
+                if (this.changes === 0) {
+                    return res.status(404).json({ error: "Tutor not found" });
+                }
+                res.json({ message: "Tutor hours reset to 0" });
+            }
+        );
+    }
+);
+
+
+
 // delete tutor endpoint
 app.delete(
 	"/api/tutors/:id",
