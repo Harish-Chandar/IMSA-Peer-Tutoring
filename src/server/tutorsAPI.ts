@@ -12,39 +12,43 @@ import multer from "multer";
 import https from "https";
 import fs from "fs";
 
-//const https = require('https'); // or import https from "https"
-//const HTTPS_PORT = 443
+const DEV_SERVER = process.env.DEV_SERVER === "1";
+console.log(process.env.DEV_SERVER)
+console.log(DEV_SERVER);
+
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.DBHOST || 5000;
 
-const options = {
-    key: fs.readFileSync('/etc/pki/nginx/private/wildcard.imsa.edu.key'),
-    cert: fs.readFileSync('/etc/pki/nginx/STAR_imsa_edu.crt')
-};
+let options = {}
+if (!DEV_SERVER) {
+    options = {
+        key: fs.readFileSync('/etc/pki/nginx/private/wildcard.imsa.edu.key'),
+        cert: fs.readFileSync('/etc/pki/nginx/STAR_imsa_edu.crt')
+    };
+}
 
-// import bulletinrouter from './bulletinapi.js';
 
 app.use(cors());
 
 // set up server
-//app.listen(PORT, () => {
-//	console.log(`server listening on port ${PORT}`);
-//});
-
-//httpsServer.listen(HTTPS_PORT, () => {
-//  console.log('server listening on port ${HTTPS_PORT}');
-//});
+if (DEV_SERVER) {
+    app.listen(PORT, () => {
+        console.log(`server listening on port ${PORT}`);
+    });
+}
 
 // allows routes to parse json
 app.use(express.json());
 
-https.createServer(options, app).listen(PORT, () => {
-	console.log(`HTTPS server listening on port ${PORT}`);
-	console.log(`Access it at: https://peertutor.imsa.edu:${PORT}`);
-});
+if (!DEV_SERVER) {
+    https.createServer(options, app).listen(PORT, () => {
+        console.log(`HTTPS server listening on port ${PORT}`);
+        console.log(`Access it at: https://peertutor.imsa.edu:${PORT}`);
+    });
+}
 
 // initialize database
 const db = new sqlite3.Database(
