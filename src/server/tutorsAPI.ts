@@ -130,6 +130,30 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
 // 	);
 // });
 
+// check if tutor exists by email endpoint - MUST be before /:id route
+app.get(
+	"/api/tutors/check-email/:email",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		const email = decodeURIComponent(req.params.email);
+
+		db.get(
+			"SELECT id FROM tutors WHERE email = ?",
+			[email],
+			(err: Error | null, row: any) => {
+				if (err) {
+					console.error("Database error:", err);
+					return res
+						.status(500)
+						.json({ error: "Error checking email" });
+				}
+
+				res.json({ exists: !!row });
+			}
+		);
+	}
+);
+
 app.get("/api/tutors/:id", (req, res) => {
 	const id = req.params.id;
 	db.all("SELECT * FROM tutors WHERE id = ?", [id], (err, rows) => {
@@ -564,63 +588,95 @@ app.post(
 	}
 );
 
-app.patch("/api/admins/:email/passwordchange", authenticateAdmin, (req: Request, res: Response) => {
-	const adminEmail = req.params.email;
-	const { currentPassword, newPassword } = req.body;
+app.patch(
+	"/api/admins/:email/passwordchange",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		const adminEmail = req.params.email;
+		const { currentPassword, newPassword } = req.body;
 
-	if (!newPassword) {
-		return res.status(400).json({ error: "New password is required" });
-	}
-
-	if (!currentPassword) {
-		return res.status(400).json({ error: "Current password is required" });
-	}
-
-	// Get the current admin record to validate the current password
-	const query = `SELECT * FROM admins WHERE email = ?`;
-	db.get<Admin>(query, [adminEmail], (err, row) => {
-		if (err) {
-			console.error("Database error:", err);
-			return res.status(500).json({ error: "Error accessing database" });
-		}
-		
-		if (!row) {
-			return res.status(404).json({ error: "Admin not found" });
+		if (!newPassword) {
+			return res.status(400).json({ error: "New password is required" });
 		}
 
-		// Validate current password
-		bcrypt.compare(currentPassword, row.pwd, (err: Error | undefined, result: boolean) => {
+		if (!currentPassword) {
+			return res
+				.status(400)
+				.json({ error: "Current password is required" });
+		}
+
+		// Get the current admin record to validate the current password
+		const query = `SELECT * FROM admins WHERE email = ?`;
+		db.get<Admin>(query, [adminEmail], (err, row) => {
 			if (err) {
-				console.error("Password comparison error:", err);
-				return res.status(500).json({ error: "Error validating current password" });
+				console.error("Database error:", err);
+				return res
+					.status(500)
+					.json({ error: "Error accessing database" });
 			}
 
-			if (!result) {
-				return res.status(401).json({ error: "Current password is incorrect" });
+			if (!row) {
+				return res.status(404).json({ error: "Admin not found" });
 			}
 
-			// Hash the new password
-			bcrypt.hash(newPassword, 10, (err: Error | undefined, hash: string) => {
-				if (err) {
-					console.error("Hashing error:", err);
-					return res.status(500).json({ error: "Error updating admin password" });
-				}
-
-				const sql = "UPDATE admins SET pwd = ? WHERE email = ?";
-				db.run(sql, [hash, adminEmail], function (err) {
+			// Validate current password
+			bcrypt.compare(
+				currentPassword,
+				row.pwd,
+				(err: Error | undefined, result: boolean) => {
 					if (err) {
-						console.error("Database error:", err);
-						return res.status(500).json({ error: "Error updating admin password" });
+						console.error("Password comparison error:", err);
+						return res.status(500).json({
+							error: "Error validating current password",
+						});
 					}
-					if (this.changes === 0) {
-						return res.status(404).json({ error: "Admin " + adminEmail + " not found" });
+
+					if (!result) {
+						return res
+							.status(401)
+							.json({ error: "Current password is incorrect" });
 					}
-					res.status(200).json({ message: "Password updated successfully" });
-				});
-			});
+
+					// Hash the new password
+					bcrypt.hash(
+						newPassword,
+						10,
+						(err: Error | undefined, hash: string) => {
+							if (err) {
+								console.error("Hashing error:", err);
+								return res.status(500).json({
+									error: "Error updating admin password",
+								});
+							}
+
+							const sql =
+								"UPDATE admins SET pwd = ? WHERE email = ?";
+							db.run(sql, [hash, adminEmail], function (err) {
+								if (err) {
+									console.error("Database error:", err);
+									return res.status(500).json({
+										error: "Error updating admin password",
+									});
+								}
+								if (this.changes === 0) {
+									return res.status(404).json({
+										error:
+											"Admin " +
+											adminEmail +
+											" not found",
+									});
+								}
+								res.status(200).json({
+									message: "Password updated successfully",
+								});
+							});
+						}
+					);
+				}
+			);
 		});
-	});
-});
+	}
+);
 
 app.get("/api/admins", authenticateAdmin, (req: Request, res: Response) => {
 	const sql = "SELECT * FROM admins";
@@ -903,8 +959,8 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 			"Multi-Variable Calculus":
 				"MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
 			"Advanced Programming": "Adpro",
-			"BMC": "Biology: Molecular & Cellular",
-			"BEE": "Biology: Evolution & Environment"
+			BMC: "Biology: Molecular & Cellular",
+			BEE: "Biology: Evolution & Environment",
 		};
 
 		// Build an array of search terms including original query and expansions
@@ -1214,7 +1270,9 @@ app.delete(
 						}
 
 						if (this.changes === 0) {
-							return res.status(404).json({ error: "Resource not found" });
+							return res
+								.status(404)
+								.json({ error: "Resource not found" });
 						}
 
 						res.json({ message: "Resource deleted successfully" });
@@ -1356,6 +1414,63 @@ app.post(
 		} catch (err) {
 			console.error("Cloudinary failed:", err);
 			res.status(500).json({ error: "Cloudinary failed" });
+		}
+	}
+);
+
+// Upload image from URL (for bulk imports)
+app.post(
+	"/api/upload-image-url",
+	authenticateAdmin,
+	async (req: Request, res: Response) => {
+		try {
+			const { imageUrl, tutorName } = req.body;
+
+			if (!imageUrl || imageUrl.trim() === "") {
+				return res.status(400).json({ error: "No image URL provided" });
+			}
+
+			// Check if it's already a Cloudinary URL
+			if (imageUrl.includes("res.cloudinary.com")) {
+				console.log(`Image already on Cloudinary: ${imageUrl}`);
+				return res.json({ secure_url: imageUrl });
+			}
+
+			console.log(`Uploading image for ${tutorName}: ${imageUrl}`);
+
+			// Convert Google Drive URLs to direct access URL
+			let urlToUpload = imageUrl;
+			if (
+				imageUrl.includes("drive.google.com") &&
+				imageUrl.includes("id=")
+			) {
+				const fileIdMatch = imageUrl.match(/id=([a-zA-Z0-9_-]+)/);
+				if (fileIdMatch) {
+					const fileId = fileIdMatch[1];
+					urlToUpload = `https://drive.google.com/uc?export=view&id=${fileId}`;
+				}
+			}
+
+			// Upload to Cloudinary using URL
+			const result = await cloudinary.uploader.upload(urlToUpload, {
+				folder: "peer-tutoring",
+				resource_type: "image",
+				public_id: `tutor_${tutorName
+					.toLowerCase()
+					.replace(/\s+/g, "_")}_${Date.now()}`,
+			});
+
+			console.log(
+				`Successfully uploaded to Cloudinary: ${result.secure_url}`
+			);
+			res.json({ secure_url: result.secure_url });
+		} catch (error) {
+			console.error("Failed to upload image URL:", error);
+			// Return error but don't fail the whole import
+			res.status(500).json({
+				error: "Failed to upload image",
+				details: error instanceof Error ? error.message : String(error),
+			});
 		}
 	}
 );
