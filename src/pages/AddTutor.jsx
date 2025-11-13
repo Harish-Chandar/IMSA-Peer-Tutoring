@@ -956,13 +956,14 @@ function AddTutor() {
 																(
 																{tutor.totaltime
 																	? (
-																			tutor.totaltime /
+																			(tutor.totaltime - tutor.approvedtime) /
 																			3600000
 																	  ).toFixed(
 																			2
 																	  )
 																	: "0.00"}{" "}
-																hrs)
+																hrs pending approval)
+                                                                
 															</span>
 														</p>
 														<p className="text-sm text-blue-400 break-all">

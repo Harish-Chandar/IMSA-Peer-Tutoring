@@ -260,7 +260,7 @@ app.patch(
 
         // get hours information
         db.run(
-            "UPDATE tutors SET approvedtime = approvedtime + totaltime, totaltime = 0 WHERE id = ?",
+            "UPDATE tutors SET approvedtime = totaltime WHERE id = ?",
             [tutorId],
             function (err: Error | null) {
                 if (err) {
@@ -269,7 +269,6 @@ app.patch(
                 }
                 if (this.changes === 0) {
                     return res.status(404).json({ error: "Tutor not found" });
-
                 }
                 res.json({ message: "Tutor hours reset to 0" });
             }
