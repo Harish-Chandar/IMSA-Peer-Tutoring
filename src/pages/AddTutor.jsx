@@ -3,7 +3,7 @@ import "./custom.css";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal.jsx";
-import BulkTutorImport from "../components/BulkTutorImport.jsx";
+import MassTutorImport from "../components/MassTutorImport.jsx";
 
 import { isTokenExpired, classCategories, getTokenAccess } from "../util.ts";
 const token = localStorage.getItem("token");
@@ -530,9 +530,9 @@ function AddTutor() {
 								{/* Bulk Import Section */}
 								<div className="border-b pb-6 mb-6">
 									<h3 className="text-2xl font-bold text-gray-700 mb-4">
-										Bulk Import Tutors
+										Mass Import Tutors
 									</h3>
-									<BulkTutorImport
+									<MassTutorImport
 										onImportComplete={fetchTutors}
 										baseUrl={baseUrl}
 										token={token}
