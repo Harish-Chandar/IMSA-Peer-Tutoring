@@ -494,7 +494,7 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 				</label>
 				<p className="text-sm text-gray-600 text-center">
 					Upload a CSV file with tutors data. Existing tutors (by
-					email) will be skipped.
+					email) will be skipped. Please stay on this page, otherwise the process will be interrupted.
 				</p>
 			</div>
 
