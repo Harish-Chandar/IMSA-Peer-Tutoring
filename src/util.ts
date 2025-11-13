@@ -138,3 +138,5 @@ export const classCategories = {
 };
 
 export const departments = [ "Computer Science", "Math", "Science", "English", "Wellness", "World Languages" ];
+
+

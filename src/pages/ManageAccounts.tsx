@@ -21,7 +21,9 @@ export default function ManageAccounts() {
 
 	const DBPORT = process.env.REACT_APP_DBPORT;
 	const HOST = process.env.REACT_APP_HOST;
-	const baseUrl = `https://${HOST}:${DBPORT}/api`;
+	const DEV_SERVER = process.env.DEV_SERVER === 'true';
+	const protocol = DEV_SERVER ? 'http' : 'https';
+	const baseUrl = `${protocol}://${HOST}:${DBPORT}/api`;
 
 	const [alertModal, setAlertModal] = useState<{
 		isOpen: boolean;

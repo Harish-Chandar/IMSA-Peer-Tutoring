@@ -6,6 +6,7 @@ import AlertModal from "../components/AlertModal.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
+const DEV_SERVER = process.env.DEV_SERVER === 'true';
 const token = localStorage.getItem("token");
 
 function ResourceForm() {
@@ -152,7 +153,8 @@ function ResourceForm() {
 			links: normalizedLinks,
 		};
 
-		const baseUrl = `https://${HOST}:${DBPORT}`;
+		const protocol = DEV_SERVER ? 'http' : 'https';
+		const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 		try {
 			const response = await fetch(`${baseUrl}/api/resources`, {
 				method: "POST",

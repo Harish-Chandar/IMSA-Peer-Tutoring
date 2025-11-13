@@ -6,6 +6,7 @@ import { isTokenExpired, getTokenAccess } from "../util.ts";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
+const DEV_SERVER = process.env.DEV_SERVER === 'true';
 
 function EditResourceInfo() {
     const { id } = useParams();
@@ -48,13 +49,13 @@ function EditResourceInfo() {
     useEffect(() => {
         const fetchResource = async () => {
             try {
+                const protocol = DEV_SERVER ? 'http' : 'https';
                 const response = await fetch(
-                    `https://${HOST}:${DBPORT}/api/resources/${id}`
+                    `${protocol}://${HOST}:${DBPORT}/api/resources/${id}`
                 );
                 if (!response.ok) {
                     throw new Error("Failed to fetch resource");
                 }
-
                 const data = await response.json();
                 setFormData({
                     teacher: data.teacher || "",
@@ -81,8 +82,9 @@ function EditResourceInfo() {
         e.preventDefault();
 
         try {
+            const protocol = DEV_SERVER ? 'http' : 'https';
             const response = await fetch(
-                `https://${HOST}:${DBPORT}/api/resources/${id}/info`,
+                `${protocol}://${HOST}:${DBPORT}/api/resources/${id}/info`,
                 {
                     method: "PATCH",
                     headers: {

@@ -5,13 +5,15 @@ import Navbar from "../components/Navbar.jsx";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer.jsx";
 
-import { departments } from "../util.ts"; 
+import { departments } from "../util.ts";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
+const DEV_SERVER = process.env.DEV_SERVER === 'true';
 
 function FindResources() {
-	const baseUrl = `https://${HOST}:${DBPORT}`;
+	const protocol = DEV_SERVER ? 'http' : 'https';
+	const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 
 	const [resources, setResources] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");

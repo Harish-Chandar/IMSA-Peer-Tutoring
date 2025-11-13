@@ -7,7 +7,9 @@ function FindTutors() {
 	// environment variables for API configuration
 	const DBPORT = process.env.REACT_APP_DBPORT;
 	const HOST = process.env.REACT_APP_HOST;
-	const baseUrl = `https://${HOST}:${DBPORT}`;
+	const DEV_SERVER = process.env.DEV_SERVER === 'true';
+	const protocol = DEV_SERVER ? 'http' : 'https';
+	const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 
 	// default placeholder image URL from environment variable
 	const DEFAULT_AVATAR_URL =
