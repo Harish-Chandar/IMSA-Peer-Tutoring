@@ -502,7 +502,7 @@ function AddTutor() {
 		setAlertModal({
 			isOpen: true,
 			title: "Confirm Accepted Hours",
-			message: `Are you sure you want to update the accepted hours for the tutor "${tutorToUpdate.fname} ${tutorToUpdate.lname}"?`,
+			message: `Are you sure you want to update the accepted hours for the tutor "${tutorToUpdate.fname} ${tutorToUpdate.lname}"? This will reset their hour counter to 0, so ensure that the hours are correctly inputted to HelperHelper.`,
 			onConfirm: async (confirmed) => {
 				setAlertModal({
 					isOpen: false,
