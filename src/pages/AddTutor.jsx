@@ -60,8 +60,8 @@ function AddTutor() {
 
 	// selected classes for each category
 	const [selectedClasses, setSelectedClasses] = useState({});
-
-	// state for searching and deleting tutors
+    
+    // state for searching and deleting tutors
 	const [deleteSearchQuery, setDeleteSearchQuery] = useState("");
 	const [tutors, setTutors] = useState([]);
 	const [filteredTutors, setFilteredTutors] = useState([]);
@@ -96,6 +96,9 @@ function AddTutor() {
 				return fullName.includes(deleteSearchQuery.toLowerCase());
 			});
 			setFilteredTutors(filtered);
+		} else {
+			// Clear filtered tutors when tutors array is empty
+			setFilteredTutors([]);
 		}
 	}, [deleteSearchQuery, tutors]);
 
@@ -429,7 +432,7 @@ function AddTutor() {
 		setAlertModal({
 			isOpen: true,
 			title: "Confirm Delete",
-			message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`,
+			message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone. Make sure all tutor hours are saved on Helper Helper, otherwise they will be lost.`,
 			onConfirm: async (confirmed) => {
 				setAlertModal({
 					isOpen: false,
@@ -584,6 +587,135 @@ function AddTutor() {
 
 
 
+
+	const handleDeleteAllTutors = async () => {
+		try {
+			const checkResponse = await fetch(
+				`${baseUrl}/api/tutors/check-outstanding-hours`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			const checkData = await checkResponse.json();
+
+			if (checkData.hasOutstandingHours) {
+				const tutorList = checkData.tutorsWithOutstandingHours
+					.map(
+						(t) =>
+							`${t.fname} ${t.lname}: ${t.totaltime - t.approvedtime} hours`
+					)
+					.join("\n");
+
+				setAlertModal({
+					isOpen: true,
+					title: "Outstanding Hours Detected",
+					message: `The following tutors have outstanding hours that haven't been approved:\n\n${tutorList}\n\nPlease approve or reset their hours before deleting all tutors.`,
+					onConfirm: () =>
+						setAlertModal({
+							isOpen: false,
+							title: "",
+							message: "",
+							onConfirm: null,
+						}),
+				});
+				return;
+			}
+
+			setAlertModal({
+				isOpen: true,
+				title: "Confirm Delete All Tutors",
+				message: `Are you sure you want to delete all tutors? This action will delete ${tutors.length} tutor(s) and cannot be undone. Make sure all tutor hours are saved on Helper Helper, otherwise they will be lost!`,
+				showCancel: true,
+				onConfirm: async (confirmed) => {
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					});
+
+					if (confirmed) {
+						try {
+							const response = await fetch(
+								`${baseUrl}/api/tutors/delete-all`,
+								{
+									method: "DELETE",
+									headers: {
+										"Content-Type": "application/json",
+										Authorization: `Bearer ${token}`,
+									},
+								}
+							);
+
+							if (response.ok) {
+								const data = await response.json();
+								setDeleteSearchQuery("");
+								fetchTutors();
+								setAlertModal({
+									isOpen: true,
+									title: "Success",
+									message: `Successfully deleted ${data.deletedCount} tutor(s)!`,
+									onConfirm: () =>
+										setAlertModal({
+											isOpen: false,
+											title: "",
+											message: "",
+											onConfirm: null,
+										}),
+								});
+							} else {
+								const errorData = await response.json();
+								setAlertModal({
+									isOpen: true,
+									title: "Error",
+									message: `Error deleting tutors: ${errorData.error}`,
+									onConfirm: () =>
+										setAlertModal({
+											isOpen: false,
+											title: "",
+											message: "",
+											onConfirm: null,
+										}),
+								});
+							}
+						} catch (error) {
+							console.error("error deleting all tutors:", error);
+							setAlertModal({
+								isOpen: true,
+								title: "Error",
+								message:
+									"Error deleting tutors. Please try again.",
+								onConfirm: () =>
+									setAlertModal({
+										isOpen: false,
+										title: "",
+										message: "",
+										onConfirm: null,
+									}),
+							});
+						}
+					}
+				},
+			});
+		} catch (error) {
+			console.error("error checking outstanding hours:", error);
+			setAlertModal({
+				isOpen: true,
+				title: "Error",
+				message: "Error checking tutor hours. Please try again.",
+				onConfirm: () =>
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					}),
+			});
+		}
+	};
 
 	return (
 		<div className="p-6 bg-gray-100 pt-14 min-h-screen">
@@ -936,6 +1068,13 @@ function AddTutor() {
 								<h3 className="text-2xl font-bold text-gray-700 mb-6">
 									Delete Tutor
 								</h3>
+
+								<button
+									onClick={handleDeleteAllTutors}
+									className="mb-6 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+								>
+									Delete All Tutors
+								</button>
 
 								<div className="flex flex-col mb-6">
 									<label className="text-gray-700 font-bold mb-2">

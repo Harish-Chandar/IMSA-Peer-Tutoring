@@ -271,36 +271,119 @@ app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 	);
 });
 
+app.get(
+	"/api/tutors/check-outstanding-hours",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		db.all(
+			"SELECT id, fname, lname, totaltime, approvedtime FROM tutors WHERE (totaltime - approvedtime) > 0",
+			[],
+			(err: Error | null, rows: any[]) => {
+				if (err) {
+					console.error("Error checking outstanding hours:", err);
+					return res.status(500).json({ error: "Database error" });
+				}
+				res.json({
+					hasOutstandingHours: rows.length > 0,
+					tutorsWithOutstandingHours: rows,
+				});
+			}
+		);
+	}
+);
 
 // accept tutor hours
 app.patch(
-    "/api/tutors/:id/accept-hours",
-    authenticateAdmin,
-    (req: Request, res: Response) => {
-        const tutorId = parseInt(req.params.id);
-        if (isNaN(tutorId) || tutorId < 0) {
-            return res.status(400).json({ error: "Invalid tutor ID" });
-        }
+	"/api/tutors/:id/accept-hours",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		const tutorId = parseInt(req.params.id);
+		if (isNaN(tutorId) || tutorId < 0) {
+			return res.status(400).json({ error: "Invalid tutor ID" });
+		}
 
-        // get hours information
-        db.run(
-            "UPDATE tutors SET approvedtime = totaltime WHERE id = ?",
-            [tutorId],
-            function (err: Error | null) {
-                if (err) {
-                    console.error("Error updating tutor hours:", err);
-                    return res.status(500).json({ error: "Error updating tutor hours" });
-                }
-                if (this.changes === 0) {
-                    return res.status(404).json({ error: "Tutor not found" });
-                }
-                res.json({ message: "Tutor hours reset to 0" });
-            }
-        );
-    }
+		// get hours information
+		db.run(
+			"UPDATE tutors SET approvedtime = totaltime WHERE id = ?",
+			[tutorId],
+			function (err: Error | null) {
+				if (err) {
+					console.error("Error updating tutor hours:", err);
+					return res.status(500).json({ error: "Error updating tutor hours" });
+				}
+				if (this.changes === 0) {
+					return res.status(404).json({ error: "Tutor not found" });
+				}
+				res.json({ message: "Tutor hours reset to 0" });
+			}
+		);
+	}
 );
 
+app.delete(
+	"/api/tutors/delete-all",
+	authenticateAdmin,
+	(req: Request, res: Response) => {
+		db.all(
+			"SELECT image FROM tutors WHERE image IS NOT NULL AND image != ''",
+			[],
+			(err: Error | null, rows: any[]) => {
+				if (err) {
+					console.error("Error fetching tutor images:", err);
+					return res
+						.status(500)
+						.json({ error: "Error fetching tutor images" });
+				}
 
+				const deletePromises = rows.map((row) => {
+					return new Promise((resolve) => {
+						try {
+							const url = row.image;
+							const parts = url.split("/");
+							const filename =
+								parts[parts.length - 2] +
+								"/" +
+								parts[parts.length - 1];
+							const publicId = filename.split(".")[0];
+
+							cloudinary.uploader.destroy(
+								publicId,
+								(error, result) => {
+									if (error) {
+										console.error(
+											"Error deleting image:",
+											error
+										);
+									}
+									resolve(result);
+								}
+							);
+						} catch (error) {
+							console.error("Error processing image:", error);
+							resolve(null);
+						}
+					});
+				});
+
+				Promise.all(deletePromises).then(() => {
+					db.run("DELETE FROM tutors", [], function (err) {
+						if (err) {
+							console.error("Error deleting all tutors:", err);
+							return res
+								.status(500)
+								.json({ error: "Error deleting all tutors" });
+						}
+
+						res.json({
+							message: "All tutors deleted successfully",
+							deletedCount: this.changes,
+						});
+					});
+				});
+			}
+		);
+	}
+);
 
 // delete tutor endpoint
 app.delete(
