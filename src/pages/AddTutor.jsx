@@ -96,6 +96,9 @@ function AddTutor() {
 				return fullName.includes(deleteSearchQuery.toLowerCase());
 			});
 			setFilteredTutors(filtered);
+		} else {
+			// Clear filtered tutors when tutors array is empty
+			setFilteredTutors([]);
 		}
 	}, [deleteSearchQuery, tutors]);
 
@@ -429,7 +432,7 @@ function AddTutor() {
 		setAlertModal({
 			isOpen: true,
 			title: "Confirm Delete",
-			message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`,
+			message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone. Make sure all tutor hours are saved on Helper Helper, otherwise they will be lost.`,
 			onConfirm: async (confirmed) => {
 				setAlertModal({
 					isOpen: false,
@@ -624,7 +627,7 @@ function AddTutor() {
 			setAlertModal({
 				isOpen: true,
 				title: "Confirm Delete All Tutors",
-				message: `Are you sure you want to delete all tutors? This action will delete ${tutors.length} tutor(s) and cannot be undone.`,
+				message: `Are you sure you want to delete all tutors? This action will delete ${tutors.length} tutor(s) and cannot be undone. Make sure all tutor hours are saved on Helper Helper, otherwise they will be lost!`,
 				showCancel: true,
 				onConfirm: async (confirmed) => {
 					setAlertModal({
