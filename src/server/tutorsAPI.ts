@@ -20,7 +20,7 @@ console.log(process.env.DEV_SERVER)
 const app = express();
 const PORT = process.env.DBHOST || 5000;
 
-let options = {}
+let options = {};
 if (!DEV_SERVER) {
     options = {
         key: fs.readFileSync('/etc/pki/nginx/private/wildcard.imsa.edu.key'),
