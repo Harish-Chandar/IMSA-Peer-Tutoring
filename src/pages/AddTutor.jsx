@@ -3,6 +3,7 @@ import "./custom.css";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal.jsx";
+import MassTutorImport from "../components/MassTutorImport.jsx";
 
 import { isTokenExpired, classCategories, getTokenAccess } from "../util.ts";
 const token = localStorage.getItem("token");
@@ -16,9 +17,15 @@ function AddTutor() {
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
 		}
-        if (token && !isTokenExpired(token) && (getTokenAccess(token) < 1 || getTokenAccess(token) > 3 || getTokenAccess(token) === 2)) {
-            navigate('/adminDashboard');
-        }
+		if (
+			token &&
+			!isTokenExpired(token) &&
+			(getTokenAccess(token) < 1 ||
+				getTokenAccess(token) > 3 ||
+				getTokenAccess(token) === 2)
+		) {
+			navigate("/adminDashboard");
+		}
 	}, []);
 	// environment variables for API configuration
 	const DBPORT = process.env.REACT_APP_DBPORT;
@@ -55,8 +62,8 @@ function AddTutor() {
 
 	// selected classes for each category
 	const [selectedClasses, setSelectedClasses] = useState({});
-
-	// state for searching and deleting tutors
+    
+    // state for searching and deleting tutors
 	const [deleteSearchQuery, setDeleteSearchQuery] = useState("");
 	const [tutors, setTutors] = useState([]);
 	const [filteredTutors, setFilteredTutors] = useState([]);
@@ -91,6 +98,9 @@ function AddTutor() {
 				return fullName.includes(deleteSearchQuery.toLowerCase());
 			});
 			setFilteredTutors(filtered);
+		} else {
+			// Clear filtered tutors when tutors array is empty
+			setFilteredTutors([]);
 		}
 	}, [deleteSearchQuery, tutors]);
 
@@ -405,7 +415,7 @@ function AddTutor() {
 			setAlertModal({
 				isOpen: true,
 				title: "Error",
-				message: "Error creating tutor. Please try again.",
+				message: "Unexpected error creating tutor. Please try again.",
 				onConfirm: () =>
 					setAlertModal({
 						isOpen: false,
@@ -424,7 +434,7 @@ function AddTutor() {
 		setAlertModal({
 			isOpen: true,
 			title: "Confirm Delete",
-			message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone.`,
+			message: `Are you sure you want to delete the tutor "${tutorToDelete.fname} ${tutorToDelete.lname}"? This action cannot be undone. Make sure all tutor hours are saved on Helper Helper, otherwise they will be lost.`,
 			onConfirm: async (confirmed) => {
 				setAlertModal({
 					isOpen: false,
@@ -496,6 +506,219 @@ function AddTutor() {
 		});
 	};
 
+
+    // handle deleting tutor with confirmation popup
+	const handleTutorHours = async (tutorId) => {
+		const tutorToUpdate = tutors.find((tutor) => tutor.id === tutorId);
+
+		setAlertModal({
+			isOpen: true,
+			title: "Confirm Accepted Hours",
+			message: `Are you sure you want to update the accepted hours for the tutor "${tutorToUpdate.fname} ${tutorToUpdate.lname}"? This will reset their hour counter to 0, so ensure that the hours are correctly inputted to HelperHelper.`,
+			onConfirm: async (confirmed) => {
+				setAlertModal({
+					isOpen: false,
+					title: "",
+					message: "",
+					onConfirm: null,
+				});
+
+				if (confirmed) {
+					try {
+						const response = await fetch(
+							`${baseUrl}/api/tutors/${tutorId}/accept-hours`,
+							{
+								method: "PATCH",
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+
+						if (response.ok) {
+							// refresh tutors from database after successful deletion
+							fetchTutors();
+							setAlertModal({
+								isOpen: true,
+								title: "Success",
+								message: "Tutor hours updated successfully!",
+								onConfirm: () =>
+									setAlertModal({
+										isOpen: false,
+										title: "",
+										message: "",
+										onConfirm: null,
+									}),
+							});
+						} else {
+							const errorData = await response.json();
+							setAlertModal({
+								isOpen: true,
+								title: "Error",
+								message: `Error updating tutor hours: ${errorData.error}`,
+								onConfirm: () =>
+									setAlertModal({
+										isOpen: false,
+										title: "",
+										message: "",
+										onConfirm: null,
+									}),
+							});
+						}
+					} catch (error) {
+						console.error("error updating tutor hours:", error);
+						setAlertModal({
+							isOpen: true,
+							title: "Error",
+							message: "Error updating tutor hours. Please try again.",
+							onConfirm: () =>
+								setAlertModal({
+									isOpen: false,
+									title: "",
+									message: "",
+									onConfirm: null,
+								}),
+						});
+					}
+				}
+			},
+		});
+	};
+
+
+
+
+
+	const handleDeleteAllTutors = async () => {
+		try {
+			const checkResponse = await fetch(
+				`${baseUrl}/api/tutors/check-outstanding-hours`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			const checkData = await checkResponse.json();
+
+			if (checkData.hasOutstandingHours) {
+				const tutorList = checkData.tutorsWithOutstandingHours
+					.map(
+						(t) =>
+							`${t.fname} ${t.lname}: ${t.totaltime - t.approvedtime} hours`
+					)
+					.join("\n");
+
+				setAlertModal({
+					isOpen: true,
+					title: "Outstanding Hours Detected",
+					message: `The following tutors have outstanding hours that haven't been approved:\n\n${tutorList}\n\nPlease approve or reset their hours before deleting all tutors.`,
+					onConfirm: () =>
+						setAlertModal({
+							isOpen: false,
+							title: "",
+							message: "",
+							onConfirm: null,
+						}),
+				});
+				return;
+			}
+
+			setAlertModal({
+				isOpen: true,
+				title: "Confirm Delete All Tutors",
+				message: `Are you sure you want to delete all tutors? This action will delete ${tutors.length} tutor(s) and cannot be undone. Make sure all tutor hours are saved on Helper Helper, otherwise they will be lost!`,
+				showCancel: true,
+				onConfirm: async (confirmed) => {
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					});
+
+					if (confirmed) {
+						try {
+							const response = await fetch(
+								`${baseUrl}/api/tutors/delete-all`,
+								{
+									method: "DELETE",
+									headers: {
+										"Content-Type": "application/json",
+										Authorization: `Bearer ${token}`,
+									},
+								}
+							);
+
+							if (response.ok) {
+								const data = await response.json();
+								setDeleteSearchQuery("");
+								fetchTutors();
+								setAlertModal({
+									isOpen: true,
+									title: "Success",
+									message: `Successfully deleted ${data.deletedCount} tutor(s)!`,
+									onConfirm: () =>
+										setAlertModal({
+											isOpen: false,
+											title: "",
+											message: "",
+											onConfirm: null,
+										}),
+								});
+							} else {
+								const errorData = await response.json();
+								setAlertModal({
+									isOpen: true,
+									title: "Error",
+									message: `Error deleting tutors: ${errorData.error}`,
+									onConfirm: () =>
+										setAlertModal({
+											isOpen: false,
+											title: "",
+											message: "",
+											onConfirm: null,
+										}),
+								});
+							}
+						} catch (error) {
+							console.error("error deleting all tutors:", error);
+							setAlertModal({
+								isOpen: true,
+								title: "Error",
+								message:
+									"Error deleting tutors. Please try again.",
+								onConfirm: () =>
+									setAlertModal({
+										isOpen: false,
+										title: "",
+										message: "",
+										onConfirm: null,
+									}),
+							});
+						}
+					}
+				},
+			});
+		} catch (error) {
+			console.error("error checking outstanding hours:", error);
+			setAlertModal({
+				isOpen: true,
+				title: "Error",
+				message: "Error checking tutor hours. Please try again.",
+				onConfirm: () =>
+					setAlertModal({
+						isOpen: false,
+						title: "",
+						message: "",
+						onConfirm: null,
+					}),
+			});
+		}
+	};
+
 	return (
 		<div className="p-6 bg-gray-100 pt-14 min-h-screen">
 			<div className="flex justify-between items-center mb-6 py-10">
@@ -519,9 +742,22 @@ function AddTutor() {
 			<div className="flex justify-center">
 				<div className="max-w-2xl md:max-w-4xl lg:max-w-6xl w-full">
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-						{/* Left card - Add tutor form */}
+						{/* Left card - Add tutor form and bulk import */}
 						<div className="rounded-2xl shadow-md p-8 bg-white border">
 							<div className="space-y-6">
+								{/* Bulk Import Section */}
+								<div className="border-b pb-6 mb-6">
+									<h3 className="text-2xl font-bold text-gray-700 mb-4">
+										Mass Import Tutors
+									</h3>
+									<MassTutorImport
+										onImportComplete={fetchTutors}
+										baseUrl={baseUrl}
+										token={token}
+									/>
+								</div>
+
+								{/* Individual Add Tutor Section */}
 								<h3 className="text-2xl font-bold text-gray-700 mb-6">
 									Add New Tutor
 								</h3>
@@ -835,6 +1071,13 @@ function AddTutor() {
 									Delete Tutor
 								</h3>
 
+								<button
+									onClick={handleDeleteAllTutors}
+									className="mb-6 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+								>
+									Delete All Tutors
+								</button>
+
 								<div className="flex flex-col mb-6">
 									<label className="text-gray-700 font-bold mb-2">
 										Search Tutor
@@ -874,13 +1117,14 @@ function AddTutor() {
 																(
 																{tutor.totaltime
 																	? (
-																			tutor.totaltime /
+																			(tutor.totaltime - tutor.approvedtime) /
 																			3600000
 																	  ).toFixed(
 																			2
 																	  )
 																	: "0.00"}{" "}
-																hrs)
+																hrs pending approval)
+                                                                
 															</span>
 														</p>
 														<p className="text-sm text-blue-400 break-all">
@@ -892,6 +1136,19 @@ function AddTutor() {
 														</p>
 													</div>
 													<div className="flex items-center space-x-2">
+                                                        <button
+															onClick={() => {
+																handleTutorHours(
+                                                                    tutor.id
+                                                                )
+															}}
+															className="w-10 h-10 flex items-center justify-center text-white bg-green-600 hover:bg-green-700 rounded-md transition-all duration-200 text-sm font-bold"
+															title="Save Hours"
+														>
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-check-fill" viewBox="0 0 16 16">
+                                                                <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 4.854-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                                                            </svg>
+														</button>
 														<button
 															onClick={() => {
 																window.scrollTo(

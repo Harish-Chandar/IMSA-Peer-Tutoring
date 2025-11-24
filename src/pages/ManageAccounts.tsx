@@ -582,17 +582,17 @@ export default function ManageAccounts() {
 						</div>
 
 						{/* Right card - Manage section */}
-						<div className="rounded-2xl shadow-md p-8 bg-white border h-[4859px] flex flex-none flex-col">
+						<div className="rounded-2xl shadow-md p-6 bg-white border h-full flex flex-col">
 							<div className="flex flex-col h-full">
-								<h3 className="text-2xl font-bold text-gray-700 mb-6">
+								<h3 className="text-xl font-bold text-gray-700 mb-4">
 									Manage Admin Accounts
 								</h3>
 
-								<div className="border rounded-lg p-4 bg-gray-50 flex-none flex flex-col">
-									<h4 className="font-bold text-gray-700 mb-3">
+								<div className="border rounded-lg p-3 bg-gray-50 flex-1 flex flex-col">
+									<h4 className="font-bold text-gray-700 mb-2">
 										Administrators List
 									</h4>
-									<div className="h-full flex-none overflow-y-scroll space-y-3">
+									<div className="flex-1 overflow-y-auto space-y-2">
 										{admins.map((admin) => {
 											const currentUserEmail =
 												getTokenEmail(token);
@@ -603,14 +603,14 @@ export default function ManageAccounts() {
 											return (
 												<div
 													key={admin.id}
-													className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow duration-200"
+													className="bg-white rounded border p-2 hover:shadow-sm transition-shadow duration-200"
 												>
 													<div className="flex justify-between items-center">
 														<div className="flex-1">
-															<div className="font-semibold text-blue-600 text-lg mb-1">
+															<div className="font-medium text-blue-600 text-xs mb-0.5">
 																{admin.email}
 															</div>
-															<div className="text-gray-500 text-xs mt-1">
+															<div className="text-gray-500 text-xs">
 																{admin.access ===
 																1
 																	? "Administrator"
@@ -623,25 +623,16 @@ export default function ManageAccounts() {
 																	: "???"}
 															</div>
 														</div>
-														<div className="ml-4 flex items-center space-x-3">
-															{/* <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                            admin.access === 1 ? 'bg-red-300 text-red-800' :
-                                                            admin.access === 2 ? 'bg-purple-200 text-purple-700' :
-                                                            admin.access === 3 ? 'bg-blue-200 text-blue-700' :
-                                                            'bg-gray-100 text-gray-800'
-                                                        }`}>
-                                                            Level {admin.access}
-                                                        </span>
-														*/}
+														<div className="ml-2 flex items-center">
 															{isCurrentUser ? (
 																<div
-																	className="bg-green-600 text-white p-3 rounded-md flex items-center justify-center cursor-not-allowed opacity-75"
+																	className="bg-green-600 text-white p-1.5 rounded flex items-center justify-center cursor-not-allowed opacity-75"
 																	title="Cannot delete your own account"
 																>
 																	<svg
 																		xmlns="http://www.w3.org/2000/svg"
-																		width="16"
-																		height="16"
+																		width="12"
+																		height="12"
 																		fill="currentColor"
 																		className="bi bi-slash-circle"
 																		viewBox="0 0 16 16"
@@ -657,11 +648,11 @@ export default function ManageAccounts() {
 																			admin.email
 																		)
 																	}
-																	className="bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transition-colors duration-200 flex items-center justify-center"
+																	className="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded transition-colors duration-200 flex items-center justify-center"
 																	title="Delete admin account"
 																>
 																	<svg
-																		className="w-5 h-5"
+																		className="w-3 h-3"
 																		fill="none"
 																		stroke="currentColor"
 																		viewBox="0 0 24 24"

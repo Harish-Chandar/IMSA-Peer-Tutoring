@@ -38,8 +38,6 @@ function ResourceDetails() {
                 // Handle links data
                 if (data.links && Array.isArray(data.links) && data.links.length > 0) {
                     setLinks(data.links);
-                } else if (data.url) {
-                    setLinks([{ link_id: 0, label: "Main Resource", url: data.url }]);
                 } else {
                     setLinks([]);
                 }
@@ -79,7 +77,7 @@ function ResourceDetails() {
             <div className="bg-[#F1F1F1] min-h-screen pt-16">
                 <Navbar />
                 <div className="flex justify-center items-center h-64">
-                    <div className="text-lg text-gray-600">No resource found</div>
+                    <div className="text-lg text-gray-600">No class found</div>
                 </div>
             </div>
         );
@@ -117,7 +115,7 @@ function ResourceDetails() {
                                 <strong>Department:</strong> {resource.department}
                             </p>
                             <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                                <strong>Teacher:</strong> {resource.teacher}
+                                <strong>Teachers:</strong> {resource.teacher}
                             </p>
                             {resource.email && (
                                 <p className="text-sm sm:text-base lg:text-lg text-gray-700">

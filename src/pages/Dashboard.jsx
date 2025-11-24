@@ -36,12 +36,12 @@ function Dashboard() {
         // For teachers
         else if (getTokenAccess(token) === 2) {
             manageAccountsButton.style.display = "none";
-            editBulletinButton.style.display = "none";
+            editBulletinButton.style.display = "block";
             addCourseButton.style.display = "block";
             manageCoursesButton.style.display = "block";
             manageTutorsButton.style.display = "none";
-            checkinButton.style.display = "none";
-            welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage courses and resources! Your access level is: Teacher.";
+            checkinButton.style.display = "block";
+            welcomeMessage.textContent = "Welcome to the administrator dashboard! Here you can manage courses, resources, and check in tutors! Your access level is: Teacher.";
         }
         // For RCs
         else if (getTokenAccess(token) === 3) {
@@ -83,11 +83,18 @@ function Dashboard() {
                 Logout
             </button>
 
-                <h1 className="text-3xl lg:text-4xl text-center font-bold text-blue-500 ml-8">
+                <h1 className="text-3xl lg:text-4xl text-center font-bold text-blue-500 ml-16">
 					Administrator Dashboard
 				</h1>
 
-				<div className="w-40"></div>
+				<div className="flex gap-2">
+					<button
+						onClick={() => handleNavigation('/changePassword')}
+						className="bg-green-700 hover:bg-green-800 text-white p-2 lg:px-4 lg:py-2 rounded-md font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+					>
+						Change Password
+					</button>
+				</div>
 			</div>
 
             <div className="flex justify-center">

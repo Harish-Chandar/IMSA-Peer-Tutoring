@@ -20,7 +20,7 @@ function EditBulletin() {
 		if (!token || isTokenExpired(token)) {
 			navigate('/login');
 		}
-        if ((token && !isTokenExpired(token) && getTokenAccess(token) != 1)) {
+        if ((token && !isTokenExpired(token) && (getTokenAccess(token) != 1 && getTokenAccess(token) != 2))) {
             navigate('/adminDashboard');
         }
 	}, [token, navigate]);
@@ -99,8 +99,8 @@ function EditBulletin() {
 			const today = new Date();
 			const eventDate = new Date(newPost.event_date);
 
-			// If eventDate is before today, show AlertModal
-            if (eventDate < today.setHours(0, 0, 0, 0)) {
+			// Added 1 so a post can be made for the same day
+			if (eventDate.getDay() + 1 < today.getDay()) {
 				const inputMonth = eventDate.getMonth();
 				const inputDate = eventDate.getDate();
 				const thisYear = today.getFullYear();
@@ -144,7 +144,7 @@ function EditBulletin() {
 						author: newPost.author || "Admin",
 						contact_info: newPost.contact_info,
 						highpriority: newPost.highpriority,
-                        image:  newPost.image,
+                        image:  newPost.image || "/BulletinImages/imsa.jpg",
 					}),
 				});
 
@@ -266,9 +266,16 @@ function EditBulletin() {
 									type="text"
 									placeholder="Enter event title..."
 									value={newPost.title}
-									onChange={(e) => handlePostInputChange("title", e.target.value)}
+									onChange={(e) => {
+                                        if (e.target.value.length <= 50) {
+                                            handlePostInputChange("title", e.target.value);
+                                        }
+                                    }}
 									className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 								/>
+                                <div className="text-right text-sm text-gray-500 mt-1">
+								{newPost.title.length}/50 characters
+							    </div>
 							</div>
 
 							{/* Event Date */}
@@ -294,9 +301,16 @@ function EditBulletin() {
 									type="text"
 									placeholder="Enter author name..."
 									value={newPost.author}
-									onChange={(e) => handlePostInputChange("author", e.target.value)}
+									onChange={(e) => {
+                                        if (e.target.value.length <= 30) {
+                                            handlePostInputChange("author", e.target.value);
+                                        }
+                                    }}
 									className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 								/>
+                                <div className="text-right text-sm text-gray-500 mt-1">
+								{newPost.author.length}/30 characters
+							    </div>
 							</div>
 
 							{/* Contact Info */}
@@ -306,11 +320,16 @@ function EditBulletin() {
 									type="text"
 									placeholder="Enter contact information..."
 									value={newPost.contact_info}
-									onChange={(e) =>
-										handlePostInputChange("contact_info", e.target.value)
-									}
+									onChange={(e) => {
+                                        if (e.target.value.length <= 30) {
+											handlePostInputChange("contact_info", e.target.value);
+										}
+									}}
 									className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
 								/>
+                                <div className="text-right text-sm text-gray-500 mt-1">
+								{newPost.contact_info.length}/30 characters
+							    </div>
 							</div>
 						</div>
 
@@ -333,18 +352,26 @@ function EditBulletin() {
 								{newPost.content.length}/110 characters
 							</div>
 						</div>
-
-                        {/* Add Image */}
-                        <div className="flex flex-col mb-4 items-center">
-                            <label className="text-gray-700 font-bold mb-2 self-center">Post Image</label>
-                            <div className="grid grid-cols-3 gap-4 max-w-xl">
-                                {availableImages.map((image) => (   
-                                    <div key={image.id} onClick={() => handlePostInputChange("image", image.src)} className={`relative cursor-pointer rounded-lg overflow-hidden border-4 transition-all duration-200 hover:shadow-lg ${newPost.image === image.src ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300 hover:border-gray-400"}`}>
-                                        <img src={image.src} className="w-full h-28 object-cover"/>
-                                 </div>
-                                ))}
-                            </div>
-                        </div>
+                        
+                         {
+                            (newPost.content.length >= 73 && newPost.title.length >= 27) && (
+                                <label className="text-red-500 font-bold my-2">No image will be shown due to text length</label>
+                            )
+                        }
+                        {
+                            (newPost.content.length < 73 || newPost.title.length < 27) && (
+                                <div className="flex flex-col mb-4 items-center">
+                                    <label className="text-gray-700 font-bold mb-2 self-center">Post Image</label>
+                                    <div className="grid grid-cols-3 gap-4 max-w-xl">
+                                        {availableImages.map((image) => (   
+                                            <div key={image.id} onClick={() => handlePostInputChange("image", image.src)} className={`relative cursor-pointer rounded-lg overflow-hidden border-4 transition-all duration-200 hover:shadow-lg ${newPost.image === image.src ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300 hover:border-gray-400"}`}>
+                                                <img src={image.src} className="w-full h-28 object-cover"/>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )
+                        }
 
 						{/* High Priority Checkbox */}
 						<div className="flex items-center mb-6">

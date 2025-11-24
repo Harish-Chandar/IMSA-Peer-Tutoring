@@ -44,5 +44,8 @@ dist-ssr
 *.sqlite
 src/server/peertutoringdb.sqlite
 
-<<<<<<< HEAD
 sanity*
+package-lock.json
+package.json
+
+tutors.csv

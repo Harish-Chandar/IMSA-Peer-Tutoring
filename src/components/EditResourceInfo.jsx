@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
+import AlertModal from "./AlertModal";
 
-import { isTokenExpired, getTokenAccess } from "../util.ts";
+import { isTokenExpired, getTokenAccess, departments } from "../util.ts";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 const DEV_SERVER = process.env.DEV_SERVER === 'true';
 
 function EditResourceInfo() {
+    const [showAlert, setShowAlert] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertTitle, setAlertTitle] = useState('');
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -33,17 +38,6 @@ function EditResourceInfo() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // Define preset departments
-    const departments = [
-        "English",
-        "Fine Arts",
-        "History & Social Science",
-        "Mathematics & CS",
-        "Science",
-        "Wellness",
-        "World Languages",
-    ];
 
     // Fetch resource data
     useEffect(() => {
@@ -99,11 +93,14 @@ function EditResourceInfo() {
                 throw new Error("Failed to update resource");
             }
 
-            alert("Resource updated successfully!");
-            navigate(`/resources/modify`); // Navigate back to modify page
+            setAlertTitle("Resource Updated!");
+            setAlertMessage("Resource information was updated successfully!");
+            setShowAlert(true);
         } catch (err) {
             setError(err.message);
-            alert(`Error updating resource: ${err.message}`);
+            setAlertTitle("Error updating resource!");
+            setAlertMessage(`Error updating resource: ${err.message}`);
+            setShowAlert(true);
         }
     };
 
@@ -131,6 +128,15 @@ function EditResourceInfo() {
 
     return (
         <div className="p-6 bg-gray-100 pt-14 min-h-screen">
+            <AlertModal
+                isOpen={showAlert}
+                message={alertMessage}
+                onConfirm={(result) => {
+                    // true for OK, false for Cancel
+                    setShowAlert(false);
+                }}
+                title={alertTitle}
+            />
             <div className="flex justify-between items-center mb-6 py-10">
                 <button
                     onClick={() => navigate('/resources/modify')}
@@ -150,7 +156,7 @@ function EditResourceInfo() {
                 <div className="rounded-2xl shadow-md p-8 bg-white border max-w-2xl md:max-w-4xl lg:max-w-5xl w-full">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-bold mb-2">Teacher Name</label>
+                            <label className="text-gray-700 font-bold mb-2">Teachers Names</label>
                             <input
                                 className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                                 name="teacher"
