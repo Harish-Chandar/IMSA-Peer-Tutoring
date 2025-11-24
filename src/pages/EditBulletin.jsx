@@ -9,7 +9,7 @@ function EditBulletin() {
 	// environment variables for API configuration
 	const DBPORT = process.env.REACT_APP_DBPORT || "5000";
 	const HOST = process.env.REACT_APP_HOST || "localhost";
-	const DEV_SERVER = process.env.DEV_SERVER === 'true';
+	const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
 	const protocol = DEV_SERVER ? 'http' : 'https';
 	const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 

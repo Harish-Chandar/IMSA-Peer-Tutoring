@@ -28,20 +28,15 @@ if (!DEV_SERVER) {
     };
 }
 
-
 app.use(cors());
+app.use(express.json());
 
 // set up server
 if (DEV_SERVER) {
     app.listen(PORT, () => {
         console.log(`server listening on port ${PORT}`);
     });
-}
-
-// allows routes to parse json
-app.use(express.json());
-
-if (!DEV_SERVER) {
+} else {
     https.createServer(options, app).listen(PORT, () => {
         console.log(`HTTPS server listening on port ${PORT}`);
         console.log(`Access it at: https://peertutor.imsa.edu:${PORT}`);
