@@ -4,9 +4,11 @@ import Footer from "../components/Footer";
 // environment variables for API configuration
 const DBPORT = process.env.REACT_APP_DBPORT || "5000";
 const HOST = process.env.REACT_APP_HOST || "localhost";
+const DEV_SERVER = process.env.DEV_SERVER === 'true';
 
 // Base URL for API calls
-const API_BASE_URL = `http://${HOST}:${DBPORT}`;
+const protocol = DEV_SERVER ? 'http' : 'https';
+const API_BASE_URL = `${protocol}://${HOST}:${DBPORT}`;
 
 // default placeholder image URL from environment variable
 const DEFAULT_AVATAR_URL =

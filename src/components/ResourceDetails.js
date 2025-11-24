@@ -5,6 +5,7 @@ import Footer from "./Footer.jsx";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
+const DEV_SERVER = process.env.DEV_SERVER === 'true';
 
 function ResourceDetails() {
     const { id } = useParams();
@@ -25,7 +26,8 @@ function ResourceDetails() {
     useEffect(() => {
         const fetchResource = async () => {
             try {
-                const baseUrl = `http://${HOST}:${DBPORT}`;
+                const protocol = DEV_SERVER ? 'http' : 'https';
+                const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
                 const response = await fetch(`${baseUrl}/api/resources/${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

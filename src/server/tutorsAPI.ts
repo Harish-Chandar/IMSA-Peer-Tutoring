@@ -9,22 +9,44 @@ import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 
+import https from "https";
+import fs from "fs";
+
 dotenv.config();
+
+const DEV_SERVER = process.env.DEV_SERVER == "true";
+console.log(process.env.DEV_SERVER)
 
 const app = express();
 const PORT = process.env.DBHOST || 5000;
 
-// import bulletinrouter from './bulletinapi.js';
+let options = {};
+if (!DEV_SERVER) {
+    options = {
+        key: fs.readFileSync('/etc/pki/nginx/private/wildcard.imsa.edu.key'),
+        cert: fs.readFileSync('/etc/pki/nginx/STAR_imsa_edu.crt')
+    };
+}
+
 
 app.use(cors());
 
 // set up server
-app.listen(PORT, () => {
-	console.log(`server listening on port ${PORT}`);
-});
+if (DEV_SERVER) {
+    app.listen(PORT, () => {
+        console.log(`server listening on port ${PORT}`);
+    });
+}
 
 // allows routes to parse json
 app.use(express.json());
+
+if (!DEV_SERVER) {
+    https.createServer(options, app).listen(PORT, () => {
+        console.log(`HTTPS server listening on port ${PORT}`);
+        console.log(`Access it at: https://peertutor.imsa.edu:${PORT}`);
+    });
+}
 
 // initialize database
 const db = new sqlite3.Database(
@@ -1073,6 +1095,8 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 			"Multi-Variable Calculus":
 				"MVC Multi Variable Calculus Calc 3 Calculus 3 Calc III Calculus III Multivariable calculus",
 			"Advanced Programming": "Adpro",
+			"BMC": "Biology: Molecular & Cellular",
+			"BEE": "Biology: Evolution & Environment",
 			BMC: "Biology: Molecular & Cellular",
 			BEE: "Biology: Evolution & Environment",
 		};
@@ -1384,9 +1408,7 @@ app.delete(
 						}
 
 						if (this.changes === 0) {
-							return res
-								.status(404)
-								.json({ error: "Resource not found" });
+							return res.status(404).json({ error: "Resource not found" });
 						}
 
 						res.json({ message: "Resource deleted successfully" });

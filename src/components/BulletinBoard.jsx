@@ -9,7 +9,9 @@ function Bulletin() {
 
     const DBPORT = process.env.REACT_APP_DBPORT;
     const HOST = process.env.REACT_APP_HOST;
-    const API_URL = `http://${HOST}:${DBPORT}/api`;
+    const DEV_SERVER = process.env.DEV_SERVER === 'true';
+    const protocol = DEV_SERVER ? 'http' : 'https';
+    const API_URL = `${protocol}://${HOST}:${DBPORT}/api`;
 
     useEffect(() => {
         const fetchBulletinData = async () => {

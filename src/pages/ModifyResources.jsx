@@ -7,6 +7,7 @@ import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
+const DEV_SERVER = process.env.DEV_SERVER === 'true';
 
 function ModifyResources() {
     const navigate = useNavigate();
@@ -28,7 +29,8 @@ function ModifyResources() {
     useEffect(() => {
         const fetchDepartments = async () => {
             try {
-                const url = `http://${HOST}:${DBPORT}/api/resources/departments`;
+                const protocol = DEV_SERVER ? 'http' : 'https';
+                const url = `${protocol}://${HOST}:${DBPORT}/api/resources/departments`;
                 console.log("Fetching departments from:", url);
 
                 const response = await fetch(url);
@@ -97,7 +99,8 @@ function ModifyResources() {
 
             console.log("Search params:", params.toString()); // Debug
 
-            const url = `http://${HOST}:${DBPORT}/api/resources/search?${params.toString()}`;
+            const protocol = DEV_SERVER ? 'http' : 'https';
+            const url = `${protocol}://${HOST}:${DBPORT}/api/resources/search?${params.toString()}`;
             console.log("Fetching from:", url); // Debug
 
             const response = await fetch(url);

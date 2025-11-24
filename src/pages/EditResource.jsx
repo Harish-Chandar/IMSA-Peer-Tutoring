@@ -14,6 +14,7 @@ function EditResource() {
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
+    const DEV_SERVER = process.env.DEV_SERVER === 'true';
     useEffect(() => {
         if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
@@ -36,7 +37,8 @@ function EditResource() {
         // Fetch resource and its links
         const fetchResource = async () => {
             try {
-                const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+                const protocol = DEV_SERVER ? 'http' : 'https';
+                const baseUrl = `${protocol}://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
                 const response = await fetch(`${baseUrl}/api/resources/${id}`);
 
                 if (!response.ok) {
@@ -99,7 +101,8 @@ function EditResource() {
         setIsSubmitting(true);
 
         try {
-            const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+            const protocol = DEV_SERVER ? 'http' : 'https';
+            const baseUrl = `${protocol}://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
             const response = await fetch(`${baseUrl}/api/resources/${id}/links`, {
                 method: "POST",
                 headers: {
@@ -137,7 +140,8 @@ function EditResource() {
                 // For legacy links that don't have an ID in the database
                 if (links[index].isLegacy) {
                     // Special handling for legacy links - update the main resource URL
-                    const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+                    const protocol = DEV_SERVER ? 'http' : 'https';
+                    const baseUrl = `${protocol}://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
                     await fetch(`${baseUrl}/api/resources/${id}`, {
                         method: "PATCH",
                         headers: {
@@ -147,7 +151,8 @@ function EditResource() {
                     });
                 } else {
                     // Normal link deletion
-                    const baseUrl = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+                    const protocol = DEV_SERVER ? 'http' : 'https';
+                    const baseUrl = `${protocol}://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
                     const response = await fetch(
                         `${baseUrl}/api/resources/${id}/links/${linkId}`,
                         {

@@ -30,7 +30,9 @@ function AddTutor() {
 	// environment variables for API configuration
 	const DBPORT = process.env.REACT_APP_DBPORT;
 	const HOST = process.env.REACT_APP_HOST;
-	const baseUrl = `http://${HOST}:${DBPORT}`;
+	const DEV_SERVER = process.env.DEV_SERVER === 'true';
+	const protocol = DEV_SERVER ? 'http' : 'https';
+	const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 
 	const isLoadingClasses = Object.keys(classCategories).length === 0; //TODO: I did this to fix a post-merge bug, probably not the right way to do it, whoever needs this review it later
 
