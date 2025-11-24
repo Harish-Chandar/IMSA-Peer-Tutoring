@@ -16,7 +16,6 @@ dotenv.config();
 
 const DEV_SERVER = process.env.DEV_SERVER == "true";
 console.log(process.env.DEV_SERVER)
-console.log(DEV_SERVER);
 
 const app = express();
 const PORT = process.env.DBHOST || 5000;
