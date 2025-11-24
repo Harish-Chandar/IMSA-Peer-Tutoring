@@ -14,7 +14,7 @@ function EditResource() {
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
-    const DEV_SERVER = process.env.DEV_SERVER === 'true';
+    const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
     useEffect(() => {
         if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });

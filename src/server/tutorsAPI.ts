@@ -28,25 +28,28 @@ if (!DEV_SERVER) {
     };
 }
 
-
-app.use(cors());
+// Configure CORS to allow frontend on port 3000
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:5000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // set up server
 if (DEV_SERVER) {
     app.listen(PORT, () => {
         console.log(`server listening on port ${PORT}`);
     });
-}
-
-// allows routes to parse json
-app.use(express.json());
-
-if (!DEV_SERVER) {
+} else {
     https.createServer(options, app).listen(PORT, () => {
         console.log(`HTTPS server listening on port ${PORT}`);
         console.log(`Access it at: https://peertutor.imsa.edu:${PORT}`);
     });
 }
+
+// allows routes to parse json
+app.use(express.json());
 
 // initialize database
 const db = new sqlite3.Database(
@@ -1097,8 +1100,6 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 			"Advanced Programming": "Adpro",
 			"BMC": "Biology: Molecular & Cellular",
 			"BEE": "Biology: Evolution & Environment",
-			BMC: "Biology: Molecular & Cellular",
-			BEE: "Biology: Evolution & Environment",
 		};
 
 		// Build an array of search terms including original query and expansions

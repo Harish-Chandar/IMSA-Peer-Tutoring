@@ -7,7 +7,7 @@ import { isTokenExpired, getTokenAccess } from "../util.ts"
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
-const DEV_SERVER = process.env.DEV_SERVER === 'true';
+const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
 
 function ModifyResources() {
     const navigate = useNavigate();
