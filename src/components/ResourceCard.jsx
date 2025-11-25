@@ -3,7 +3,9 @@ import "../App.css";
 
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
-const baseUrl = `http://${HOST}:${DBPORT}`;
+const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
+const PROTOCOL = DEV_SERVER ? 'http' : 'https';
+const baseUrl = `${PROTOCOL}://${HOST}:${DBPORT}`;
 
 
 function ResourceCard({ course, teacher, department, resource_id }) {
