@@ -46,6 +46,7 @@ export const classCategories = {
 		"Planetary Science",
 		"Modern Physics",
 		"Computational Science",
+		"Biophysics",
 	],
 	chem: [
 		"SI Chemistry",
@@ -64,7 +65,6 @@ export const classCategories = {
 		"Environmental Microbiology",
 		"Pathophysiology",
 		"Biology of Behavior",
-		"Biophysics",
 		"Human Anatomy & Physiology 1",
 		"Human Anatomy & Physiology 2",
 	],
@@ -137,4 +137,12 @@ export const classCategories = {
 	],
 };
 
-export const departments = [ "Computer Science", "Math", "Science", "English", "Wellness", "World Languages", "Fine Arts" ];
+export const departments = [
+	"Computer Science",
+	"Math",
+	"Science",
+	"English",
+	"Wellness",
+	"World Languages",
+	"Fine Arts",
+];
