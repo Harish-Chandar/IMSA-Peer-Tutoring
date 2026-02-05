@@ -9,6 +9,7 @@ export const classCategories = {
         "Planetary Science",
         "Modern Physics",
         "Computational Science",
+		"Biophysics",
     ],
     chem: [
         "SI Chemistry",
