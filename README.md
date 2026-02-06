@@ -111,7 +111,7 @@
 - **Review:** Ensure your code is well-tested and follows the project's coding standards (4-space tabs, etc).
 - **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
 - **Style:** Follow the project's coding style and conventions. 4-space tabs, indentation convention, etc.
-- **Communication:** Email IMSA's Peer Tutor Coordinator (Amy Keck, akeck@imsa.edu at time of writing) and inform them of the changes. 
+- **Communication:** Email IMSA's Peer Tutor Coordinator (Amy Keck, akeck@imsa.edu at time of writing) and inform them of the pending changes. You **must** update them if the pull request is either accepted or denied.
 
 ## Grounds for Pull Request Rejection
 - **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
