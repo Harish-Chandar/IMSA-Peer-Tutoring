@@ -107,16 +107,18 @@
 
 ## Pull Request Guidelines
 - **Title:** Use a clear, descriptive title for your PR.
-- **Description:** Provide a detailed description of what your PR does, including any relevant issue numbers.
-- **Review:** Ensure your code is well-tested and follows the project's coding standards.
+- **Description:** Provide a detailed description of what your PR does, including any relevant issues fixed. In the description, attach your full name as shown on Powerschool and IMSA email address.
+- **Review:** Ensure your code is well-tested and follows the project's coding standards (4-space tabs, etc).
 - **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
 - **Style:** Follow the project's coding style and conventions. 4-space tabs, indentation convention, etc.
+- **Communication:** Email IMSA's Peer Tutor Coordinator (Amy Keck, akeck@imsa.edu at time of writing) and inform them of the changes. 
 
 ## Grounds for Pull Request Rejection
 - **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
 - **Poor Code Quality:** Code that does not adhere to the project's coding standards or is poorly documented.
 - **Unclear Use Cases:** PRs that do not clearly explain the use case or functionality being added. Inclusive of this is PRs that changes, especially to core systems, that are not well explained.
 - **Unnecessary Changes:** Changes that do not contribute to the project or are not relevant to the current scope.
+- **Maintainer Discretion:** Final rights to approve new changes lie solely with the maintainer(s) of the repository.
 
 ## Last Remarks 
 - Make sure to run the database setup scripts before starting the backend server for the first time.
