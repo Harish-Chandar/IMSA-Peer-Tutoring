@@ -22,9 +22,11 @@ function ChangePassword() {
     const [alertMessage, setAlertMessage] = useState("");
     const [alertTitle, setAlertTitle] = useState("");
 
+    const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
+    const protocol = DEV_SERVER ? 'http' : 'https';
     const DBPORT = process.env.REACT_APP_DBPORT;
     const HOST = process.env.REACT_APP_HOST;
-    const baseUrl = `http://${HOST}:${DBPORT}/api`;
+    const baseUrl = `${protocol}://${HOST}:${DBPORT}/api`;
 
     useEffect(() => {
         if (!token || isTokenExpired(token) || getTokenAccess(token) < 1 || getTokenAccess(token) > 3) {
@@ -90,7 +92,8 @@ function ChangePassword() {
         try {
             const userEmail = getTokenEmail(token);
             
-            const response = await fetch(`${baseUrl}/admins/${userEmail}/passwordchange`, {
+            const encodedEmail = encodeURIComponent(userEmail);
+            const response = await fetch(`${baseUrl}/admins/${encodedEmail}/passwordchange`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

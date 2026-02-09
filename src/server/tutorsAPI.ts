@@ -723,7 +723,7 @@ app.patch(
 	"/api/admins/:email/passwordchange",
 	authenticateAdmin,
 	(req: Request, res: Response) => {
-		const adminEmail = req.params.email;
+		const adminEmail = decodeURIComponent(req.params.email);
 		const { currentPassword, newPassword } = req.body;
 
 		if (!newPassword) {
