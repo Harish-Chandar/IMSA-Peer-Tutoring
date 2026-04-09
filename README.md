@@ -133,3 +133,9 @@
 - [Harish Chandar](https://www.linkedin.com/in/harish-chandar) - harishschandar@gmail.com
 - [Aarav Shah](https://www.linkedin.com/in/aarav-shah-aba4a631b) - aaravshah820@gmail.com
 
+## License
+This project is licensed under the GNU Affero General Public License v3.0.
+See the LICENSE file for details.
+### tl;dr
+This project is licensed under AGPL-3.0, which means you can personally use, modify, and even sell it.   
+If you share it or run it publicly (like SaaS or a website), you must release your source code under this same license and give credit to this repository.
