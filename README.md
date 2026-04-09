@@ -8,20 +8,20 @@
    Click the "Fork" button on GitHub to create your own copy of this repository.
 
 2. **Clone Your Fork:**  
-   Run `git clone https://github.com/<your-username>/IMSA-Peer-Tutoring.git` on your command line, or clone it with GitHub Desktop.
+   Run `git clone https://github.com/<your-username>/IMSA-Peer-Tutoring.git` on your command line (assumes installation of Git), or clone it with GitHub Desktop.
 
 3. **Install Dependencies:**  
-   In the root directory, run `npm i` to install all required packages. Follow the steps under "Setting up Your Environment" to set up environment variables and configurations.
+   In the root directory, run `npm i` to install all required packages (assumes installation of Node JS). Follow the steps under "Setting up Your Environment" to set up environment variables and configurations.
 
 4. **No Branches Needed:**  
-   Please work directly on your forked repository, all pull requests (PRs) will be merged into main.
+   Please work directly on your forked repository, as any pull requests (PRs) will be merged into main.
 
 5. **Making Contributions:**  
    - Make your changes and commit them to your fork.
     - Use descriptive, meaningful commit messages to explain your changes.
    - Push your changes to GitHub.
-   - Ensure your fork is up to date with the main repository by syncing the latest changes from the main branch before making a PR.
-   - Submit a Pull Request (PR) from your fork to the main repository.
+   - Ensure your fork is up to date with the main repository by syncing the latest changes from the main branch before making a Pull Request (PR).
+   - Submit a PR from your fork to the main repository.
    - Add a list of your changes in the PR description. Be sure to mention any dependencies, updates, or configurations that need to be set up for your changes to work.
       - If changes not mentioned in the PR description are made to the code, the PR will be rejected.
 
@@ -90,7 +90,7 @@
 - **Resources:** Add and search for academic resources, with support for resource links.
 - **Bulletin Board:** Post and manage announcements/events for students and tutors.
 - **Classes:** Manage class and department information for matching tutors and resources.
-- **Admin Panel:** Admin authentication and account management.
+- **Admin Dashboard:** Admin authentication and account management.
 
 ## Scripts in `src/server/`
 - `create-db.ts`: Creates the SQLite database and all required tables.
@@ -107,11 +107,11 @@
 
 ## Pull Request Guidelines
 - **Title:** Use a clear, descriptive title for your PR.
-- **Description:** Provide a detailed description of what your PR does, including any relevant issues fixed. In the description, attach your full name as shown on Powerschool and IMSA email address.
+- **Description:** Provide a detailed (technical) description of what your PR does, including any relevant issues fixed. In the description, attach your full name as shown on Powerschool and IMSA email address.
 - **Review:** Ensure your code is well-tested and follows the project's coding standards (4-space tabs, etc).
 - **Conflicts:** Resolve any merge conflicts before submitting your PR. Any conficts that the repository maintainer has to resolve will be rejected.
 - **Style:** Follow the project's coding style and conventions. 4-space tabs, indentation convention, etc.
-- **Communication:** Email IMSA's Peer Tutor Coordinator (Amy Keck, akeck@imsa.edu at time of writing) and inform them of the pending changes. You **must** update them if the pull request is either accepted or denied.
+- **Communication:** Email IMSA's Peer Tutor Coordinator (Amy Keck, akeck@imsa.edu at time of writing) and inform them of the pending changes in a clear, non-technical, outcome-driven manner. 
 
 ## Grounds for Pull Request Rejection
 - **Incomplete Features:** PRs that do not fully implement the intended feature or fix.
@@ -126,12 +126,12 @@
 - If you encounter any issues, check the console for error messages and ensure your environment variables are set correctly.
 - If you make any changes to the server code, restart the backend server to apply the changes.
 - If you make any changes to the frontend code, the React app will automatically reload to reflect those changes.
-- If your pull request gets approved, please let the Peer Tutor Coordinator know so that they may contact ITS and update the website.
-- For any questions, contact the project administrators.
+- If your pull request gets approved, they will usually be reflected on the website before the end of a semester. 
+- For any questions, contact the project developers.
 
 ### For any inquiries, contact:
-- [Harish Chandar](https://www.linkedin.com/in/harish-chandar) - harishschandar@gmail.com
-- [Aarav Shah](https://www.linkedin.com/in/aarav-shah-aba4a631b) - aaravshah820@gmail.com
+- [Harish Chandar](https://harish-chandar.github.io/) - *harishschandar@gmail.com*
+- [Aarav Shah](https://www.linkedin.com/in/aarav-shah-aba4a631b) - *aaravshah820@gmail.com*
 
 ## License
 This project is licensed under the GNU Affero General Public License v3.0.
