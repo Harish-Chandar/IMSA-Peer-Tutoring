@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import ResourceCard from "../components/ResourceCard.jsx";
 import ResourceHero from "../components/ResourceHero.jsx";

@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import { useState, useEffect } from "react";
 import "./../App.css";
 import Note from "./BulletinNote.jsx";

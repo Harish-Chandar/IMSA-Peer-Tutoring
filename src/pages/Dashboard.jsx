@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { apiFetch } from "../apiFetch.js";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +8,7 @@ import { isTokenExpired, getTokenAccess, getTokenEmail } from "../util.ts"
 function Dashboard() {
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("session");
 
     useEffect(() => {
         if (!token || isTokenExpired(token) || getTokenAccess(token) < 1 || getTokenAccess(token) > 3) {
@@ -68,9 +69,17 @@ function Dashboard() {
         navigate(path);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate('/login', { replace: true });
+    const handleLogout = async () => {
+        const protocol = process.env.REACT_APP_DEV_SERVER === 'true' ? 'http' : 'https';
+        const baseUrl = `${protocol}://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_DBPORT}`;
+        try {
+            const response = await apiFetch(`${baseUrl}/api/logout`, { method: 'POST' });
+            if (!response.ok && response.status !== 401) throw new Error('Logout failed');
+            localStorage.removeItem("session");
+            navigate('/login', { replace: true });
+        } catch (error) {
+            window.alert('Could not log out. Please try again.');
+        }
     };
 
 	return (

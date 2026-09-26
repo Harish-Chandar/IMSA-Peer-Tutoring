@@ -9,7 +9,7 @@ export function base64UrlDecode(str) {
 export function isTokenExpired(token) {
 	if (!token) return true;
 	try {
-		const payload = JSON.parse(base64UrlDecode(token.split(".")[1]));
+		const payload = JSON.parse(token);
 		if (!payload.exp) return true;
 		return Date.now() >= payload.exp * 1000;
 	} catch (e) {
@@ -20,7 +20,7 @@ export function isTokenExpired(token) {
 export function getTokenAccess(token) {
 	if (!token) return 0;
 	try {
-		const payload = JSON.parse(base64UrlDecode(token.split(".")[1]));
+		const payload = JSON.parse(token);
 		return payload.access;
 	} catch (e) {
 		return 0;
@@ -30,7 +30,7 @@ export function getTokenAccess(token) {
 export function getTokenEmail(token) {
 	if (!token) return null;
 	try {
-		const payload = JSON.parse(base64UrlDecode(token.split(".")[1]));
+		const payload = JSON.parse(token);
 		return payload.email;
 	} catch (e) {
 		return null;

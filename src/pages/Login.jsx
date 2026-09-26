@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "../components/AlertModal";
@@ -31,7 +32,7 @@ export function Login() {
 
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem("token", data.token);
+                localStorage.setItem("session", JSON.stringify({ email: data.email, access: data.access, exp: data.exp, csrf: data.csrf }));
                 navigate("/adminDashboard", { replace: true });
                 console.log("User access level:", data.access);
             } else {

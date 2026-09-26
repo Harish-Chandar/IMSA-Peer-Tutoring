@@ -11,8 +11,10 @@ import multer from "multer";
 
 import https from "https";
 import fs from "fs";
+import crypto from "crypto";
 
 dotenv.config();
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET must be set");
 
 const DEV_SERVER = process.env.DEV_SERVER == "true";
 console.log(process.env.DEV_SERVER)
@@ -28,7 +30,8 @@ if (!DEV_SERVER) {
     };
 }
 
-app.use(cors());
+const allowedOrigin = process.env.FRONTEND_ORIGIN || (DEV_SERVER ? "http://localhost:3000" : "https://peertutor.imsa.edu");
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 app.use(express.json());
 
 // set up server
@@ -53,6 +56,7 @@ const db = new sqlite3.Database(
 		console.log("connected to the database");
 	}
 );
+db.run("CREATE TABLE IF NOT EXISTS revoked_tokens (jti TEXT PRIMARY KEY, expires_at INTEGER NOT NULL)");
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -151,6 +155,7 @@ app.get("/api/tutors/search", (req: Request, res: Response) => {
 app.get(
 	"/api/tutors/check-email/:email",
 	authenticateAdmin,
+	requireTutorManager,
 	(req: Request, res: Response) => {
 		const email = decodeURIComponent(req.params.email);
 
@@ -224,7 +229,7 @@ app.get("/api/tutors/:id", (req: Request, res: Response) => {
 });
 
 // create tutor endpoint
-app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
+app.post("/api/tutors", authenticateAdmin, requireTutorManager, (req: Request, res: Response) => {
 	const {
 		fname,
 		lname,
@@ -291,6 +296,7 @@ app.post("/api/tutors", authenticateAdmin, (req: Request, res: Response) => {
 app.get(
 	"/api/tutors/check-outstanding-hours",
 	authenticateAdmin,
+	requireTutorManager,
 	(req: Request, res: Response) => {
 		db.all(
 			"SELECT id, fname, lname, totaltime, approvedtime FROM tutors WHERE (totaltime - approvedtime) > 0",
@@ -313,6 +319,7 @@ app.get(
 app.patch(
 	"/api/tutors/:id/accept-hours",
 	authenticateAdmin,
+	requireTutorManager,
 	(req: Request, res: Response) => {
 		const tutorId = parseInt(req.params.id);
 		if (isNaN(tutorId) || tutorId < 0) {
@@ -340,6 +347,7 @@ app.patch(
 app.delete(
 	"/api/tutors/delete-all",
 	authenticateAdmin,
+	requireTutorManager,
 	(req: Request, res: Response) => {
 		db.all(
 			"SELECT image FROM tutors WHERE image IS NOT NULL AND image != ''",
@@ -406,6 +414,7 @@ app.delete(
 app.delete(
 	"/api/tutors/:id",
 	authenticateAdmin,
+	requireTutorManager,
 	(req: Request, res: Response) => {
 		const tutorId = parseInt(req.params.id);
 
@@ -455,7 +464,7 @@ app.delete(
 );
 
 // update tutor endpoint
-app.put("/api/tutors/:id", authenticateAdmin, (req: Request, res: Response) => {
+app.put("/api/tutors/:id", authenticateAdmin, requireTutorManager, (req: Request, res: Response) => {
 	const tutorId = parseInt(req.params.id);
 
 	// validate tutorId
@@ -592,31 +601,69 @@ type Admin = {
 };
 
 function authenticateAdmin(req: Request, res: Response, next: Function) {
-	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+	const cookie = req.headers.cookie?.split(";").map((part) => part.trim()).find((part) => part.startsWith("session="));
+	const token = cookie && decodeURIComponent(cookie.slice("session=".length));
+	if (!token) {
 		return res.status(401).json({ error: "Missing token" });
 	}
 
-	const token = authHeader.split(" ")[1];
-	console.log("Token received:", token);
-
 	try {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ["HS256"] }) as {
 			email: string;
 			access: number;
+			jti: string;
+			csrf: string;
 		};
 
-		if (decoded.access < 1) {
-			return res.status(403).json({ error: "Insufficient privileges" });
+		if (!decoded.jti || !decoded.csrf || !decoded.email || ![1, 2, 3].includes(decoded.access)) {
+			return res.status(403).json({ error: "Invalid token" });
 		}
-
-		//@ts-ignore
-		req.user = decoded;
-		next();
+		if (!["GET", "HEAD", "OPTIONS"].includes(req.method) && req.headers["x-csrf-token"] !== decoded.csrf) {
+			return res.status(403).json({ error: "Invalid CSRF token" });
+		}
+		db.get("SELECT jti FROM revoked_tokens WHERE jti = ?", [decoded.jti], (revocationError, revoked) => {
+			if (revocationError) return res.status(500).json({ error: "Authentication error" });
+			if (revoked) return res.status(401).json({ error: "Session ended" });
+			db.get<Admin>("SELECT id, email, access FROM admins WHERE email = ?", [decoded.email], (accountError, account) => {
+				if (accountError) return res.status(500).json({ error: "Authentication error" });
+				if (!account || account.access !== decoded.access) return res.status(401).json({ error: "Session ended" });
+				(req as any).user = decoded;
+				next();
+			});
+		});
 	} catch (err) {
 		return res.status(403).json({ error: "Invalid or expired token" });
 	}
 }
+
+function requireAdministrator(req: Request, res: Response, next: Function) {
+	if ((req as any).user.access !== 1) return res.status(403).json({ error: "Administrator access required" });
+	next();
+}
+
+function requireTutorManager(req: Request, res: Response, next: Function) {
+	if (![1, 3].includes((req as any).user.access)) return res.status(403).json({ error: "Tutor management access required" });
+	next();
+}
+
+function requireResourceManager(req: Request, res: Response, next: Function) {
+	if (![1, 2].includes((req as any).user.access)) return res.status(403).json({ error: "Resource management access required" });
+	next();
+}
+
+app.get("/api/session", authenticateAdmin, (req: Request, res: Response) => {
+	const user = (req as any).user;
+	res.json({ email: user.email, access: user.access, exp: user.exp, csrf: user.csrf });
+});
+
+app.post("/api/logout", authenticateAdmin, (req: Request, res: Response) => {
+	const user = (req as any).user;
+	db.run("INSERT OR IGNORE INTO revoked_tokens (jti, expires_at) VALUES (?, ?)", [user.jti, user.exp], (err) => {
+		if (err) return res.status(500).json({ error: "Unable to end session" });
+		res.clearCookie("session", { path: "/", sameSite: "strict", secure: !DEV_SERVER, httpOnly: true });
+		res.json({ success: true });
+	});
+});
 
 app.post("/api/login", (req: Request, res: Response) => {
 	const { email, password }: { email: string; password: string } = req.body;
@@ -639,16 +686,21 @@ app.post("/api/login", (req: Request, res: Response) => {
 					return res
 						.status(401)
 						.json({ error: "Invalid email or password" });
+				if (![1, 2, 3].includes(row.access)) return res.status(403).json({ error: "Account access is invalid" });
+				db.run("DELETE FROM revoked_tokens WHERE expires_at < ?", [Math.floor(Date.now() / 1000)]);
 
 				const token = jwt.sign(
-					{ email: row.email, access: row.access },
+					{ email: row.email, access: row.access, jti: crypto.randomUUID(), csrf: crypto.randomBytes(32).toString("hex") },
 					process.env.JWT_SECRET!,
 					{ expiresIn: "3h" }
 				);
+				res.cookie("session", token, { httpOnly: true, secure: !DEV_SERVER, sameSite: "strict", path: "/", maxAge: 3 * 60 * 60 * 1000 });
+				const session = jwt.decode(token) as { csrf: string; exp: number };
 
 				res.json({
 					success: true,
-					token,
+					csrf: session.csrf,
+					exp: session.exp,
 					access: row.access,
 					email: row.email,
 				});
@@ -660,10 +712,11 @@ app.post("/api/login", (req: Request, res: Response) => {
 app.post(
 	"/api/admin/create",
 	authenticateAdmin,
+	requireAdministrator,
 	(req: Request, res: Response) => {
 		const { email, password, role } = req.body;
 
-		if (!email || !password || !role) {
+		if (!email || !password || ![1, 2, 3].includes(role)) {
 			return res
 				.status(400)
 				.json({ error: "Email, password, and role are required" });
@@ -724,6 +777,7 @@ app.patch(
 	authenticateAdmin,
 	(req: Request, res: Response) => {
 		const adminEmail = decodeURIComponent(req.params.email);
+		if (adminEmail !== (req as any).user.email) return res.status(403).json({ error: "Cannot change another account's password" });
 		const { currentPassword, newPassword } = req.body;
 
 		if (!newPassword) {
@@ -809,8 +863,8 @@ app.patch(
 	}
 );
 
-app.get("/api/admins", authenticateAdmin, (req: Request, res: Response) => {
-	const sql = "SELECT * FROM admins";
+app.get("/api/admins", authenticateAdmin, requireAdministrator, (req: Request, res: Response) => {
+	const sql = "SELECT id, email, access FROM admins";
 
 	db.all(sql, [], (err: Error | null, rows: any[]) => {
 		if (err) {
@@ -826,6 +880,7 @@ app.get("/api/admins", authenticateAdmin, (req: Request, res: Response) => {
 app.post(
 	"/api/admins/:email/delete",
 	authenticateAdmin,
+	requireAdministrator,
 	(req: Request, res: Response) => {
 		const adminEmail = req.params.email;
 
@@ -886,7 +941,7 @@ app.get("/api/test", (req: Request, res: Response) => {
 });
 
 // bulletin board api routes
-app.post("/api/bulletin", authenticateAdmin, (req: Request, res: Response) => {
+app.post("/api/bulletin", authenticateAdmin, requireResourceManager, (req: Request, res: Response) => {
 	const {
 		title,
 		content,
@@ -940,6 +995,7 @@ app.get("/api/bulletin", (req: Request, res: Response) => {
 app.delete(
 	"/api/bulletin/:id",
 	authenticateAdmin,
+	requireResourceManager,
 	(req: Request, res: Response) => {
 		const sql = "DELETE FROM bulletin WHERE id = ?";
 
@@ -957,7 +1013,7 @@ app.delete(
 // resources routes
 
 // api route for inserting new data into the resources table
-app.post("/api/resources", authenticateAdmin, (req: Request, res: Response) => {
+app.post("/api/resources", authenticateAdmin, requireResourceManager, (req: Request, res: Response) => {
 	const { teacher, email, course, department, url, type, links } = req.body;
 
 	console.log("Request body:", req.body); // Log the entire request body
@@ -1092,8 +1148,6 @@ app.get("/api/resources/search", (req: Request, res: Response) => {
 			"Advanced Programming": "Adpro",
 			"BMC": "Biology: Molecular & Cellular",
 			"BEE": "Biology: Evolution & Environment",
-			BMC: "Biology: Molecular & Cellular",
-			BEE: "Biology: Evolution & Environment",
 		};
 
 		// Build an array of search terms including original query and expansions
@@ -1235,14 +1289,14 @@ app.get("/api/resources/:id", (req: Request, res: Response) => {
 					if (err) {
 						// Even if there's an error getting links, return the resource
 						return res.json({
-							...resource,
+							...(resource as object),
 							links: [],
 						});
 					}
 
 					// Return the resource with links
 					return res.json({
-						...resource,
+						...(resource as object),
 						links: links || [],
 					});
 				}
@@ -1255,6 +1309,7 @@ app.get("/api/resources/:id", (req: Request, res: Response) => {
 app.post(
 	"/api/resources/:id/links",
 	authenticateAdmin,
+	requireResourceManager,
 	(req: Request, res: Response) => {
 		const resourceId = parseInt(req.params.id);
 		const { label, url } = req.body;
@@ -1287,6 +1342,7 @@ app.post(
 app.delete(
 	"/api/resources/:id/links/:linkId",
 	authenticateAdmin,
+	requireResourceManager,
 	(req: Request, res: Response) => {
 		const linkId = parseInt(req.params.linkId);
 
@@ -1311,6 +1367,7 @@ app.delete(
 app.patch(
 	"/api/resources/:id",
 	authenticateAdmin,
+	requireResourceManager,
 	(req: Request, res: Response) => {
 		const resourceId = parseInt(req.params.id);
 		const { url } = req.body;
@@ -1336,6 +1393,7 @@ app.patch(
 app.patch(
 	"/api/resources/:id/info",
 	authenticateAdmin,
+	requireResourceManager,
 	(req: Request, res: Response) => {
 		const resourceId = parseInt(req.params.id);
 		const { teacher, email, course, department, type } = req.body;
@@ -1373,6 +1431,7 @@ app.patch(
 app.delete(
 	"/api/resources/:id",
 	authenticateAdmin,
+	requireResourceManager,
 	(req: Request, res: Response) => {
 		const resourceId = parseInt(req.params.id);
 
@@ -1518,6 +1577,7 @@ app.post(
 app.post(
 	"/api/upload-image",
 	authenticateAdmin,
+	requireTutorManager,
 	upload.single("image"), // "image" must match the FormData field name
 	async (req: Request, res: Response) => {
 		try {
@@ -1553,6 +1613,7 @@ app.post(
 app.post(
 	"/api/upload-image-url",
 	authenticateAdmin,
+	requireTutorManager,
 	async (req: Request, res: Response) => {
 		try {
 			const { imageUrl, tutorName } = req.body;

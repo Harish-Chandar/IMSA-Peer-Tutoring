@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import {useEffect, useRef, useState } from 'react';
 import { AlertModal } from './AlertModal.jsx';
 
@@ -19,13 +20,10 @@ const UploadWidget = ({ setImageUrl }) => {
 	    const protocol = DEV_SERVER ? 'http' : 'https';
 	    const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 
-        const token = localStorage.getItem("token"); // whatever you store after login
-
         try {
             const res = await fetch(`${baseUrl}/api/upload-image`, {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${token}`,
                 },
                 body: formData,
             });

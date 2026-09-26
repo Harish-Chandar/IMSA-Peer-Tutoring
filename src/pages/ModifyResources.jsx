@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import ResourceEditCard from "../components/ResourceEditCard";
 import Footer from "../components/Footer.jsx";
@@ -12,7 +13,7 @@ const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
 function ModifyResources() {
     const navigate = useNavigate();
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("session");
         if (!token || isTokenExpired(token)) {
             navigate('/login', { replace: true });
         }

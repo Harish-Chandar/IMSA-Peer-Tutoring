@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import Navbar from "./Navbar.jsx";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";

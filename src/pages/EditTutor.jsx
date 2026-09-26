@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./custom.css";
@@ -11,7 +12,7 @@ function EditTutor() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("session");
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
 		}
@@ -404,12 +405,11 @@ function EditTutor() {
 				...formattedClasses,
 			};
 
-			const token = localStorage.getItem("token");
+			const token = localStorage.getItem("session");
 			const response = await fetch(`${baseUrl}/api/tutors/${id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify(updatedTutorData),
 			});

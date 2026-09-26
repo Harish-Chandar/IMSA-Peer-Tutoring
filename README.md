@@ -33,6 +33,9 @@
    REACT_APP_HOST=localhost
    PORT=3000
    REACT_APP_DBPORT=5000
+   DEV_SERVER=true
+   REACT_APP_DEV_SERVER=true
+   FRONTEND_ORIGIN=http://localhost:3000
 
    JWT_SECRET=your_jwt_secret_here
 
@@ -48,6 +51,7 @@
 
 2. **Hosts and Ports:**
     Customize the different ports and hosts specific to your computer. You can find out which values to use by running `npm start` (see **How to Start the Website**).
+    `FRONTEND_ORIGIN` must exactly match the address used to open the frontend, including its scheme and port. In production, set it to the HTTPS frontend origin. The API uses an HttpOnly session cookie, so the frontend and API must be on the same site, and both must be deployed together. Existing users will need to sign in again after this change.
 
 3. **JWT_SECRET:**  
     1. Enter the following command into some UNIX terminal (i.e. WSL, Git Bash, MinGW, a normal Mac/Linux terminal, etc): `openssl rand -base64 32`

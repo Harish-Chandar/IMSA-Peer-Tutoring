@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,7 @@ function EditBulletin() {
 	const protocol = DEV_SERVER ? 'http' : 'https';
 	const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 
-	const token = localStorage.getItem("token");
+	const token = localStorage.getItem("session");
 
 	const navigate = useNavigate();
 	useEffect(() => {
@@ -67,7 +68,6 @@ function EditBulletin() {
                     const deletePost = await fetch(`${baseUrl}/api/bulletin/${data[i].id}`, {
                         method: 'DELETE',
                         headers: {
-                            "Authorization": `Bearer ${token}`,
                             "Content-Type": "application/json"
                         }
                     });
@@ -135,7 +135,6 @@ function EditBulletin() {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						"Authorization": `Bearer ${token}`,
 					},
 					body: JSON.stringify({
 						title: newPost.title,
@@ -188,7 +187,6 @@ function EditBulletin() {
 				const response = await fetch(`${baseUrl}/api/bulletin/${postId}`, {
 					method: "DELETE",
 					headers: {
-						"Authorization": `Bearer ${token}`,
 					},
 				});
 

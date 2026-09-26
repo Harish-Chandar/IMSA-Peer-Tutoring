@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import TutorCard from "../components/TutorCard";
 import Footer from "../components/Footer";

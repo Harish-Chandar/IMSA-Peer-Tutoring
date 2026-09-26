@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import "./custom.css";
 import Footer from "../components/Footer.jsx";
@@ -6,14 +7,13 @@ import AlertModal from "../components/AlertModal.jsx";
 import MassTutorImport from "../components/MassTutorImport.jsx";
 
 import { isTokenExpired, classCategories, getTokenAccess } from "../util.ts";
-const token = localStorage.getItem("token");
 
 import UploadWidget from "../components/UploadWidget.js";
 
 function AddTutor() {
 	const navigate = useNavigate();
 	useEffect(() => {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("session");
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
 		}
@@ -343,7 +343,6 @@ function AddTutor() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify(tutorData),
 			});
@@ -451,7 +450,6 @@ function AddTutor() {
 								method: "DELETE",
 								headers: {
 									"Content-Type": "application/json",
-									Authorization: `Bearer ${token}`,
 								},
 							}
 						);
@@ -531,7 +529,6 @@ function AddTutor() {
 								method: "PATCH",
 								headers: {
 									"Content-Type": "application/json",
-									Authorization: `Bearer ${token}`,
 								},
 							}
 						);
@@ -596,7 +593,6 @@ function AddTutor() {
 				`${baseUrl}/api/tutors/check-outstanding-hours`,
 				{
 					headers: {
-						Authorization: `Bearer ${token}`,
 					},
 				}
 			);
@@ -647,7 +643,6 @@ function AddTutor() {
 									method: "DELETE",
 									headers: {
 										"Content-Type": "application/json",
-										Authorization: `Bearer ${token}`,
 									},
 								}
 							);
@@ -753,7 +748,6 @@ function AddTutor() {
 									<MassTutorImport
 										onImportComplete={fetchTutors}
 										baseUrl={baseUrl}
-										token={token}
 									/>
 								</div>
 

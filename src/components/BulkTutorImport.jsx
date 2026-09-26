@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState } from "react";
 import AlertModal from "./AlertModal.jsx";
 
@@ -247,7 +248,6 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify({
 					imageUrl: imageUrl,
@@ -348,7 +348,6 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 						)}`,
 						{
 							headers: {
-								Authorization: `Bearer ${token}`,
 							},
 						}
 					);
@@ -398,7 +397,6 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
 						},
 						body: JSON.stringify(tutorData),
 					});

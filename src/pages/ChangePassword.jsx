@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +9,7 @@ import { isTokenExpired, getTokenAccess, getTokenEmail } from "../util.ts"
 function ChangePassword() {
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("session");
     
     const [formData, setFormData] = useState({
         currentPassword: "",
@@ -97,7 +98,6 @@ function ChangePassword() {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     currentPassword: formData.currentPassword,

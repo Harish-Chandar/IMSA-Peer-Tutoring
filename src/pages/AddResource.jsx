@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer.jsx";
 import { useNavigate } from "react-router-dom";
@@ -7,13 +8,13 @@ import AlertModal from "../components/AlertModal.jsx";
 const DBPORT = process.env.REACT_APP_DBPORT;
 const HOST = process.env.REACT_APP_HOST;
 const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("session");
 
 function ResourceForm() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("session");
 		if (!token || isTokenExpired(token)) {
 			navigate("/login");
 		}
@@ -160,7 +161,6 @@ function ResourceForm() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify(resourceData),
 			});

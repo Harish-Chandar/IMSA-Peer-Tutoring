@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import AlertModal from "../components/AlertModal";
 import Footer from "../components/Footer";
@@ -8,7 +9,7 @@ import { isTokenExpired, getTokenAccess, getTokenEmail } from "../util.ts";
 export default function ManageAccounts() {
 	const navigate = useNavigate();
 
-	const token = localStorage.getItem("token");
+	const token = localStorage.getItem("session");
 
 	useEffect(() => {
 		if (!token || isTokenExpired(token)) {
@@ -128,7 +129,6 @@ export default function ManageAccounts() {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
 			},
 			body: JSON.stringify({
 				email: newAdmin.email,
@@ -186,7 +186,6 @@ export default function ManageAccounts() {
 								method: "GET",
 								headers: {
 									"Content-Type": "application/json",
-									Authorization: `Bearer ${token}`,
 								},
 							})
 								.then((response) => {
@@ -297,7 +296,6 @@ export default function ManageAccounts() {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 					},
 					body: JSON.stringify({ email: adminEmail }),
 				})
@@ -364,7 +362,6 @@ export default function ManageAccounts() {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
 			},
 		})
 			.then((response) => {

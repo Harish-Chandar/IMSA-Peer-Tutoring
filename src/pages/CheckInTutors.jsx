@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useEffect, useState } from "react";
 import TutorCard from "../components/TutorCard";
 import Footer from "../components/Footer";
@@ -13,7 +14,7 @@ const baseUrl = `${protocol}://${HOST}:${DBPORT}`;
 
 function CheckInTutors() {
 	const navigate = useNavigate();
-	const token = localStorage.getItem("token");
+	const token = localStorage.getItem("session");
 	useEffect(() => {
 		if (!token || isTokenExpired(token)) {
 			navigate("/login", { replace: true });
@@ -62,14 +63,13 @@ function CheckInTutors() {
 	const handleCheckIn = async (id) => {
 		setError("");
 		try {
-			const token = localStorage.getItem("token");
+			const token = localStorage.getItem("session");
 			const response = await fetch(
 				`${baseUrl}/api/tutors/${id}/checkin`,
 				{
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 					},
 				}
 			);
@@ -108,14 +108,13 @@ function CheckInTutors() {
 		}
 
 		try {
-			const token = localStorage.getItem("token");
+			const token = localStorage.getItem("session");
 			const response = await fetch(
 				`${baseUrl}/api/tutors/${pendingTutor.id}/checkout`,
 				{
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 					},
 					body: JSON.stringify({
 						hoursToAdd: inputHours,

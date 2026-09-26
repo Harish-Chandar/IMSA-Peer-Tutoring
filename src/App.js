@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ResourceDetails from "./components/ResourceDetails.js";
 import FindResources from "./pages/FindResources.jsx";
@@ -25,6 +25,10 @@ import CheckInTutors from "./pages/CheckInTutors.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
 
 export default function App() {
+    useEffect(() => {
+        // Remove credentials left by versions that stored bearer tokens in the browser.
+        localStorage.removeItem("token");
+    }, []);
     return (
         <Router>
             <Navbar />

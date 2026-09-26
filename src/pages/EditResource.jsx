@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from "../apiFetch.js";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
@@ -13,7 +14,7 @@ function EditResource() {
 	const [showDeleteCourseAlert, setShowDeleteCourseAlert] = useState(false);
 
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("session");
     const DEV_SERVER = process.env.REACT_APP_DEV_SERVER == 'true';
     useEffect(() => {
         if (!token || isTokenExpired(token)) {
@@ -107,7 +108,6 @@ function EditResource() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify(newLink),
             });
@@ -159,7 +159,6 @@ function EditResource() {
                             method: "DELETE",
                             headers: {
                                 "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`,
                             },
                         }
                     );
@@ -195,7 +194,6 @@ function EditResource() {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
                 },
             });
 
