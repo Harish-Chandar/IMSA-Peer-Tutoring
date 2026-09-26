@@ -1,79 +1,95 @@
 import React, { useState } from "react";
 import AlertModal from "./AlertModal.jsx";
+import { classCategories } from "../util.ts";
 
-const COURSE_ABBREVIATIONS = {
-	SI: "SI Physics",
-	"Physics: Sound and Light": "Physics: Sound and Light",
-	"Physics C: Mechanics": "Physics C: Mechanics",
-	"Physics C: Electricity/Magnetism": "Physics C: Electricity/Magnetism",
-	"Computational Science": "Computational Science",
-	"SI Chemistry": "SI Chemistry",
-	"Organic Chemistry I": "Organic Chemistry I",
-	"Organic Chemistry II": "Organic Chemistry II",
-	"Advanced Chemistry - Structure and Properties":
-		"Advanced Chemistry - Structure and Properties",
-	"Advanced Chemistry - Chemical Reactions":
+const COURSE_ALIASES = {
+	SI: "Physics: Algebra-Based Mechanics",
+	"SI Physics": "Physics: Algebra-Based Mechanics",
+	"Physics C: Mechanics": "Physics: Calculus-Based Mechanics",
+	"Physics C: Electricity/Magnetism":
+		"Physics: Calculus-Based Electricity/Magnetism",
+	"Physics: Calc Based Electricity/Magnetism":
+		"Physics: Calculus-Based Electricity/Magnetism",
+	"Bio Physics": "Biophysics",
+	"Intro to Engineering": "Engineering",
+	"Introduction to Engineering": "Engineering",
+	"SI Chemistry": "Chemistry",
+	"Org Chem I": "Organic Chemistry I",
+	"Org Chem II": "Organic Chemistry II",
+	"Advanced Chemistry: Chem Reactions":
 		"Advanced Chemistry - Chemical Reactions",
-	"Biotechnology Techniques in Chemistry":
-		"Biotechnology Techniques in Chemistry",
-	"Biology: Evolution & Environment": "Biology: Evolution & Environment",
-	"Biology: Molecular & Cellular": "Biology: Molecular & Cellular",
-	"Cancer Biology": "Cancer Biology",
-	Biophysics: "Biophysics",
-	Pathophysiology: "Pathophysiology",
-	MSI: "MSI",
-	"Introduction to Engineering": "Introduction to Engineering",
-	Electronics: "Electronics",
-	Geometry: "Geometry",
-	"MI I/II": "MI I/II",
-	"MI II": "MI II",
-	"MI III": "MI III",
-	"MI IV": "MI IV",
-	"AB I": "AB I",
-	"AB II": "AB II",
-	"BC I": "BC I",
-	"BC II": "BC II",
-	"BC III": "BC III",
-	"BC I/II": "BC I/II",
-	"BC II/III": "BC II/III",
-	"Introduction to Proofs": "Introduction to Proofs",
-	"Multi-Variable Calculus": "Multi-Variable Calculus",
-	"Differential Equations": "Differential Equations",
-	"Linear Algebra": "Linear Algebra",
-	"Number Theory": "Number Theory",
-	"Discrete Mathematics": "Discrete Mathematics",
+	"ad chem: structure and properties":
+		"Advanced Chemistry - Structure and Properties",
+	"Biotech in Chem": "Biotechnology Techniques in Chemistry",
+	"Physical Chem of Materials": "The Physical Chemistry of Materials",
+	"Bio: Evolution & Environment": "Biology: Evolution & Environment",
+	"Bio: Molecular & Cellular": "Biology: Molecular & Cellular",
+	"Evolution Biodiversity and Ecology":
+		"Evolution, Biodiversity, and Ecology",
+	"Cancer Bio": "Cancer Biology",
+	"Bio of Behavior": "Biology of Behavior",
+	"AB I": "AB Calculus I",
+	"AB CALC I": "AB Calculus I",
+	"AB II": "AB Calculus II",
+	"BC I": "BC Calculus I",
+	"BC CALC I": "BC Calculus I",
+	"BC II": "BC Calculus II",
+	"BC CALC II": "BC Calculus II",
+	"BC III": "BC Calculus III",
+	"BC I/II": "BC Calculus I/II",
+	"BC II/III": "BC Calculus II/III",
+	"BC CALC II/III": "BC Calculus II/III",
+	MVC: "Multi-Variable Calculus",
+	Stats: "Statistics",
 	"Statistical Exploration and Description":
-		"Statistical Exploration and Description",
+		"Statistics",
 	"Statistical Experimentation and Inference":
-		"Statistical Experimentation and Inference",
-	CSI: "CSI",
-	OOP: "OOP",
-	"Web Technologies": "Web Technologies",
-	"Advanced Programming": "Advanced Programming",
-	"Microcontroller Applications (CS)": "Microcontroller Applications (CS)",
-	"Artificial Intelligence 1": "Artificial Intelligence 1",
-	"Artificial Intelligence 2": "Artificial Intelligence 2",
-	"Advanced Web Technologies": "Advanced Web Technologies",
-	"CS Seminar: Android Apps Development":
-		"CS Seminar: Android Apps Development",
-	"CS Seminar: Linux and Cybersecurity":
-		"CS Seminar: Linux and Cybersecurity",
-	"Elements of Computing Systems 1": "Elements of Computing Systems 1",
-	"Spanish II": "Spanish II",
-	"Spanish III": "Spanish III",
-	"Spanish IV": "Spanish IV",
-	"Spanish V": "Spanish V",
-	"French I": "French I",
-	"French II": "French II",
-	"French III": "French III",
-	"French IV": "French IV",
-	"Mandarin Chinese I": "Mandarin Chinese I",
-	"Mandarin Chinese II": "Mandarin Chinese II",
-	"Mandarin Chinese III": "Mandarin Chinese III",
-	"German I": "German I",
-	"German II": "German II",
-	"German III": "German III",
+		"Advanced Topics in Data Analysis",
+	"Adv Programming": "Advanced Programming",
+	"Web Tech": "Web Technologies",
+	"Adv Web Tech": "Advanced Web Technologies",
+	Ai1: "Artificial Intelligence 1",
+	"AI-1": "Artificial Intelligence 1",
+	"AI-2": "Artificial Intelligence 2",
+	"Mandarin I": "Mandarin Chinese I",
+	"Mandarin II": "Mandarin Chinese II",
+	"Mandarin III": "Mandarin Chinese III",
 };
+
+const normalizeCourseName = (course) =>
+	course.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+const CANONICAL_COURSES_BY_NORMALIZED_NAME = Object.fromEntries(
+	Object.values(classCategories)
+		.flat()
+		.map((course) => [normalizeCourseName(course), course])
+);
+
+const COURSE_ALIASES_BY_NORMALIZED_NAME = Object.fromEntries(
+	Object.entries(COURSE_ALIASES).map(([alias, course]) => [
+		normalizeCourseName(alias),
+		course,
+	])
+);
+
+const resolveCanonicalCourse = (course) => {
+	const normalizedName = normalizeCourseName(course);
+	return (
+		CANONICAL_COURSES_BY_NORMALIZED_NAME[normalizedName] ||
+		COURSE_ALIASES_BY_NORMALIZED_NAME[normalizedName] ||
+		null
+	);
+};
+
+const EXCLUDED_TUTOR_COURSES = new Set([
+	normalizeCourseName("Foundations of Healthy Living"),
+]);
+
+const COURSE_TO_CATEGORY = Object.fromEntries(
+	Object.entries(classCategories).flatMap(([category, courses]) =>
+		courses.map((course) => [course, category])
+	)
+);
 
 function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 	const [isLoading, setIsLoading] = useState(false);
@@ -148,6 +164,10 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 		if (!cellValue || cellValue.trim() === "") return [];
 
 		return cellValue
+			.replace(
+				/Evolution,\s*Biodiversity,?\s+and\s+Ecology/gi,
+				"Evolution Biodiversity and Ecology"
+			)
 			.split(",")
 			.map((course) => course.trim())
 			.filter((course) => course.length > 0);
@@ -217,15 +237,72 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 			language: "World Language Courses",
 		};
 
-		const courses = {};
+		const courseLists = Object.fromEntries(
+			Object.keys(courseMap).map((category) => [category, []])
+		);
+		const additionalInterests = [];
+		const droppedCourses = [];
+		const movedCourses = [];
+		const unmappedCourses = [];
 
-		Object.entries(courseMap).forEach(([category, csvColumn]) => {
+		Object.entries(courseMap).forEach(([sourceCategory, csvColumn]) => {
 			const coursesStr = tutorData[csvColumn];
 			const coursesList = parseCoursesFromCell(coursesStr);
-			courses[category] = formatCoursesForDatabase(coursesList);
+
+			coursesList.forEach((course) => {
+				const normalizedCourse = resolveCanonicalCourse(course);
+
+				if (EXCLUDED_TUTOR_COURSES.has(normalizeCourseName(course))) {
+					droppedCourses.push(course);
+					return;
+				}
+
+				if (!normalizedCourse) {
+					additionalInterests.push(course);
+					unmappedCourses.push({ course, source: csvColumn });
+					return;
+				}
+
+				const targetCategory = COURSE_TO_CATEGORY[normalizedCourse];
+
+				if (targetCategory !== sourceCategory) {
+					movedCourses.push({
+						course: normalizedCourse,
+						from: csvColumn,
+						to: courseMap[targetCategory],
+					});
+				}
+
+				if (!courseLists[targetCategory].includes(normalizedCourse)) {
+					courseLists[targetCategory].push(normalizedCourse);
+				}
+			});
 		});
 
-		return courses;
+		const courses = Object.fromEntries(
+			Object.entries(courseLists).map(([category, courseList]) => [
+				category,
+				formatCoursesForDatabase(courseList),
+			])
+		);
+
+		return {
+			courses,
+			additionalInterests,
+			droppedCourses,
+			movedCourses,
+			unmappedCourses,
+		};
+	};
+
+	const appendTutoringInterestsToBlurb = (blurb, additionalInterests) => {
+		if (additionalInterests.length === 0) return blurb || "";
+
+		const uniqueInterests = [...new Set(additionalInterests)];
+		const joinedInterests = uniqueInterests.join("; ");
+		const ending = /[.!?]$/.test(joinedInterests) ? "" : ".";
+		const interestsText = `Additional tutoring interests: ${joinedInterests}${ending}`;
+		return [blurb?.trim(), interestsText].filter(Boolean).join(" ");
 	};
 
 	const uploadImageToCloudinary = async (imageUrl, tutorName) => {
@@ -292,6 +369,12 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 			let skippedCount = 0;
 			let errorCount = 0;
 			const errors = [];
+			const importEvents = {
+				dropped: [],
+				moved: [],
+				appended: [],
+				unmapped: [],
+			};
 
 			for (const tutorRow of tutorsData) {
 				try {
@@ -370,7 +453,17 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 					}
 
 					// Extract and format courses
-					const courses = extractCoursesFromColumns(tutorRow);
+					const {
+						courses,
+						additionalInterests,
+						droppedCourses,
+						movedCourses,
+						unmappedCourses,
+					} = extractCoursesFromColumns(tutorRow);
+					const blurbWithInterests = appendTutoringInterestsToBlurb(
+						blurb,
+						additionalInterests
+					);
 
 					// Construct availability string
 					const availability = constructAvailabilityString(tutorRow);
@@ -384,7 +477,7 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 						imsaid: parseInt(imsaid),
 						hall: parseInt(hall),
 						wing: wingLetter.charCodeAt(0) - 64, // Convert A-D to 1-4 (A=65, so 65-64=1)
-						blurb: blurb || "",
+						blurb: blurbWithInterests,
 						image: imageUrl || "",
 						availability,
 						is_available: 1,
@@ -405,6 +498,27 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 
 					if (response.ok) {
 						successCount++;
+						const tutorName = `${fname} ${lname}`;
+						importEvents.dropped.push(
+							...droppedCourses.map((course) => `${tutorName}: ${course}`)
+						);
+						importEvents.moved.push(
+							...movedCourses.map(
+								({ course, from, to }) =>
+									`${tutorName}: ${course} (${from} -> ${to})`
+							)
+						);
+						importEvents.appended.push(
+							...additionalInterests.map(
+								(interest) => `${tutorName}: ${interest}`
+							)
+						);
+						importEvents.unmapped.push(
+							...unmappedCourses.map(
+								({ course, source }) =>
+									`${tutorName}: ${course} (${source})`
+							)
+						);
 					} else {
 						const errorData = await response.json();
 						errorCount++;
@@ -431,6 +545,24 @@ function BulkTutorImport({ onImportComplete, baseUrl, token }) {
 					message += `\n... and ${errors.length - 5} more`;
 				}
 			}
+
+			const appendEventSection = (heading, events) => {
+				if (events.length === 0) return;
+				message += `\n\n${heading} (${events.length}):\n${events
+					.map((event) => `- ${event}`)
+					.join("\n")}`;
+			};
+
+			appendEventSection("Dropped tutor courses", importEvents.dropped);
+			appendEventSection("Moved to canonical categories", importEvents.moved);
+			appendEventSection(
+				"Appended to tutor bios",
+				importEvents.appended
+			);
+			appendEventSection(
+				"Unmapped class values (preserved in bios)",
+				importEvents.unmapped
+			);
 
 			setAlertModal({
 				isOpen: true,

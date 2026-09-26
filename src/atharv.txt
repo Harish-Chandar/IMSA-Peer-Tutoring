@@ -37,7 +37,7 @@ export function getTokenEmail(token) {
 	}
 }
 
-// Sourced from IMSA's "Learning Opportunities 2026/2027" course catalog.
+// Sourced from IMSA's "Learning Opportunities 2026/2027" course catalog (lo.pdf).
 export const classCategories = {
 	physics: [
 		"Physics: Algebra-Based Mechanics",
@@ -67,10 +67,10 @@ export const classCategories = {
 		"Evolution, Biodiversity, and Ecology",
 		"Cancer Biology",
 		"Environmental Microbiology",
-		"Pathophysiology",
-		"Biology of Behavior",
 		"Human Anatomy & Physiology 1",
 		"Human Anatomy & Physiology 2",
+		"Pathophysiology",
+		"Biology of Behavior",
 	],
 	sciother: [
 		"MSI",
@@ -99,6 +99,7 @@ export const classCategories = {
 		"MI II",
 		"MI III",
 		"MI IV",
+		"Survey of Calculus",
 		"AB Calculus I",
 		"AB Calculus II",
 		"BC Calculus I",
@@ -106,7 +107,6 @@ export const classCategories = {
 		"BC Calculus III",
 		"BC Calculus I/II",
 		"BC Calculus II/III",
-		"Survey of Calculus",
 	],
 	cs: [
 		"CSI",
@@ -116,14 +116,14 @@ export const classCategories = {
 		"Microcontroller Applications (CS)",
 		"CS Seminar: Android Apps Development",
 		"CS Seminar: Linux and Cybersecurity",
+		"CS Seminar: Machine Learning",
+		"Robotics and Control Systems",
 		"Artificial Intelligence 1",
 		"Artificial Intelligence 2",
 		"Elements of Computing Systems 1",
 		"Elements of Computing Systems 2",
 		"Advanced Web Technologies",
 		"Introduction to Neural Computation",
-		"CS Seminar: Machine Learning",
-		"Robotics and Control Systems",
 	],
 	language: [
 		"French I",
@@ -135,13 +135,13 @@ export const classCategories = {
 		"Spanish III",
 		"Spanish IV",
 		"Spanish V",
+		"Perspectivas en el Mundo Hispano",
 		"German I",
 		"German II",
 		"German III",
 		"Mandarin Chinese I",
 		"Mandarin Chinese II",
 		"Mandarin Chinese III",
-		"Perspectivas en el Mundo Hispano",
 	],
 };
 

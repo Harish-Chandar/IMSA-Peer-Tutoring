@@ -75,8 +75,8 @@ export function AlertModal({
 						{title}
 					</h3>
 				</div>
-				<div className="mb-6">
-					<p className="text-gray-700">{message}</p>
+				<div className="mb-6 max-h-[60vh] overflow-y-auto">
+					<p className="text-gray-700 whitespace-pre-line">{message}</p>
 					{typeof inputValue !== "undefined" && onInputChange && (
 						<div className="mt-4">
 							{inputLabel && (

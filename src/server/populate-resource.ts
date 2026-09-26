@@ -16,7 +16,7 @@ export const sampleResources = [
 	{
 		teacher: "Krithik",
 		email: "ksenthilkumar@imsa.edu",
-		course: "SI Physics",
+		course: "Physics: Algebra-Based Mechanics",
 		department: "Science",
 	},
 	{
@@ -116,22 +116,22 @@ export function populateResources(
 					"MI IV":
 						"Mathematical Investigations IV Mathematical Investigations 4",
 					CSI: "Computer Science Inquiry",
-					"SI Physics":
-						"Scientific Inquiries Physics Scientific Inquiries: Physics",
-					"SI Chemistry":
-						"Scientific Inquiries Chemistry Scientific Inquiries: Chemistry",
+					"Physics: Algebra-Based Mechanics":
+						"SI Physics Scientific Inquiries Physics Scientific Inquiries: Physics",
+					Chemistry:
+						"SI Chemistry Scientific Inquiries Chemistry Scientific Inquiries: Chemistry",
 					MSI: "Methods in Scientific Inquiries",
 					"MI II":
 						"Mathematical Investigations II Mathematical Investigations 2",
 					"MI I/II":
 						"Mathematical Investigations I/II Mathematical Investigations 1/2 Mathematical Investigations 1",
-					"BC I": "BC Calculus I BC Calculus 1 BC 1",
-					"BC II": "BC Calculus II BC Calculus 2 BC 2",
-					"BC III": "BC Calculus III BC Calculus 3 BC 3",
-					"BC I/II": "BC Calculus I/II BC Calculus 1/2",
-					"BC II/III": "BC Calculus II/III BC Calculus 2/3",
-					"AB I": "AB Calculus I AB Calculus 1 AB 1",
-					"AB II": "AB Calculus II AB Calculus 2 AB 2",
+					"BC Calculus I": "BC I BC Calculus 1 BC 1",
+					"BC Calculus II": "BC II BC Calculus 2 BC 2",
+					"BC Calculus III": "BC III BC Calculus 3 BC 3",
+					"BC Calculus I/II": "BC I/II BC Calculus 1/2",
+					"BC Calculus II/III": "BC II/III BC Calculus 2/3",
+					"AB Calculus I": "AB I AB Calculus 1 AB 1",
+					"AB Calculus II": "AB II AB Calculus 2 AB 2",
 					"Object Oriented Programming": "OOP",
 				};
 
